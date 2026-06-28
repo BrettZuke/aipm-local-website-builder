@@ -1,0 +1,2075 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Partner Method Local Website Builder STACK · STUDENT JOURNEY</title>
+<meta name="description" content="Flow diagram of the AI Partner Method Local Website Builder student journey from clone to first paying client.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap">
+<style>
+  :root {
+    --bg:           #0A0A0A;
+    --bg-lift:      #141414;
+    --bg-card:      #161616;
+    --bg-card-alt:  #1C1C1C;
+    --rule:         rgba(255, 255, 255, 0.10);
+    --rule-strong:  rgba(255, 255, 255, 0.22);
+    --text:         #FFFFFF;
+    --text-soft:    #B8B8B8;
+    --text-mute:    #6E6E6E;
+
+    /* Silver palette */
+    --silver:       #D4D4D4;
+    --silver-light: #F2F2F2;
+    --silver-mid:   #A8A8A8;
+    --silver-dark:  #6F6F6F;
+    --silver-bg:    rgba(212, 212, 212, 0.06);
+    --silver-edge:  rgba(212, 212, 212, 0.22);
+
+    --ease:         cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Metallic silver text effect for big numbers and key headings */
+  .metallic {
+    background: linear-gradient(160deg,
+      #FFFFFF 0%,
+      #EAEAEA 18%,
+      #9C9C9C 50%,
+      #D8D8D8 78%,
+      #FFFFFF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    font-weight: 600;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  h1 { font-weight: 900; }
+  h2 { font-weight: 900; }
+  h3 { font-weight: 800; }
+  h4 { font-weight: 800; }
+
+  .mono { font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; font-weight: 600; }
+  .num  { font-variant-numeric: tabular-nums; }
+
+  /* ─── Top bar ────────────────────────────────────────────────────────── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(10, 10, 10, 0.94);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+  .topbar-inner .brand {
+    color: var(--silver);
+    font-weight: 900;
+    letter-spacing: 0.24em;
+  }
+
+  /* ─── Header ─────────────────────────────────────────────────────────── */
+  header.intro {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 96px 32px 56px;
+    text-align: center;
+  }
+  header h1 {
+    font-size: clamp(44px, 7.2vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0 auto 24px;
+    max-width: 16ch;
+    font-weight: 900;
+  }
+  header h1 .accent {
+    color: var(--silver);
+  }
+  header .sub {
+    font-size: 17px;
+    color: var(--text-soft);
+    font-weight: 600;
+    max-width: 60ch;
+    margin: 0 auto 56px;
+    line-height: 1.55;
+    text-transform: none;
+    letter-spacing: 0.01em;
+  }
+
+  /* ─── Actors strip ───────────────────────────────────────────────────── */
+  .actors {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 0 0;
+    border-top: 2px solid var(--rule);
+  }
+  .actor {
+    text-align: center;
+    padding: 8px 4px;
+  }
+  .actor .role {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 8px;
+  }
+  .actor .who {
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.5;
+    font-weight: 600;
+  }
+  .actors-arrow {
+    color: var(--silver-dark);
+    font-size: 24px;
+    font-weight: 900;
+  }
+  @media (max-width: 760px) {
+    .actors { grid-template-columns: 1fr; }
+    .actors-arrow { display: none; }
+  }
+
+  /* ─── Flow chart ─────────────────────────────────────────────────────── */
+  .flow {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 80px 32px 96px;
+  }
+
+  .zone {
+    margin-bottom: 64px;
+    position: relative;
+  }
+  .zone:last-child { margin-bottom: 0; }
+
+  .zone-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text);
+    background: var(--silver-bg);
+    padding: 10px 18px;
+    border: 1px solid var(--silver-edge);
+    margin-bottom: 24px;
+  }
+  .zone-label::before {
+    content: '';
+    width: 28px;
+    height: 2px;
+    background: var(--silver);
+  }
+
+  .nodes {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .node {
+    position: relative;
+    display: grid;
+    grid-template-columns: 110px 1fr 220px;
+    align-items: center;
+    gap: 28px;
+    padding: 28px 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--silver);
+    transition: border-color 280ms var(--ease-out),
+                background 280ms var(--ease-out),
+                box-shadow 280ms var(--ease-out);
+  }
+  .node:hover {
+    background: var(--bg-card-alt);
+    border-color: var(--rule-strong);
+    border-left-color: var(--silver);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.5),
+      0 32px 64px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Connector line down the left edge */
+  .nodes::before {
+    content: '';
+    position: absolute;
+    left: 55px;
+    top: -20px;
+    bottom: -20px;
+    width: 2px;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      var(--silver-edge) 8%,
+      var(--silver-edge) 92%,
+      transparent 100%);
+    z-index: 0;
+  }
+
+  .node-num {
+    font-size: 64px;
+    line-height: 1;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    padding: 4px 0;
+    position: relative;
+    z-index: 1;
+    background: var(--bg-card);
+    letter-spacing: -0.04em;
+  }
+  .node:hover .node-num { background: var(--bg-card-alt); }
+
+  .node-body h3 {
+    font-size: 22px;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 10px;
+    font-weight: 900;
+  }
+  .node-body p {
+    color: var(--text-soft);
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0 0 14px;
+    max-width: 60ch;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.005em;
+  }
+  .node-body .cmds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .node-cmd {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--silver);
+    background: var(--silver-bg);
+    padding: 5px 10px;
+    border: 1px solid var(--silver-edge);
+    letter-spacing: 0;
+  }
+
+  .node-meta {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .node-meta .time {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: -0.005em;
+  }
+  .node-meta .cost {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-soft);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .node-meta .cost.free { color: var(--silver); }
+
+  /* ─── Sub-pipeline ───────────────────────────────────────────────────── */
+  .pipeline {
+    margin: -4px 0 0 138px;
+    padding: 24px 28px;
+    background: var(--silver-bg);
+    border-left: 2px dashed var(--silver-mid);
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+  .pipeline-title {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 14px;
+  }
+  .pipeline-stages {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 8px 20px;
+    counter-reset: stage;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-weight: 700;
+  }
+  .pipeline-stages li {
+    padding-left: 32px;
+    position: relative;
+    line-height: 1.45;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+  .pipeline-stages li::before {
+    counter-increment: stage;
+    content: counter(stage, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 1px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--silver-mid);
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+
+  /* ─── Loop arrow ─────────────────────────────────────────────────────── */
+  .loop {
+    position: relative;
+    margin: 64px 0;
+    padding: 36px 32px;
+    background: var(--silver-bg);
+    border: 2px dashed var(--silver-mid);
+    text-align: center;
+  }
+  .loop-icon {
+    display: inline-block;
+    font-size: 40px;
+    color: var(--silver);
+    line-height: 1;
+    margin-bottom: 12px;
+    font-weight: 900;
+  }
+  .loop h3 {
+    font-size: 24px;
+    color: var(--text);
+    margin-bottom: 12px;
+    font-weight: 900;
+  }
+  .loop p {
+    color: var(--text-soft);
+    font-size: 14px;
+    margin: 0 auto 18px;
+    max-width: 58ch;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.005em;
+  }
+  .loop p strong {
+    color: var(--silver);
+    font-weight: 800;
+  }
+  .loop .cmds { justify-content: center; }
+
+  /* ─── End state ──────────────────────────────────────────────────────── */
+  .endstate {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 80px 32px 0;
+    border-top: 2px solid var(--rule);
+  }
+  .endstate-head {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+  .endstate-head .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 18px;
+  }
+  .endstate-head h2 {
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    max-width: 22ch;
+    margin: 0 auto;
+    font-weight: 900;
+  }
+  .endstate-head h2 .accent {
+    color: var(--silver);
+  }
+
+  .takeaways {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .takeaway {
+    background: var(--bg);
+    padding: 36px 28px;
+    transition: background 280ms var(--ease-out);
+  }
+  .takeaway:hover { background: var(--bg-lift); }
+  .takeaway .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--silver);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .takeaway h4 {
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 10px;
+    font-weight: 900;
+  }
+  .takeaway p {
+    margin: 0;
+    color: var(--text-soft);
+    font-size: 13.5px;
+    line-height: 1.55;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.005em;
+  }
+  @media (max-width: 960px) {
+    .takeaways { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .takeaways { grid-template-columns: 1fr; }
+  }
+
+  /* ─── Costs strip ────────────────────────────────────────────────────── */
+  .costs-strip {
+    max-width: 1280px;
+    margin: 80px auto 0;
+    padding: 48px 32px;
+    background: linear-gradient(180deg, var(--bg-lift) 0%, var(--bg) 100%);
+    border: 1px solid var(--rule);
+    border-top: 2px solid var(--silver-edge);
+  }
+  .costs-strip h3 {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  .costs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    text-align: center;
+  }
+  .cost-cell .label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-mute);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .cost-cell .value {
+    font-size: 28px;
+    color: var(--text);
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+  .cost-cell .value.free {
+    color: var(--silver);
+  }
+  @media (max-width: 760px) {
+    .costs-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ─── Footer ─────────────────────────────────────────────────────────── */
+  footer.outro {
+    max-width: 1280px;
+    margin: 80px auto 0;
+    padding: 56px 32px 64px;
+    text-align: center;
+    color: var(--text-mute);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--rule);
+  }
+  footer .brand-mark {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--silver);
+    letter-spacing: 0.24em;
+    margin-bottom: 16px;
+  }
+  footer p { margin: 0; }
+
+  /* ─── Responsive collapse ────────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .node {
+      grid-template-columns: 76px 1fr;
+      gap: 20px;
+      padding: 24px 20px;
+    }
+    .node-meta {
+      grid-column: 1 / -1;
+      text-align: left;
+      padding-left: 96px;
+      display: flex;
+      gap: 20px;
+      align-items: baseline;
+    }
+    .node-meta .time { font-size: 16px; margin: 0; }
+    .nodes::before { left: 38px; }
+    .node-num { font-size: 48px; }
+    .pipeline { margin-left: 96px; }
+  }
+
+  /* ─── Motion ─────────────────────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+
+  /* AIPM logo disc (top-left brand mark) */
+  .aipm-logo {
+    width: 90px;
+    height: 90px;
+    display: inline-block;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-image: url('data:image/png;base64,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');
+    background-size: cover;
+    background-position: center;
+    background-color: #000;
+    vertical-align: middle;
+  }
+  .topbar-inner .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .footer-brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .footer-brand-row .aipm-logo {
+    width: 34px;
+    height: 34px;
+  }
+  .footer-brand-row .brand-mark {
+    margin-bottom: 0;
+  }
+
+  /* ─── IDE Explainer (VS Code-style window) ────────────────────────────── */
+  .ide-explainer {
+    max-width: 1280px;
+    margin: 80px auto 0;
+    padding: 64px 32px 0;
+    border-top: 2px solid var(--rule);
+  }
+  .explainer-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .explainer-header .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 18px;
+  }
+  .explainer-header h2 {
+    font-size: clamp(32px, 4.4vw, 56px);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin: 0 auto;
+    max-width: 22ch;
+    font-weight: 900;
+  }
+  .explainer-header h2 .metallic { font-weight: 900; }
+
+  /* Phase selector row (sits above the IDE window) */
+  .step-row {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .step-btn {
+    background: var(--bg-card);
+    color: var(--text-soft);
+    border: 1px solid var(--rule);
+    padding: 14px 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 200ms var(--ease-out),
+                border-color 200ms var(--ease-out),
+                color 200ms var(--ease-out);
+    text-align: center;
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .step-btn .step-num {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--silver);
+    font-variant-numeric: tabular-nums;
+  }
+  .step-btn:hover {
+    border-color: var(--silver-edge);
+    color: var(--text);
+    background: var(--bg-card-alt);
+  }
+  .step-btn.is-active {
+    background: var(--silver);
+    color: var(--bg);
+    border-color: var(--silver);
+  }
+  .step-btn.is-active .step-num { color: var(--bg); }
+  @media (max-width: 960px) {
+    .step-row { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (max-width: 540px) {
+    .step-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* The window itself */
+  .ide-window {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.4),
+      0 32px 80px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Title bar with macOS traffic lights */
+  .ide-titlebar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(180deg, #2c2c2c 0%, #1f1f1f 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+    height: 38px;
+  }
+  .ide-trafficlights {
+    display: flex;
+    gap: 8px;
+    z-index: 1;
+  }
+  .ide-trafficlights span {
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(0, 0, 0, 0.3);
+  }
+  .ide-trafficlights .light-red    { background: #FF5F57; }
+  .ide-trafficlights .light-yellow { background: #FEBC2E; }
+  .ide-trafficlights .light-green  { background: #28C840; }
+  .ide-titlebar-title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-mute);
+    letter-spacing: 0.04em;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  /* Body: sidebar 30%, editor 70% */
+  .ide-body {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    height: 640px;
+  }
+  @media (max-width: 880px) {
+    .ide-body {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+  }
+
+  /* Sidebar */
+  .ide-sidebar {
+    background: #111111;
+    border-right: 1px solid rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .ide-sidebar-header {
+    padding: 10px 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-mute);
+    border-bottom: 1px solid var(--rule);
+    flex-shrink: 0;
+  }
+  .ide-tree {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px 0 24px;
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    font-size: 12.5px;
+    line-height: 1.85;
+    color: var(--text-soft);
+  }
+  .ide-tree::-webkit-scrollbar { width: 8px; }
+  .ide-tree::-webkit-scrollbar-track { background: transparent; }
+  .ide-tree::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 4px; }
+  .ide-tree::-webkit-scrollbar-thumb:hover { background: var(--silver-mid); }
+
+  .tree, .tree ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .tree ul { padding-left: 14px; }
+  .tree > li { padding-left: 8px; }
+
+  .tree li {
+    position: relative;
+    padding: 0 8px 0 18px;
+    white-space: nowrap;
+    transition: opacity 250ms var(--ease-out),
+                color 250ms var(--ease-out),
+                background 250ms var(--ease-out);
+  }
+  .tree li::before {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-mute);
+    transition: transform 200ms var(--ease-out), color 200ms var(--ease-out);
+  }
+  .tree li.folder::before { content: '▸'; }
+  .tree li.folder.is-open::before {
+    content: '▸';
+    transform: translateY(-50%) rotate(90deg);
+    color: var(--silver-mid);
+  }
+  .tree li.file::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--text-mute);
+    left: 6px;
+    top: calc(50% - 2px);
+    transform: none;
+  }
+
+  /* Folder name + child collapsing */
+  .tree li.folder > .name {
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+  }
+  .tree li.folder > .name:hover {
+    color: var(--text);
+  }
+  .tree li.folder:not(.is-open) > ul {
+    display: none;
+  }
+
+  /* Step dim/highlight states */
+  .ide-explainer.is-stepped .tree li:not(.is-touched):not(.is-ancestor) {
+    opacity: 0.30;
+  }
+  .tree li.is-touched {
+    color: var(--silver-light);
+    background: rgba(212, 212, 212, 0.10);
+    font-weight: 700;
+    box-shadow: inset 2px 0 0 var(--silver);
+  }
+  .tree li.is-touched::before {
+    background: var(--silver-light);
+    color: var(--silver-light);
+  }
+  .tree li.is-touched.folder::before {
+    background: transparent;
+    color: var(--silver-light);
+  }
+  .tree li.is-ancestor {
+    color: var(--text);
+    opacity: 1 !important;
+  }
+  .tree li.is-ancestor::before {
+    color: var(--silver-mid);
+  }
+  .tree li .badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 6px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(212, 212, 212, 0.10);
+    color: var(--silver);
+    border-radius: 2px;
+    vertical-align: middle;
+  }
+
+  /* Editor pane */
+  .ide-editor {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    min-width: 0;
+  }
+
+  /* Editor tabs (these ARE the step selectors now) */
+  .ide-tabs {
+    display: flex;
+    overflow-x: auto;
+    background: #1a1a1a;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+    scrollbar-width: thin;
+    flex-shrink: 0;
+  }
+  .ide-tabs::-webkit-scrollbar { height: 4px; }
+  .ide-tabs::-webkit-scrollbar-track { background: transparent; }
+  .ide-tabs::-webkit-scrollbar-thumb { background: var(--rule-strong); }
+
+  .ide-tab {
+    position: relative;
+    padding: 10px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-mute);
+    background: transparent;
+    border: none;
+    border-right: 1px solid rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 180ms var(--ease-out), color 180ms var(--ease-out);
+    letter-spacing: 0.01em;
+  }
+  .ide-tab .tab-icon {
+    color: var(--silver-mid);
+    font-size: 12px;
+  }
+  .ide-tab .tab-num {
+    color: var(--silver-mid);
+    font-weight: 800;
+    margin-right: 2px;
+  }
+  .ide-tab:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-soft);
+  }
+  .ide-tab.is-active {
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  .ide-tab.is-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--silver);
+  }
+  .ide-tab.is-active .tab-num,
+  .ide-tab.is-active .tab-icon {
+    color: var(--silver-light);
+  }
+
+  /* Editor content area */
+  .ide-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 36px 44px;
+    min-height: 0;
+  }
+  .ide-content::-webkit-scrollbar { width: 8px; }
+  .ide-content::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 4px; }
+
+  .detail-step {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--silver);
+    padding: 4px 10px;
+    background: rgba(212, 212, 212, 0.08);
+    border: 1px solid var(--silver-edge);
+    margin-bottom: 20px;
+  }
+  .ide-content .detail-title {
+    font-size: 28px;
+    line-height: 1.1;
+    color: var(--text);
+    margin: 0 0 16px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .detail-text {
+    color: var(--text-soft);
+    font-size: 15px;
+    line-height: 1.7;
+    font-weight: 500;
+    margin: 0 0 28px;
+    text-transform: none;
+    letter-spacing: 0.005em;
+    max-width: 60ch;
+  }
+  .detail-summary {
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .detail-summary .chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--silver);
+    background: rgba(212, 212, 212, 0.08);
+    border: 1px solid var(--silver-edge);
+    padding: 6px 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .detail-summary .chip .count {
+    color: var(--silver-light);
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  /* Status bar (footer of the IDE window) */
+  .ide-statusbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px;
+    background: var(--silver);
+    color: var(--bg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+  }
+  .ide-statusbar .left,
+  .ide-statusbar .right {
+    display: flex;
+    gap: 16px;
+  }
+
+  /* Print fallback for handouts */
+  @media print {
+    body { background: white; color: black; }
+    .topbar { display: none; }
+    .node { background: white; border: 2px solid #333; color: black; }
+    .metallic, .silver, header h1 .accent, .endstate-head h2 .accent { color: #333; -webkit-text-fill-color: #333; background: none; }
+    .pipeline, .loop, .takeaway { background: #f5f5f5; color: black; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="aipm-logo" role="img" aria-label="AI Partner Method"></span>
+    <span>Student Journey · Webinar</span>
+  </div>
+</div>
+
+<header class="intro">
+  <h1>From clone to <span class="accent metallic">your first paying client</span>.</h1>
+  <p class="sub">Eight modules. One niche. One factory you sell. One content engine that pulls leads to you. Two ways to fill your pipeline: cold DMs out, content engine pulling in.</p>
+
+  <div class="actors">
+    <div class="actor">
+      <div class="role">You</div>
+      <div class="who">The student.<br>You own the agency.</div>
+    </div>
+    <div class="actors-arrow">▶</div>
+    <div class="actor">
+      <div class="role">Your client</div>
+      <div class="who">A real business in your niche.<br>Buys the website, never the engine.</div>
+    </div>
+    <div class="actors-arrow">▶</div>
+    <div class="actor">
+      <div class="role">Their customer</div>
+      <div class="who">The end customer.<br>Every line on the website targets them.</div>
+    </div>
+  </div>
+</header>
+
+<main class="flow">
+
+  <!-- Phase 1 -->
+  <div class="zone">
+    <span class="zone-label">Phase 01 · Find your niche</span>
+    <div class="nodes">
+
+      <div class="node">
+        <div class="node-num metallic">01</div>
+        <div class="node-body">
+          <h3>Discovery interview</h3>
+          <p>Seven sections of structured self-interview. What you have done before, who you talk to easily, what kind of work you actually enjoy. Anchors every downstream decision.</p>
+          <div class="cmds">
+            <span class="node-cmd">/discovery</span>
+          </div>
+        </div>
+        <div class="node-meta">
+          <div class="time num">~90 min</div>
+          <div class="cost free">Free</div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-num metallic">02</div>
+        <div class="node-body">
+          <h3>Score five niche candidates</h3>
+          <p>You name five niches. The agent scores each on seven factors: ticket size, urgency, online maturity, your unfair advantage, saturation, two more. Top three flagged.</p>
+          <div class="cmds">
+            <span class="node-cmd">/score-niches</span>
+          </div>
+        </div>
+        <div class="node-meta">
+          <div class="time num">~30 min</div>
+          <div class="cost free">Free</div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-num metallic">03</div>
+        <div class="node-body">
+          <h3>Deep research on the top three</h3>
+          <p>Apify scrapes Google Business Profile, Facebook, agency portfolios, organic SERP winners, social discussion. Seven sub-tasks per niche. A structured intelligence pack you read before deciding.</p>
+          <div class="cmds">
+            <span class="node-cmd">/research</span>
+          </div>
+        </div>
+        <div class="node-meta">
+          <div class="time num">3 to 5 hrs</div>
+          <div class="cost num">~$5 Apify</div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-num metallic">04</div>
+        <div class="node-body">
+          <h3>Pick the niche</h3>
+          <p>You commit. The state machine records the niche. Nothing was tailored before this. Everything that follows is tailored.</p>
+          <div class="cmds">
+            <span class="node-cmd">/pick-niche</span>
+          </div>
+        </div>
+        <div class="node-meta">
+          <div class="time num">~15 min</div>
+          <div class="cost free">Free</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="zone">
+    <span class="zone-label">Phase 02 · Tailor the system</span>
+    <div class="nodes">
+
+      <div class="node">
+        <div class="node-num metallic">05</div>
+        <div class="node-body">
+          <h3>Build your niche template</h3>
+          <p>Apify captures 8 to 12 top-of-niche sites. Claude Vision scores each on an 8-category conversion rubric. You see the top three with screenshots. You pick one or mix. The stack writes a full niche playbook into <span class="mono">templates/{your-niche}/niche-playbook/</span> covering voice grammar, hero composition, photo manifest, trust signals, motion preset, CRO rules. Vite + React scaffold ready to run.</p>
+          <div class="cmds">
+            <span class="node-cmd">/build-niche-template</span>
+          </div>
+        </div>
+        <div class="node-meta">
+          <div class="time num">60 to 90 min</div>
+          <div class="cost num">~$5 Apify</div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-num metallic">06</div>
+        <div class="node-body">
+          <h3>Craft your offer and cold DMs</h3>
+          <p>Positioning, stage, irresistible offer, cold-DM scripts. The output is the file you copy into LinkedIn and Instagram from day one. Tuned to your niche, your voice, your numbers.</p>
+          <div class="cmds">
+            <span class="node-cmd">/craft-offer</span>
+          </div>
+        </div>
+        <div class="node-meta">
+          <div class="time num">~2 hrs</div>
+          <div class="cost free">Free</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="zone">
+    <span class="zone-label">Phase 03 · Ship for a real client</span>
+    <div class="nodes">
+
+      <div class="node">
+        <div class="node-num metallic">07</div>
+        <div class="node-body">
+          <h3>Tailor the factory and run a client</h3>
+          <p>You bring a real client. The factory tailors itself to their data, then runs them through the 13-stage pipeline. Every stage has a gate. The brand DNA stage carries an approval gate where you and the client sign off before code is written. Subsequent gates run as automated QA checks.</p>
+          <div class="cmds">
+            <span class="node-cmd">/tailor-factory</span>
+            <span class="node-cmd">/run-factory</span>
+          </div>
+        </div>
+        <div class="node-meta">
+          <div class="time num">1 to 3 days</div>
+          <div class="cost num">~$5 / client</div>
+        </div>
+      </div>
+
+      <!-- 13-stage sub-pipeline -->
+      <div class="pipeline">
+        <div class="pipeline-title">The 13 stages, in order, per client</div>
+        <ol class="pipeline-stages">
+          <li>Intake</li>
+          <li>Research</li>
+          <li>SEO planning</li>
+          <li>Asset harvest</li>
+          <li>Strategy</li>
+          <li>Copywriting</li>
+          <li>Brand DNA <span class="gate-note">(approval gate)</span></li>
+          <li>Brand resonance <span class="gate-note">(optional)</span></li>
+          <li>Hero image <span class="gate-note">(Nano Banana)</span></li>
+          <li>Build + QA <span class="gate-note">(build · personalise · uplift · fidelity · SOP · perf)</span></li>
+          <li>Deploy</li>
+          <li>Delivery</li>
+          <li>Proposal</li>
+        </ol>
+      </div>
+
+      <div class="node">
+        <div class="node-num metallic">08</div>
+        <div class="node-body">
+          <h3>Deploy YOUR content engine</h3>
+          <p>This one is for <strong style="color:var(--silver)">you</strong>, not your client. The content engine is a Next.js app you deploy to your own Vercel. It scrapes your niche's hashtags and creators, surfaces real ideas spiking right now, and writes them in your voice. You post on your own LinkedIn and Instagram. Leads come inbound. The alternative to grinding cold DMs from Module 06.</p>
+          <div class="cmds">
+            <span class="node-cmd">/generate-ce-brief</span>
+            <span class="node-cmd">/deploy-engine</span>
+            <span class="node-cmd">/walk-engine</span>
+          </div>
+        </div>
+        <div class="node-meta">
+          <div class="time num">~60 min</div>
+          <div class="cost free">Free tier</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Loop -->
+  <div class="loop">
+    <div class="loop-icon">↻</div>
+    <h3>Each client sharpens the template</h3>
+    <p>Every build produces lessons. A locked phrase that didn't land. A section the niche wants in a different order. A trust badge you missed first time. These feed back into <strong>Module 05's</strong> niche template so your second client is faster than your first. Tenth client is faster than your fifth.</p>
+    <div class="cmds">
+      <span class="node-cmd">/factory-feedback</span>
+      <span class="node-cmd">/refine-template</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- Costs strip -->
+<div class="costs-strip">
+  <h3>Cost to client one</h3>
+  <div class="costs-grid">
+    <div class="cost-cell">
+      <div class="label">Anthropic</div>
+      <div class="value free">$5 Free</div>
+    </div>
+    <div class="cost-cell">
+      <div class="label">Apify Total</div>
+      <div class="value">~$10–$15</div>
+    </div>
+    <div class="cost-cell">
+      <div class="label">Supabase + Vercel</div>
+      <div class="value free">Free Tier</div>
+    </div>
+    <div class="cost-cell">
+      <div class="label">Per Client (Hero)</div>
+      <div class="value">Pennies</div>
+    </div>
+  </div>
+</div>
+
+<!-- End state -->
+<section class="endstate">
+  <div class="endstate-head">
+    <span class="eyebrow">By the end of the journey</span>
+    <h2>You own <span class="accent metallic">six things</span>.</h2>
+  </div>
+  <div class="takeaways">
+    <div class="takeaway">
+      <div class="label">01 · Agency</div>
+      <h4>A productized agency</h4>
+      <p>Not a job. A clear offer with a specific niche, a specific price, and a process you can describe in one sentence.</p>
+    </div>
+    <div class="takeaway">
+      <div class="label">02 · Template</div>
+      <h4>A niche template</h4>
+      <p>Tuned to your niche by your own research. Improves with every client. Lives in your repo, your fork, your control.</p>
+    </div>
+    <div class="takeaway">
+      <div class="label">03 · Factory</div>
+      <h4>A 13-stage factory</h4>
+      <p>Tailored to your niche. Every stage gated and reviewable. Builds a real production website end-to-end.</p>
+    </div>
+    <div class="takeaway">
+      <div class="label">04 · Engine</div>
+      <h4>Your own lead-gen engine</h4>
+      <p>Deployed on your Vercel. Loaded with your niche context. Surfaces real ideas you post on your own social so leads come to you instead of you chasing them.</p>
+    </div>
+    <div class="takeaway">
+      <div class="label">05 · Client</div>
+      <h4>A first paying client</h4>
+      <p>Two lead channels at once. Cold DMs from Module 06 go out. The content engine from Module 08 pulls in. Most students sign their first client in week three.</p>
+    </div>
+    <div class="takeaway">
+      <div class="label">06 · Compounding</div>
+      <h4>Lessons that compound</h4>
+      <p>Every client run feeds back. The system gets better at your niche than any general agency ever can, because it only learns from your work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── IDE Explainer: pick a step, see which files light up ─────────────── -->
+<section class="ide-explainer is-stepped">
+  <div class="explainer-header">
+    <span class="eyebrow">Pick a step</span>
+    <h2>See exactly which files <span class="metallic">light up</span>.</h2>
+  </div>
+
+  <!-- Phase selector (sits above the IDE window) -->
+  <div class="step-row" role="tablist">
+    <button class="step-btn is-active" data-step="01" role="tab" aria-selected="true" aria-controls="ide-window-1">
+      <span class="step-num">01</span><span>Discovery</span>
+    </button>
+    <button class="step-btn" data-step="02" role="tab" aria-selected="false" aria-controls="ide-window-1">
+      <span class="step-num">02</span><span>Score Niches</span>
+    </button>
+    <button class="step-btn" data-step="03" role="tab" aria-selected="false" aria-controls="ide-window-1">
+      <span class="step-num">03</span><span>Research</span>
+    </button>
+    <button class="step-btn" data-step="04" role="tab" aria-selected="false" aria-controls="ide-window-1">
+      <span class="step-num">04</span><span>Pick Niche</span>
+    </button>
+    <button class="step-btn" data-step="05" role="tab" aria-selected="false" aria-controls="ide-window-1">
+      <span class="step-num">05</span><span>Build Template</span>
+    </button>
+    <button class="step-btn" data-step="06" role="tab" aria-selected="false" aria-controls="ide-window-1">
+      <span class="step-num">06</span><span>Craft Offer</span>
+    </button>
+    <button class="step-btn" data-step="07" role="tab" aria-selected="false" aria-controls="ide-window-1">
+      <span class="step-num">07</span><span>Run Factory</span>
+    </button>
+    <button class="step-btn" data-step="08" role="tab" aria-selected="false" aria-controls="ide-window-1">
+      <span class="step-num">08</span><span>Deploy Engine</span>
+    </button>
+  </div>
+
+  <div class="ide-window" id="ide-window-1">
+
+    <!-- Title bar (macOS-style) -->
+    <div class="ide-titlebar">
+      <div class="ide-trafficlights" aria-hidden="true">
+        <span class="light-red"></span>
+        <span class="light-yellow"></span>
+        <span class="light-green"></span>
+      </div>
+      <div class="ide-titlebar-title">aipm local website builder — student journey</div>
+    </div>
+
+    <!-- Body: sidebar 30% / editor 70% -->
+    <div class="ide-body">
+
+      <!-- Sidebar -->
+      <aside class="ide-sidebar">
+        <div class="ide-sidebar-header">Explorer</div>
+        <nav class="ide-tree" aria-label="Repository file tree">
+          <ul class="tree">
+
+        <li class="folder is-open" data-path=".claude/">
+          <span class="name">.claude/</span>
+          <ul>
+            <li class="folder is-open" data-path=".claude/agents/">
+              <span class="name">agents/</span>
+              <ul>
+                <li class="file" data-path=".claude/agents/01-setup-wizard.md">01-setup-wizard.md</li>
+                <li class="file" data-path=".claude/agents/02-discovery.md">02-discovery.md</li>
+                <li class="file" data-path=".claude/agents/03-niche-scorer.md">03-niche-scorer.md</li>
+                <li class="file" data-path=".claude/agents/04-niche-researcher.md">04-niche-researcher.md</li>
+                <li class="file" data-path=".claude/agents/05-niche-decider.md">05-niche-decider.md</li>
+                <li class="file" data-path=".claude/agents/06-factory-loader.md">06-factory-loader.md</li>
+                <li class="file" data-path=".claude/agents/07-factory-brief-writer.md">07-factory-brief-writer.md</li>
+                <li class="file" data-path=".claude/agents/08-factory-tailor.md">08-factory-tailor.md</li>
+                <li class="file" data-path=".claude/agents/09-engine-loader.md">09-engine-loader.md</li>
+                <li class="file" data-path=".claude/agents/10-engine-brief-writer.md">10-engine-brief-writer.md</li>
+                <li class="file" data-path=".claude/agents/14-template-builder.md">14-template-builder.md</li>
+              </ul>
+            </li>
+            <li class="folder is-open" data-path=".claude/commands/">
+              <span class="name">commands/</span>
+              <ul>
+                <li class="file" data-path=".claude/commands/setup.md">setup.md</li>
+                <li class="file" data-path=".claude/commands/discovery.md">discovery.md</li>
+                <li class="file" data-path=".claude/commands/score-niches.md">score-niches.md</li>
+                <li class="file" data-path=".claude/commands/research.md">research.md</li>
+                <li class="file" data-path=".claude/commands/pick-niche.md">pick-niche.md</li>
+                <li class="file" data-path=".claude/commands/build-niche-template.md">build-niche-template.md</li>
+                <li class="file" data-path=".claude/commands/craft-offer.md">craft-offer.md</li>
+                <li class="file" data-path=".claude/commands/load-factory-structure.md">load-factory-structure.md</li>
+                <li class="file" data-path=".claude/commands/generate-wf-brief.md">generate-wf-brief.md</li>
+                <li class="file" data-path=".claude/commands/tailor-factory.md">tailor-factory.md</li>
+                <li class="file" data-path=".claude/commands/run-factory.md">run-factory.md</li>
+                <li class="file" data-path=".claude/commands/load-engine-structure.md">load-engine-structure.md</li>
+                <li class="file" data-path=".claude/commands/generate-ce-brief.md">generate-ce-brief.md</li>
+                <li class="file" data-path=".claude/commands/deploy-engine.md">deploy-engine.md</li>
+                <li class="file" data-path=".claude/commands/walk-engine.md">walk-engine.md</li>
+                <li class="file" data-path=".claude/commands/factory-feedback.md">factory-feedback.md</li>
+                <li class="file" data-path=".claude/commands/refine-template.md">refine-template.md</li>
+              </ul>
+            </li>
+            <li class="folder is-open" data-path=".claude/skills/">
+              <span class="name">skills/</span>
+              <ul>
+                <li class="folder" data-path=".claude/skills/apify-niche-research/">
+                  <span class="name">apify-niche-research/</span>
+                  <ul>
+                    <li class="file" data-path=".claude/skills/apify-niche-research/SKILL.md">SKILL.md</li>
+                  </ul>
+                </li>
+                <li class="folder" data-path=".claude/skills/niche-research-framework/">
+                  <span class="name">niche-research-framework/</span>
+                  <ul>
+                    <li class="file" data-path=".claude/skills/niche-research-framework/SKILL.md">SKILL.md</li>
+                  </ul>
+                </li>
+                <li class="folder" data-path=".claude/skills/template-capture-and-build/">
+                  <span class="name">template-capture-and-build/</span>
+                  <ul>
+                    <li class="file" data-path=".claude/skills/template-capture-and-build/SKILL.md">SKILL.md</li>
+                    <li class="file" data-path=".claude/skills/template-capture-and-build/scaffold-blueprint.md">scaffold-blueprint.md</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="file" data-path=".claude/settings.json">settings.json</li>
+          </ul>
+        </li>
+
+        <li class="folder is-open" data-path="research/">
+          <span class="name">research/</span>
+          <ul>
+            <li class="folder is-open" data-path="research/_framework/">
+              <span class="name">_framework/</span>
+              <ul>
+                <li class="file" data-path="research/_framework/Student_Research_System.md">Student_Research_System.md</li>
+                <li class="file" data-path="research/_framework/web-design-research-2026-05.md">web-design-research-2026-05.md</li>
+              </ul>
+            </li>
+            <li class="folder" data-path="research/_state/">
+              <span class="name">_state/</span>
+              <ul>
+                <li class="file" data-path="research/_state/project.json">project.json</li>
+              </ul>
+            </li>
+            <li class="folder" data-path="research/_structure/">
+              <span class="name">_structure/</span>
+              <ul>
+                <li class="file" data-path="research/_structure/Website_Factory_Structure.md">Website_Factory_Structure.md</li>
+                <li class="file" data-path="research/_structure/Content_Engine_Structure.md">Content_Engine_Structure.md</li>
+              </ul>
+            </li>
+            <li class="file" data-path="research/01-student-profile.md">01-student-profile.md</li>
+            <li class="file" data-path="research/02-niche-scores.md">02-niche-scores.md</li>
+            <li class="folder" data-path="research/02-niche-research/">
+              <span class="name">02-niche-research/{slug}/</span>
+              <ul>
+                <li class="file" data-path="research/02-niche-research/{slug}/01-agencies.md">01-agencies.md</li>
+                <li class="file" data-path="research/02-niche-research/{slug}/02-customer-voice.md">02-customer-voice.md</li>
+                <li class="file" data-path="research/02-niche-research/{slug}/03-copy-patterns.md">03-copy-patterns.md</li>
+                <li class="file" data-path="research/02-niche-research/{slug}/04-cro-patterns.md">04-cro-patterns.md</li>
+                <li class="file" data-path="research/02-niche-research/{slug}/05-trust-signals.md">05-trust-signals.md</li>
+                <li class="file" data-path="research/02-niche-research/{slug}/06-seo-landscape.md">06-seo-landscape.md</li>
+                <li class="file" data-path="research/02-niche-research/{slug}/07-objections.md">07-objections.md</li>
+                <li class="file" data-path="research/02-niche-research/{slug}/synthesis.md">synthesis.md</li>
+                <li class="folder" data-path="research/02-niche-research/{slug}/templates/">
+                  <span class="name">templates/</span>
+                  <ul>
+                    <li class="file" data-path="research/02-niche-research/{slug}/templates/candidates.json">candidates.json</li>
+                    <li class="file" data-path="research/02-niche-research/{slug}/templates/raw/">raw/{site-slug}/ <span class="badge">screenshots + DOM</span></li>
+                    <li class="file" data-path="research/02-niche-research/{slug}/templates/scores.md">scores.md</li>
+                    <li class="file" data-path="research/02-niche-research/{slug}/templates/pick.json">pick.json</li>
+                    <li class="file" data-path="research/02-niche-research/{slug}/templates/build-log.md">build-log.md</li>
+                  </ul>
+                </li>
+                <li class="file" data-path="research/02-niche-research/{slug}/09-template-spec.md">09-template-spec.md</li>
+                <li class="file" data-path="research/02-niche-research/{slug}/09-wireframe.md">09-wireframe.md</li>
+                <li class="file" data-path="research/02-niche-research/{slug}/09-sitemap.json">09-sitemap.json</li>
+              </ul>
+            </li>
+            <li class="file" data-path="research/02-niche-decision.md">02-niche-decision.md</li>
+            <li class="file" data-path="research/03-offer-pack.md">03-offer-pack.md</li>
+            <li class="folder" data-path="research/output/">
+              <span class="name">output/</span>
+              <ul>
+                <li class="file" data-path="research/output/website-factory-brief.md">website-factory-brief.md</li>
+                <li class="file" data-path="research/output/content-engine-brief.md">content-engine-brief.md</li>
+              </ul>
+            </li>
+            <li class="folder" data-path="research/lessons/">
+              <span class="name">lessons/</span>
+              <ul>
+                <li class="file" data-path="research/lessons/factory-runs.md">factory-runs.md</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li class="folder is-open" data-path="website-factory/">
+          <span class="name">website-factory/</span>
+          <ul>
+            <li class="file" data-path="website-factory/CLAUDE.md">CLAUDE.md</li>
+            <li class="folder" data-path="website-factory/.claude/">
+              <span class="name">.claude/</span>
+              <ul>
+                <li class="folder" data-path="website-factory/.claude/agents/">
+                  <span class="name">agents/</span> <span class="badge">19 factory agents</span>
+                </li>
+                <li class="folder" data-path="website-factory/.claude/sops/">
+                  <span class="name">sops/</span> <span class="badge">20 SOPs</span>
+                </li>
+                <li class="folder" data-path="website-factory/.claude/skills/">
+                  <span class="name">skills/</span> <span class="badge">12 skills incl. plugins</span>
+                </li>
+                <li class="folder" data-path="website-factory/.claude/commands/">
+                  <span class="name">commands/</span> <span class="badge">12 commands</span>
+                </li>
+                <li class="folder" data-path="website-factory/.claude/checklists/">
+                  <span class="name">checklists/</span>
+                </li>
+                <li class="folder" data-path="website-factory/.claude/lessons/">
+                  <span class="name">lessons/</span>
+                </li>
+                <li class="folder" data-path="website-factory/.claude/prompts/">
+                  <span class="name">prompts/</span>
+                </li>
+              </ul>
+            </li>
+            <li class="folder" data-path="website-factory/clients/">
+              <span class="name">clients/{client-name}/</span> <span class="badge">per-client output</span>
+            </li>
+            <li class="folder" data-path="website-factory/config/">
+              <span class="name">config/</span>
+              <ul>
+                <li class="file" data-path="website-factory/config/template-routes.json">template-routes.json</li>
+              </ul>
+            </li>
+            <li class="folder" data-path="website-factory/references/">
+              <span class="name">references/</span>
+              <ul>
+                <li class="folder" data-path="website-factory/references/copy/">
+                  <span class="name">copy/</span>
+                  <ul>
+                    <li class="file" data-path="website-factory/references/copy/ai-vocab-blocklist.md">ai-vocab-blocklist.md</li>
+                    <li class="file" data-path="website-factory/references/copy/typographic-standards.md">typographic-standards.md</li>
+                  </ul>
+                </li>
+                <li class="folder" data-path="website-factory/references/cro-sops/">
+                  <span class="name">cro-sops/</span>
+                </li>
+                <li class="folder" data-path="website-factory/references/niche-playbook/">
+                  <span class="name">niche-playbook/</span>
+                  <ul>
+                    <li class="file" data-path="website-factory/references/niche-playbook/README.md">README.md</li>
+                    <li class="folder" data-path="website-factory/references/niche-playbook/schemas/">
+                      <span class="name">schemas/</span> <span class="badge">10 JSON schemas</span>
+                    </li>
+                    <li class="folder" data-path="website-factory/references/niche-playbook/contracts/">
+                      <span class="name">contracts/</span> <span class="badge">6 contracts + sop-overrides</span>
+                    </li>
+                  </ul>
+                </li>
+                <li class="folder" data-path="website-factory/references/schemas/">
+                  <span class="name">schemas/</span>
+                  <ul>
+                    <li class="file" data-path="website-factory/references/schemas/brand-dna.schema.json">brand-dna.schema.json</li>
+                  </ul>
+                </li>
+                <li class="file" data-path="website-factory/references/web-design-research-mapping.md">web-design-research-mapping.md</li>
+              </ul>
+            </li>
+            <li class="folder" data-path="website-factory/templates/">
+              <span class="name">templates/</span>
+              <ul>
+                <li class="folder" data-path="website-factory/templates/website-template/">
+                  <span class="name">website-template/</span> <span class="badge">baseline</span>
+                </li>
+                <li class="folder" data-path="website-factory/templates/proposal/">
+                  <span class="name">proposal/</span>
+                </li>
+                <li class="folder" data-path="website-factory/templates/{niche-slug}/">
+                  <span class="name">{niche-slug}/</span> <span class="badge">scaffolded in module 05</span>
+                  <ul>
+                    <li class="folder" data-path="website-factory/templates/{niche-slug}/src/">
+                      <span class="name">src/</span> <span class="badge">Vite + React</span>
+                    </li>
+                    <li class="folder" data-path="website-factory/templates/{niche-slug}/niche-playbook/">
+                      <span class="name">niche-playbook/</span> <span class="badge">copy-locks, hero, photo manifest, more</span>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li class="folder" data-path="website-factory/tools/">
+              <span class="name">tools/</span>
+              <ul>
+                <li class="file" data-path="website-factory/tools/apify-scrape.py">apify-scrape.py</li>
+                <li class="file" data-path="website-factory/tools/build-from-template.py">build-from-template.py</li>
+                <li class="file" data-path="website-factory/tools/generate-hero.py">generate-hero.py</li>
+                <li class="file" data-path="website-factory/tools/copy-lint.py">copy-lint.py</li>
+                <li class="file" data-path="website-factory/tools/optimise-image.py">optimise-image.py</li>
+                <li class="file" data-path="website-factory/tools/build-proposal.py">build-proposal.py</li>
+                <li class="file" data-path="website-factory/tools/extract-resonance.py">extract-resonance.py</li>
+                <li class="file" data-path="website-factory/tools/check-lcp.py">check-lcp.py</li>
+                <li class="file" data-path="website-factory/tools/personalize.py">personalize.py</li>
+                <li class="file" data-path="website-factory/tools/qualify-photos.py">qualify-photos.py</li>
+                <li class="file" data-path="website-factory/tools/derive-accent-stops.py">derive-accent-stops.py</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li class="folder is-open" data-path="content-engine/">
+          <span class="name">content-engine/</span>
+          <ul>
+            <li class="file" data-path="content-engine/README.md">README.md</li>
+            <li class="file" data-path="content-engine/CLAUDE.md">CLAUDE.md</li>
+            <li class="file" data-path="content-engine/package.json">package.json</li>
+            <li class="file" data-path="content-engine/next.config.ts">next.config.ts</li>
+            <li class="folder" data-path="content-engine/src/">
+              <span class="name">src/</span> <span class="badge">Next.js app: workspace, library, generator, kanban, radar</span>
+            </li>
+            <li class="folder" data-path="content-engine/supabase/">
+              <span class="name">supabase/migrations/</span>
+            </li>
+            <li class="folder" data-path="content-engine/docs/">
+              <span class="name">docs/</span>
+              <ul>
+                <li class="file" data-path="content-engine/docs/SETUP.md">SETUP.md</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li class="file" data-path="CLAUDE.md">CLAUDE.md</li>
+        <li class="file" data-path="README.md">README.md</li>
+        <li class="file" data-path="stack-state.json">stack-state.json</li>
+        <li class="file" data-path=".env.example">.env.example</li>
+
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Editor pane -->
+      <main class="ide-editor">
+
+        <!-- Tab bar (reflects the active phase as an "open file") -->
+        <div class="ide-tabs" aria-hidden="true">
+          <div class="ide-tab is-active">
+            <span class="tab-icon">📄</span><span class="tab-num tab-num-active">01</span><span class="tab-filename">discovery.md</span>
+          </div>
+        </div>
+
+        <!-- Editor content -->
+        <div class="ide-content">
+          <span class="detail-step">Module 01 · Discovery Interview</span>
+          <h3 class="detail-title">What happens here</h3>
+          <p class="detail-text">Loading...</p>
+          <div class="detail-summary">
+            <span class="chip"><span class="count detail-reads-count">0</span> reads</span>
+            <span class="chip"><span class="count detail-writes-count">0</span> writes</span>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Status bar -->
+    <div class="ide-statusbar">
+      <div class="left">
+        <span>● Main</span>
+        <span class="status-step">Step 01 of 08</span>
+      </div>
+      <div class="right">
+        <span class="status-counts">5 reads · 2 writes</span>
+        <span>UTF-8</span>
+        <span>Markdown</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="outro">
+  <div class="footer-brand-row">
+    <span class="aipm-logo" role="img" aria-label="AI Partner Method logo"></span>
+    <div class="brand-mark metallic">AI Partner Method Local Website Builder STACK</div>
+  </div>
+  <p>Eight Modules · One Niche · One Factory · One Engine · One Paying Client</p>
+</footer>
+
+<script>
+  // Scroll-reveal motion (skipped when prefers-reduced-motion)
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.node, .zone-label, .pipeline, .loop, .takeaway, .cost-cell, header h1, header .sub, .actors, .ide-explainer .explainer-header, .ide-explainer .ide-window').forEach(el => el.classList.add('reveal'));
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); obs.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  }
+
+  // ─── IDE Explainer: step → file mapping ─────────────────────────────────
+  const STEPS = {
+    '01': {
+      title: 'Module 01 · Discovery Interview',
+      plain: 'You answer seven sections of structured self-interview. The system records who you are, what you have done, and what kind of work fits you. The output anchors every downstream decision and unlocks Module 02.',
+      reads: [
+        '.claude/agents/02-discovery.md',
+        '.claude/commands/discovery.md',
+        'research/_framework/Student_Research_System.md',
+        'stack-state.json',
+        'CLAUDE.md',
+      ],
+      writes: [
+        'research/01-student-profile.md',
+        'stack-state.json',
+      ],
+    },
+    '02': {
+      title: 'Module 02 · Score Five Niche Candidates',
+      plain: 'You name five candidate niches. The agent reads your profile and scores each niche on seven factors (ticket size, urgency, online maturity, your unfair advantage, saturation, and more). Top three are flagged for deeper research.',
+      reads: [
+        '.claude/agents/03-niche-scorer.md',
+        '.claude/commands/score-niches.md',
+        'research/_framework/Student_Research_System.md',
+        'research/01-student-profile.md',
+        'stack-state.json',
+      ],
+      writes: [
+        'research/02-niche-scores.md',
+        'stack-state.json',
+      ],
+    },
+    '03': {
+      title: 'Module 03 · Deep Niche Research',
+      plain: 'For each of three finalists, the stack runs Apify scrapers across Google Business Profile, Facebook, agency portfolios, organic SERP winners, and social discussion. Seven sub-tasks per niche produce a structured intelligence pack you can read before committing.',
+      reads: [
+        '.claude/agents/04-niche-researcher.md',
+        '.claude/commands/research.md',
+        '.claude/skills/apify-niche-research/SKILL.md',
+        '.claude/skills/niche-research-framework/SKILL.md',
+        'research/_framework/Student_Research_System.md',
+        'research/01-student-profile.md',
+        'research/02-niche-scores.md',
+        'stack-state.json',
+        '.env.example',
+      ],
+      writes: [
+        'research/02-niche-research/{slug}/01-agencies.md',
+        'research/02-niche-research/{slug}/02-customer-voice.md',
+        'research/02-niche-research/{slug}/03-copy-patterns.md',
+        'research/02-niche-research/{slug}/04-cro-patterns.md',
+        'research/02-niche-research/{slug}/05-trust-signals.md',
+        'research/02-niche-research/{slug}/06-seo-landscape.md',
+        'research/02-niche-research/{slug}/07-objections.md',
+        'research/02-niche-research/{slug}/synthesis.md',
+        'stack-state.json',
+      ],
+    },
+    '04': {
+      title: 'Module 04 · Pick the Niche',
+      plain: 'You commit. The state machine records your niche. Nothing was tailored before this. Everything that follows is tailored to your chosen niche.',
+      reads: [
+        '.claude/agents/05-niche-decider.md',
+        '.claude/commands/pick-niche.md',
+        'research/02-niche-research/{slug}/synthesis.md',
+        'stack-state.json',
+      ],
+      writes: [
+        'research/02-niche-decision.md',
+        'stack-state.json',
+      ],
+    },
+    '05': {
+      title: 'Module 05 · Build Your Niche Template',
+      plain: 'Apify captures 8 to 12 top-of-niche sites. Claude Vision scores each on an 8-category conversion rubric. You see the top three with screenshots and pick one (or mix). The stack writes a full niche playbook (copy locks, hero composition, photo manifest, trust signals, motion preset, CRO rules) and scaffolds a complete Vite + React template ready to run.',
+      reads: [
+        '.claude/agents/14-template-builder.md',
+        '.claude/commands/build-niche-template.md',
+        '.claude/skills/template-capture-and-build/SKILL.md',
+        '.claude/skills/template-capture-and-build/scaffold-blueprint.md',
+        'research/02-niche-research/{slug}/01-agencies.md',
+        'research/02-niche-research/{slug}/04-cro-patterns.md',
+        'research/02-niche-research/{slug}/06-seo-landscape.md',
+        'website-factory/templates/website-template/',
+        'website-factory/references/niche-playbook/README.md',
+        'website-factory/references/niche-playbook/schemas/',
+        'website-factory/references/niche-playbook/contracts/',
+        'website-factory/references/schemas/brand-dna.schema.json',
+        'website-factory/references/web-design-research-mapping.md',
+        'website-factory/references/copy/ai-vocab-blocklist.md',
+        'website-factory/references/copy/typographic-standards.md',
+      ],
+      writes: [
+        'research/02-niche-research/{slug}/templates/candidates.json',
+        'research/02-niche-research/{slug}/templates/raw/',
+        'research/02-niche-research/{slug}/templates/scores.md',
+        'research/02-niche-research/{slug}/templates/pick.json',
+        'research/02-niche-research/{slug}/templates/build-log.md',
+        'research/02-niche-research/{slug}/09-template-spec.md',
+        'research/02-niche-research/{slug}/09-wireframe.md',
+        'research/02-niche-research/{slug}/09-sitemap.json',
+        'website-factory/templates/{niche-slug}/',
+        'website-factory/templates/{niche-slug}/src/',
+        'website-factory/templates/{niche-slug}/niche-playbook/',
+        'website-factory/config/template-routes.json',
+        'stack-state.json',
+      ],
+    },
+    '06': {
+      title: 'Module 06 · Craft Offer + Cold DMs',
+      plain: 'Positioning, stage, irresistible offer, cold-DM scripts. The output is the file you copy into LinkedIn and Instagram from day one. Tuned to your niche, your voice, your numbers.',
+      reads: [
+        'research/_framework/Student_Research_System.md',
+        'research/01-student-profile.md',
+        'research/02-niche-decision.md',
+        'research/02-niche-research/{slug}/synthesis.md',
+        '.claude/commands/craft-offer.md',
+        'stack-state.json',
+      ],
+      writes: [
+        'research/03-offer-pack.md',
+        'stack-state.json',
+      ],
+    },
+    '07': {
+      title: 'Module 07 · Tailor + Run the Factory',
+      plain: 'You bring a real client. The factory tailors itself to their data, then runs them through the 13-stage pipeline: intake, research, SEO, assets, strategy, copywriting, brand DNA (approval gate), brand resonance (optional), hero image, build + QA, deploy, delivery, proposal. Every stage has a gate. Output lands in clients/{client-name}/.',
+      reads: [
+        '.claude/agents/06-factory-loader.md',
+        '.claude/agents/07-factory-brief-writer.md',
+        '.claude/agents/08-factory-tailor.md',
+        '.claude/commands/load-factory-structure.md',
+        '.claude/commands/generate-wf-brief.md',
+        '.claude/commands/tailor-factory.md',
+        '.claude/commands/run-factory.md',
+        'website-factory/CLAUDE.md',
+        'website-factory/.claude/agents/',
+        'website-factory/.claude/sops/',
+        'website-factory/.claude/skills/',
+        'website-factory/.claude/commands/',
+        'website-factory/.claude/checklists/',
+        'website-factory/.claude/lessons/',
+        'website-factory/.claude/prompts/',
+        'website-factory/config/template-routes.json',
+        'website-factory/references/copy/ai-vocab-blocklist.md',
+        'website-factory/references/copy/typographic-standards.md',
+        'website-factory/references/cro-sops/',
+        'website-factory/references/schemas/brand-dna.schema.json',
+        'website-factory/templates/{niche-slug}/',
+        'website-factory/templates/{niche-slug}/src/',
+        'website-factory/templates/{niche-slug}/niche-playbook/',
+        'website-factory/templates/proposal/',
+        'website-factory/tools/apify-scrape.py',
+        'website-factory/tools/build-from-template.py',
+        'website-factory/tools/generate-hero.py',
+        'website-factory/tools/copy-lint.py',
+        'website-factory/tools/optimise-image.py',
+        'website-factory/tools/build-proposal.py',
+        'website-factory/tools/extract-resonance.py',
+        'website-factory/tools/check-lcp.py',
+        'website-factory/tools/personalize.py',
+        'website-factory/tools/qualify-photos.py',
+        'website-factory/tools/derive-accent-stops.py',
+        'research/output/website-factory-brief.md',
+        'stack-state.json',
+        '.env.example',
+      ],
+      writes: [
+        'research/_structure/Website_Factory_Structure.md',
+        'research/output/website-factory-brief.md',
+        'website-factory/clients/',
+        'stack-state.json',
+      ],
+    },
+    '08': {
+      title: 'Module 08 · Deploy YOUR Content Engine',
+      plain: 'For you, not your client. You deploy the Next.js content engine to your own Vercel. The system writes a brief structured by 7 context buckets. You paste the brief into your live dashboard bucket-by-bucket. The engine then surfaces niche-specific content ideas you post on your own social channels to pull leads inbound.',
+      reads: [
+        '.claude/agents/09-engine-loader.md',
+        '.claude/agents/10-engine-brief-writer.md',
+        '.claude/commands/load-engine-structure.md',
+        '.claude/commands/generate-ce-brief.md',
+        '.claude/commands/deploy-engine.md',
+        '.claude/commands/walk-engine.md',
+        'research/01-student-profile.md',
+        'research/02-niche-research/{slug}/synthesis.md',
+        'research/02-niche-research/{slug}/02-customer-voice.md',
+        'research/02-niche-research/{slug}/03-copy-patterns.md',
+        'research/03-offer-pack.md',
+        'content-engine/README.md',
+        'content-engine/CLAUDE.md',
+        'content-engine/package.json',
+        'content-engine/next.config.ts',
+        'content-engine/src/',
+        'content-engine/supabase/',
+        'content-engine/docs/SETUP.md',
+        'stack-state.json',
+        '.env.example',
+      ],
+      writes: [
+        'research/_structure/Content_Engine_Structure.md',
+        'research/output/content-engine-brief.md',
+        'stack-state.json',
+      ],
+    },
+  };
+
+  // Compute ancestor paths for a given path (e.g. 'research/02-niche-research/{slug}/01-agencies.md' →
+  // ['research/', 'research/02-niche-research/', 'research/02-niche-research/{slug}/'])
+  function ancestorsOf(path) {
+    const trailing = path.endsWith('/');
+    const stripped = trailing ? path.slice(0, -1) : path;
+    const parts = stripped.split('/').filter(Boolean);
+    const list = [];
+    for (let i = 1; i < parts.length; i++) {
+      list.push(parts.slice(0, i).join('/') + '/');
+    }
+    return list;
+  }
+
+  // Map step IDs to short filenames shown in the IDE's active tab
+  const TAB_FILENAMES = {
+    '01': 'discovery.md',
+    '02': 'score-niches.md',
+    '03': 'research.md',
+    '04': 'pick-niche.md',
+    '05': 'build-template.md',
+    '06': 'craft-offer.md',
+    '07': 'run-factory.md',
+    '08': 'deploy-engine.md',
+  };
+
+  function setStep(stepId) {
+    const step = STEPS[stepId];
+    if (!step) return;
+
+    // Phase selector (the row of buttons above the IDE) active state
+    document.querySelectorAll('.step-btn').forEach(b => {
+      const isActive = b.dataset.step === stepId;
+      b.classList.toggle('is-active', isActive);
+      b.setAttribute('aria-selected', String(isActive));
+    });
+
+    // The single IDE tab reflects the active step
+    const tabNum = document.querySelector('.tab-num-active');
+    const tabName = document.querySelector('.tab-filename');
+    if (tabNum) tabNum.textContent = stepId;
+    if (tabName) tabName.textContent = TAB_FILENAMES[stepId] || '';
+
+    // Build sets of touched paths + ancestor paths
+    const touched = new Set([...step.reads, ...step.writes]);
+    const ancestors = new Set();
+    [...touched].forEach(p => ancestorsOf(p).forEach(a => ancestors.add(a)));
+
+    // Reset all tree nodes: clear highlight classes AND collapse all folders
+    document.querySelectorAll('.tree [data-path]').forEach(node => {
+      node.classList.remove('is-touched', 'is-ancestor');
+      if (node.classList.contains('folder')) {
+        node.classList.remove('is-open');
+      }
+    });
+
+    // Apply highlights AND auto-expand folders that contain touched files
+    document.querySelectorAll('.tree [data-path]').forEach(node => {
+      const p = node.dataset.path;
+      if (touched.has(p)) {
+        node.classList.add('is-touched');
+        // If this node is a folder, open it too
+        if (node.classList.contains('folder')) {
+          node.classList.add('is-open');
+        }
+      } else if (ancestors.has(p)) {
+        node.classList.add('is-ancestor');
+        if (node.classList.contains('folder')) {
+          node.classList.add('is-open');
+        }
+      }
+    });
+
+    // Editor content
+    document.querySelector('.detail-step').textContent = step.title;
+    document.querySelector('.detail-text').textContent = step.plain;
+    document.querySelector('.detail-reads-count').textContent = step.reads.length;
+    document.querySelector('.detail-writes-count').textContent = step.writes.length;
+
+    // Status bar
+    const statusStep = document.querySelector('.status-step');
+    const statusCounts = document.querySelector('.status-counts');
+    if (statusStep) statusStep.textContent = `Step ${stepId} of 08`;
+    if (statusCounts) statusCounts.textContent = `${step.reads.length} reads · ${step.writes.length} writes`;
+
+    // Scroll the first touched file into view in the tree
+    const firstTouched = document.querySelector('.tree .is-touched');
+    if (firstTouched) {
+      const treeContainer = document.querySelector('.ide-tree');
+      if (treeContainer) {
+        const containerRect = treeContainer.getBoundingClientRect();
+        const elRect = firstTouched.getBoundingClientRect();
+        if (elRect.top < containerRect.top || elRect.bottom > containerRect.bottom) {
+          firstTouched.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+      }
+    }
+  }
+
+  // Wire up phase selector buttons (the row above the IDE)
+  document.querySelectorAll('.step-btn').forEach(b => {
+    b.addEventListener('click', () => setStep(b.dataset.step));
+  });
+
+  // Manual folder toggle (clicking on folder name expands/collapses)
+  document.querySelectorAll('.tree li.folder > .name').forEach(name => {
+    name.addEventListener('click', (e) => {
+      e.stopPropagation();
+      name.parentElement.classList.toggle('is-open');
+    });
+  });
+
+  // Initial state: Step 01
+  setStep('01');
+</script>
+
+</body>
+</html>
