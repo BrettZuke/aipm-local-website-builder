@@ -102,7 +102,7 @@ export default function useAvailableNow() {
 
   return {
     available: state.available,
-    label: brandDNA.copy?.availableNow || "__REQUIRED__AVAILABILITY_LABEL__",
+    label: brandDNA.copy?.availableNow || "Available now",
     nextOpenLabel: buildNextOpenLabel(state.weekday),
   };
 }

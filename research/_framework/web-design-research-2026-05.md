@@ -2,7 +2,7 @@
 
 Date: 2026-05-14
 Researcher: Claude (Opus 4.7, 1M context)
-Trigger: First factory build (https://{TEMPLATE_REFERENCE_DEPLOY_URL}) felt under-polished. Boutique hotel and wedding venue niche.
+Trigger: First factory build (https://{{REFERENCE_TEMPLATE_DEPLOY_URL}}) felt under-polished. Boutique hotel and wedding venue niche.
 Goal: Mine X (Twitter) and the surrounding design community for specific, actionable upgrades to bake into the website-factory templates, copy generation, and asset pipeline.
 
 Stack: Vite + React + Tailwind. Current defaults: Cormorant Garamond + Inter, near-black + warm tan + cream, 15 sections.
@@ -86,7 +86,7 @@ Source: designsystems.com space-grids-and-layouts, atlassian.design spacing, car
 Apply to factory: Override Tailwind spacing scale in config to use 8pt with named sizes (`section-gap` = 96, `section-gap-lg` = 128, `card-pad` = 32). Audit current factory components and remove default p-4 and m-8 everywhere.
 
 ### 13. Use a "quiet premium" neutral palette with one disciplined accent
-What it is: Bone, sand, taupe, stone, ivory, smoke. Pair with one accent (not multiple). Current {TEMPLATE_REFERENCE_CLIENT} defaults of warm tan + cream + near-black is on the right track, but the accent should be a single warm gold or oxblood, used sparingly on links, CTA, and decorative dividers. Never use more than 5 hex values total in the entire site.
+What it is: Bone, sand, taupe, stone, ivory, smoke. Pair with one accent (not multiple). Current {{REFERENCE_TEMPLATE_CLIENT}} defaults of warm tan + cream + near-black is on the right track, but the accent should be a single warm gold or oxblood, used sparingly on links, CTA, and decorative dividers. Never use more than 5 hex values total in the entire site.
 Why it works: Premium brands (Aman, Aesop, Hermes, Loro Piana) live in muted tones. Reducing palette discipline is the single biggest brand maturity signal.
 Source: aifire.co premium AI websites guide, mediaboom luxury hotel, lummi.ai web design best practices.
 Apply to factory: Lock the boutique-wedding template palette to 5 tokens: ink (#1A1817), bone (#F4EDE3), cream (#FAF5EB), tan (#B8956A), accent (single hex per client, default oxblood #6B2C2A). All component styling references these tokens only.
@@ -124,7 +124,7 @@ Why it screams AI: "Diverse group of people looking at a laptop in an impossibly
 Source: 925studios.co, mannixmarketing.com hotel photos, justinmind.com hero images.
 
 ### 5. Vague aspirational headlines ("Build the future of work")
-Why it screams AI: AI averages every headline. Specific, founder-voiced headlines beat aspirational ones every time. {TEMPLATE_REFERENCE_CLIENT}'s hero copy currently risks this.
+Why it screams AI: AI averages every headline. Specific, founder-voiced headlines beat aspirational ones every time. {{REFERENCE_TEMPLATE_CLIENT}}'s hero copy currently risks this.
 Source: 925studios.co, mindstudio.ai.
 
 ### 6. Em dashes everywhere

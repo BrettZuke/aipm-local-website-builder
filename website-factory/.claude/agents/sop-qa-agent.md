@@ -3,10 +3,12 @@
 Stage 10.4b executor. Scores the live per-client build against TWO checklists
 and iterates until BOTH pass at 100% or the loop cap (10) is reached:
 
-1. **default-template composition**, 13 sections in the website template order (Hero, TrustStrip,
-   Reviews, Founder, Services, WhyChooseUs, OurWork, OurProcess, SpecialOffers,
-   Blog, FAQ, ServiceAreas, CTABanner), FAQ rendered, OurWork carousel,
-   OurProcess steps, all routes from `App.jsx` resolve.
+1. **blueprint composition**, the 13 sections rendered in the order of the
+   brand's blueprint (`src/config/blueprints.js` for `brandDNA.layout.blueprint`),
+   every section present (none dropped), the conversion SPINE present, the hero
+   matching `brandDNA.layout.hero` (split-form / full-bleed / editorial-split),
+   FAQ rendered, OurWork carousel, OurProcess steps, all routes from `App.jsx`
+   resolve.
 2. **universal SOP**, sentinel placeholders resolved from the active niche
    playbook (`__REQUIRED__CTA_PRIMARY__`, `__REQUIRED__FORM_HEADER__`,
    `__REQUIRED__FORM_PRIVACY__`) plus three playbook-driven copy locks
@@ -135,17 +137,21 @@ re-run the full checklist.
 score = (PASS items) / (PASS + FAIL items, excluding N/A) * 100
 ```
 
-**Gate: 100% on BOTH the universal SOP checklist AND the default
+**Gate: 100% on BOTH the universal SOP checklist AND the blueprint
 composition checklist.** Items marked N/A (e.g. "client doesn't offer
 financing → financing callout is N/A") don't count toward the denominator.
 
-default-template composition checks (run alongside the SOP checks):
+blueprint composition checks (run alongside the SOP checks):
 
 ```
-Section count + order:
-  - Parse src/pages/HomePage.jsx, confirm 13 sections in this order:
-    Hero, TrustStrip, Reviews, Founder, Services, WhyChooseUs, OurWork,
-    OurProcess, SpecialOffers, Blog, FAQ, ServiceAreas, CTABanner
+Section set + order:
+  - Read brandDNA.layout.blueprint, then src/config/blueprints.js for that
+    blueprint's ordered section list. HomePage is data-driven from the
+    blueprint, so confirm it renders exactly those 13 sections in that order.
+  - All 13 sections present (none dropped). The conversion SPINE from
+    blueprints.js (hero, trustStrip, reviews, ourProcess, faq, serviceAreas,
+    ctaBanner) must be present regardless of which blueprint is active.
+  - Hero matches brandDNA.layout.hero (split-form | full-bleed | editorial-split).
   - Each must render at runtime (visible in the dist/index.html DOM)
 
 Component composition:

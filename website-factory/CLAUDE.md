@@ -78,21 +78,33 @@ per-client assets via `tools/optimise-image.py`, runs `npm install + npm run bui
 then validates `dist/` for `__REQUIRED__` sentinels and forbidden strings.
 
 The website template was derived from `{{REFERENCE_TEMPLATE_REPO_URL}}`
-on 2026-05-11. The original {{TEMPLATE_REFERENCE_CLIENT}} site continues to be deployed
+on 2026-05-11. The original {{REFERENCE_TEMPLATE_CLIENT}} site continues to be deployed
 at `{{REFERENCE_TEMPLATE_DEPLOY_URL}}` independently.
 
-Per-client variance is locked to:
+Per-client variance is driven entirely by `brand-dna.js` (so the QA gates,
+which build their reference from the same brand-dna, stay valid):
 - **paint**, palette CSS variables (rewritten by `inject-theme.mjs` at prebuild)
+- **fonts**, `brand-dna.typography.heading` / `.body` flow through `--font-heading` / `--font-body` CSS vars that inject-theme writes into `:root`; the base rules and Tailwind reference those vars, so a client's faces actually apply
 - **copy**, every visible string (sourced from `Pipeline Data/copy/copy-deck.md`)
 - **photos**, logo, hero (desktop + mobile), owner, projects, team, per-section
 - **trust badges**, looked up from `templates/{niche-slug}/niche-playbook/trust-signals.json` against `brand-dna.certifications`
 - **theme mode**, `brand-dna.theme_mode` ("light" | "dark", single mode, no toggle)
 - **background SVG pattern**, `brand-dna.shape_motif` selects from 13 patterns in `templates/website-template/src/assets/bg-patterns/`
+- **layout (the variance engine)**, `brand-dna.layout`:
+  - `blueprint`, section ORDER preset (`trust-first` | `showcase-first` | `story-first`), defined in `src/config/blueprints.js`
+  - `hero`, hero composition (`split-form` | `full-bleed` | `editorial-split`)
+  - `vibe`, feel via `<html data-vibe>` (`signal` | `editorial` | `structural`): corner radius, card edge, button shape, eyebrow rhythm
+  - `sections`, optional per-section layout-variant overrides
 
-NOTHING ELSE varies. Layout, composition, components LOCKED. Every client
-renders the same 13 sections in the same order: Hero, TrustStrip, Reviews,
-Founder, Services, WhyChooseUs, OurWork, OurProcess, SpecialOffers, Blog,
-FAQ, ServiceAreas, CTABanner.
+The variance engine lets two niches look like different studios built them
+WITHOUT breaking determinism: every blueprint is a fixed permutation of the
+same 13 components, and the conversion + local-SEO **spine** (hero lead form,
+TrustStrip, Reviews, OurProcess risk-reversal, FAQ, ServiceAreas, CTABanner,
+plus the sticky MobileCtaBar and click-to-call) is present in EVERY blueprint.
+Components themselves are not edited per client; only which sections render, in
+what order, with which hero and vibe. The `layout` axes are deterministic
+(the composer derives a default from `voice_register`; Stage 7 may override),
+so the build is reproducible and the fidelity gates still hold.
 
 ### No canonical React component library, no per-client React generation
 
@@ -135,17 +147,29 @@ at 100% on every per-client build.
 
 The logo file path lives in `brand-dna.json` and is shared across all four.
 
-### Page section order (website template composition, locked, 13 sections)
+### Page section order (blueprint-driven, 13 sections)
+
+`HomePage.jsx` is data-driven: it renders the section list for the brand's
+`layout.blueprint` from `src/config/blueprints.js`. The three blueprints are
+permutations of the same 13 components:
 
 ```
-Nav (Layout) → TopBar → Hero → TrustStrip → Reviews → Founder → Services →
-  WhyChooseUs → OurWork → OurProcess → SpecialOffers → Blog → FAQ →
-  ServiceAreas → CTABanner → Footer (Layout)
+trust-first     Hero → TrustStrip → Reviews → Founder → Services → WhyChooseUs →
+                OurWork → OurProcess → SpecialOffers → Blog → FAQ → ServiceAreas → CTABanner
+showcase-first  Hero → TrustStrip → Services → OurWork → Reviews → WhyChooseUs →
+                OurProcess → SpecialOffers → Founder → FAQ → ServiceAreas → Blog → CTABanner
+story-first     Hero → TrustStrip → Founder → Services → Reviews → OurWork →
+                WhyChooseUs → OurProcess → SpecialOffers → FAQ → ServiceAreas → Blog → CTABanner
 ```
 
-Source of truth: `templates/website-template/src/pages/HomePage.jsx`. The 13 main
-sections live there in this order; Layout.jsx wraps them with the persistent
-TopBar + Navbar header and the persistent Footer + MobileCtaBar.
+Conversion + local-SEO SPINE (present in every blueprint): Hero, TrustStrip,
+Reviews, OurProcess, FAQ, ServiceAreas, CTABanner.
+
+Source of truth: `templates/website-template/src/config/blueprints.js` (the
+orders) and `src/pages/HomePage.jsx` (the data-driven renderer). Layout.jsx
+wraps the page with the persistent TopBar + Navbar header and the persistent
+Footer + MobileCtaBar. Add a blueprint by adding a key to `blueprints.js` whose
+value is a permutation of the same 13 section ids that still contains the SPINE.
 
 ---
 
@@ -312,7 +336,8 @@ Blueprint reference document (delivered to the agency) and from the template's b
 | Forbidden strings in dist | any FORBIDDEN_STRINGS entry (__REQUIRED__ sentinel + niche-playbook extensions), fail closed | Lesson Rule 5 (universal) |
 | `__REQUIRED__` sentinels in brand-dna.js | Fail closed if any survive | Lesson Rule 6 (universal) |
 
-Background SVG pattern (the ONE per-client visual variance): `brand-dna.shape_motif`
+Background SVG pattern (one of the per-client visual variance axes, alongside the
+`layout` blueprint / hero / vibe engine described above): `brand-dna.shape_motif`
 selects from `polygon | triangle | wave | arc | dot-grid | hexagon | chevron |
 diamond | cross-hatch | mountain | shingle | blueprint-grid | topographic`.
 Default `polygon` if extraction is ambiguous.

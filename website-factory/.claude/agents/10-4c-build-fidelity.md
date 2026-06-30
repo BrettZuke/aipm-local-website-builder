@@ -1,10 +1,13 @@
 # 10-4c-build-fidelity (template-approach branch)
 
-Stage 10.4c executor. Compares the per-client build against the canonical
-`templates/website-template/` build and confirms structural fidelity: same DOM tree
-shape, same component class taxonomy, same section order. Per-client deltas
-allowed: text content, image src, palette CSS variable values. Anything else
-fails the gate.
+Stage 10.4c executor. Compares the per-client build against a reference built
+from `templates/website-template/` WITH THIS CLIENT'S brand-dna applied, and
+confirms structural fidelity: same DOM tree shape, same component class
+taxonomy, same section order. Because the reference uses the client's own
+`layout` (blueprint / hero / vibe), the chosen archetype is expected to match
+on both sides; the diff catches UNAUTHORIZED component edits, not the brand's
+archetype choice. Per-client deltas allowed: text content, image src, palette
+CSS variable values. Anything else fails the gate.
 
 This is a SEPARATE QA from Stage 10.4a (design fidelity SSIM). 10.4a checks
 visual rendering; 10.4c checks DOM structure.
@@ -12,7 +15,7 @@ visual rendering; 10.4c checks DOM structure.
 ## Inputs
 
 - `clients/[Client Name]/[Client Name] Website/dist/` (the per-client build, output of Stage 10.1)
-- `templates/website-template/dist/` (the reference build; created on first run via `--build-reference`)
+- `clients/[Client Name]/Pipeline Data/qa/reference-build/dist/` (the reference: a scratch clone of `templates/website-template/` built with THIS client's brand-dna, so it adopts the same archetype. Built automatically on first diff, or forced with `--build-reference`. The canonical template is never mutated.)
 
 ## Process
 
@@ -31,13 +34,15 @@ Before any other step, read these two files if they exist:
 
 ### Step 2, Run the diff tool
 
-If the reference build is missing or stale (older than the latest commit on `templates/website-template/`), build it first:
+The reference is built automatically (per client, with that client's brand-dna)
+on the first run and cached under `Pipeline Data/qa/reference-build/`. Force a
+rebuild whenever the client's brand-dna.js changed since the last diff:
 
 ```bash
 python3 tools/build-fidelity-diff.py --client "[Client Name]" --build-reference
 ```
 
-Otherwise, faster path:
+Reuse the cached reference (faster) when brand-dna has not changed:
 
 ```bash
 python3 tools/build-fidelity-diff.py --client "[Client Name]"
@@ -94,9 +99,10 @@ Halt the pipeline. The build deviated from the template structure, needs
 investigation. Most likely causes:
 - A component file in `clients/[X]/[X] Website/src/components/` was edited
   outside of brand-dna substitution
-- A new section was added to one of the page files
-- The website template itself changed (the reference is stale; rebuild with
-  `--build-reference`)
+- A section NOT in the brand's blueprint was added or removed in
+  `HomePage.jsx` (the blueprint, not the page file, decides section order)
+- The client's brand-dna.js changed since the reference was built (rebuild the
+  reference with `--build-reference`)
 
 ## Failure handling
 

@@ -52,11 +52,27 @@ async function loadBrandDNA() {
   return brandDNA;
 }
 
-function buildRootBlock(palette) {
+function cssFontStack(name, fallbacks) {
+  if (!name || typeof name !== "string" || !name.trim()) return null;
+  const n = name.trim();
+  const quoted = /[\s\d]/.test(n) ? `'${n}'` : n;
+  return [quoted, ...fallbacks].join(", ");
+}
+
+function buildRootBlock(palette, typography) {
   const lightVars = Object.entries(palette)
     .map(([k, v]) => `  --${k.replace(/_/g, "-")}: ${hexToRgbTriplet(v)};`)
     .join("\n");
-  return `:root {\n${lightVars}\n}\n`;
+  // Fonts flow through CSS variables, NOT per-file regex. The base rules in
+  // index.css and the Tailwind fontFamily stacks both reference var(--font-*),
+  // so writing these two lines here is the single point that applies a
+  // client's typography. Without this, the @import loads the font but nothing
+  // ever sets font-family to it, so every client renders in the template's
+  // default faces. Generic fallback keeps text readable during font swap.
+  const heading = cssFontStack(typography?.heading, ["sans-serif"]) || "'Oswald', Impact, sans-serif";
+  const body = cssFontStack(typography?.body, ["sans-serif"]) || "'Inter', sans-serif";
+  const fontVars = `  --font-heading: ${heading};\n  --font-body: ${body};`;
+  return `:root {\n${lightVars}\n${fontVars}\n}\n`;
 }
 
 function normaliseGoogleFontUrl(value) {
@@ -83,11 +99,25 @@ async function injectCss(brandDNA) {
   // Strip existing Google Fonts imports.
   css = css.replace(/^@import url\('https:\/\/fonts\.googleapis\.com[^']+'\);\s*\n?/gm, "");
 
-  // Replace the existing :root { ... } block. If none exists, prepend.
-  const rootBlock = buildRootBlock(brandDNA.palette);
-  const rootRegex = /:root\s*\{[^}]*\}\s*\n?/;
-  if (rootRegex.test(css)) {
-    css = css.replace(rootRegex, () => rootBlock);
+  // Replace EVERY plain `:root { ... }` block with one client block.
+  //
+  // index.css ships more than one plain `:root {}` block (a foundation-token
+  // block plus the palette block). A non-global regex rewrote only the first,
+  // leaving a stale `--accent` in the second; the CSS minifier then merges the
+  // duplicate selectors and the stale accent (source-order-later) WINS, so the
+  // client's accent silently reverts to the template default. The fix: rewrite
+  // the first plain :root and strip the rest, collapsing to one block. The
+  // `\s*\{` guard means `:root[data-theme-mode="dark"] {` is never matched, so
+  // the dark-mode override survives untouched.
+  const rootBlock = buildRootBlock(brandDNA.palette, brandDNA.typography);
+  const plainRoot = /:root\s*\{[^}]*\}\s*\n?/g;
+  if (css.match(plainRoot)) {
+    let done = false;
+    css = css.replace(plainRoot, () => {
+      if (done) return "";
+      done = true;
+      return rootBlock;
+    });
   } else {
     css = rootBlock + css;
   }
@@ -146,7 +176,7 @@ function buildJsonLd(brandDNA) {
       "addressLocality": address.city,
       "addressRegion": address.state,
       "postalCode": address.zip,
-      "addressCountry": "US",
+      "addressCountry": address.country || "US",
     },
     "openingHoursSpecification": openingHours,
     "aggregateRating":
@@ -171,19 +201,29 @@ function buildJsonLd(brandDNA) {
 async function injectHtml(brandDNA) {
   let html = await readFile(INDEX_HTML, "utf8");
   const themeMode = brandDNA.theme_mode || "light";
+  const vibe = brandDNA.layout?.vibe || "signal";
+  const blueprint = brandDNA.layout?.blueprint || "trust-first";
   const title = brandDNA.meta?.title || "";
   const description = brandDNA.meta?.description || "";
 
-  // <html data-theme-mode="..."> — use function replacer so any literal `$`
-  // in the value cannot be interpreted as a backreference.
-  if (/<html\b[^>]*\bdata-theme-mode=/.test(html)) {
-    html = html.replace(
-      /(<html\b[^>]*\bdata-theme-mode=")[^"]*(")/,
-      (_match, open, close) => `${open}${themeMode}${close}`
-    );
-  } else {
-    html = html.replace(/<html\b/, () => `<html data-theme-mode="${themeMode}"`);
-  }
+  // <html data-*> attributes drive theme mode (light/dark), the vibe profile
+  // (card + radius + eyebrow + motion treatment), and the blueprint (the
+  // section order picked for this brand). Components and the vibe CSS layer key
+  // off these. Function replacers keep any literal `$` in a value from being
+  // read as a regex backreference.
+  const setHtmlAttr = (markup, attr, value) => {
+    if (new RegExp(`<html\\b[^>]*\\b${attr}=`).test(markup)) {
+      return markup.replace(
+        new RegExp(`(<html\\b[^>]*\\b${attr}=")[^"]*(")`),
+        (_m, open, close) => `${open}${value}${close}`
+      );
+    }
+    return markup.replace(/<html\b/, () => `<html ${attr}="${value}"`);
+  };
+
+  html = setHtmlAttr(html, "data-theme-mode", themeMode);
+  html = setHtmlAttr(html, "data-vibe", vibe);
+  html = setHtmlAttr(html, "data-blueprint", blueprint);
 
   // <title> — function replacer for safety even though title rarely has `$`.
   html = html.replace(

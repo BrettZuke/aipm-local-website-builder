@@ -240,6 +240,13 @@ def compose_agency_vars(brand: dict[str, Any]) -> dict[str, str]:
         # Winning formula outcome line (e.g. "More leads booked")
         "AGENCY_FORMULA_OUTCOME": formula.get("outcome_line", ""),
 
+        # Traffic audit card heading (the "what the top sites do" checklist title).
+        # Falls back to a sensible default if the agency didn't set one.
+        "AGENCY_TRAFFIC_AUDIT_HEADING": (
+            (formula.get("traffic", {}) or {}).get("audit_heading", "")
+            or "What the top-ranked sites do"
+        ),
+
         # SOP unlock + blueprint
         "AGENCY_SOP_PASSWORD": brand.get("sop_password", ""),
         "AGENCY_BLUEPRINT_NAME": brand.get("blueprint_pdf_title", ""),
@@ -339,6 +346,45 @@ def compose_palette_css_vars(brand: dict[str, Any]) -> str:
         + "\n}\n"
         "</style>"
     )
+
+
+def compose_fonts_css_vars(brand: dict[str, Any]) -> str:
+    """Build an optional <style> block that overrides --font-display / --font-body
+    from agency-brand.json `fonts`, and loads the agency's web fonts if they give an
+    `import_url`. This is what makes every student's proposal differ in TYPOGRAPHY,
+    not just colour, so two students never ship a recognisably identical document.
+
+    If no `fonts` block is set, the template default (Fraunces + Hanken Grotesk) stands.
+
+        "fonts": {
+          "display": "'Playfair Display', Georgia, serif",
+          "body": "'Work Sans', system-ui, sans-serif",
+          "import_url": "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Work+Sans:wght@400;500;700&display=swap"
+        }
+    """
+    fonts = brand.get("fonts", {}) or {}
+    if not fonts:
+        return ""  # template default pairing stands
+    display = fonts.get("display")
+    body = fonts.get("body")
+    import_url = fonts.get("import_url")
+    overrides = []
+    if display:
+        overrides.append(f"  --font-display: {display};")
+    if body:
+        overrides.append(f"  --font-body: {body};")
+    if not overrides and not import_url:
+        return ""
+    parts = ["<style data-agency-fonts>"]
+    if import_url:
+        # @import must lead the block; it is the only rule before :root here, so valid.
+        parts.append(f"@import url('{import_url}');")
+    if overrides:
+        parts.append(":root {")
+        parts.extend(overrides)
+        parts.append("}")
+    parts.append("</style>")
+    return "\n".join(parts)
 
 
 def inject_review_carousel(html: str, brand: dict[str, Any]) -> str:
@@ -533,12 +579,16 @@ def inject_traffic_audit_bullets(html: str, brand: dict[str, Any]) -> str:
 
 
 def copy_agency_assets(proposal_dir: Path) -> None:
-    """Copy clients/_agency/assets/* into the per-client proposal's agency-assets/."""
+    """Overlay clients/_agency/assets/* onto the per-client proposal's agency-assets/.
+
+    Merges (dirs_exist_ok) rather than replacing, so the student's real /setup-agency
+    media lands on top of whatever copy_agency_static already wrote, without wiping
+    the per-client logo/GMB cover that get added afterwards.
+    """
     target = proposal_dir / "agency-assets"
     if AGENCY_ASSETS_DIR.exists():
-        if target.exists():
-            shutil.rmtree(target)
-        shutil.copytree(AGENCY_ASSETS_DIR, target)
+        target.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(AGENCY_ASSETS_DIR, target, dirs_exist_ok=True)
 
 
 def compose_vars(client_name: str, paths: dict[str, Path]) -> dict[str, str]:
@@ -717,6 +767,12 @@ def compose_vars(client_name: str, paths: dict[str, Path]) -> dict[str, str]:
         "BBB_NUMBER": str(bbb_number) if bbb_number else "",
         "SETUP_FEE_DEFAULT": str(setup_fee_default).replace("$", ""),
         "LIVE_PREVIEW_URL": _resolve_live_preview_url(client_name),
+        # GMB knowledge-panel mock fields (currently inside a commented block in the
+        # template, but the validator scans comments too — give them graceful,
+        # never-empty values so the build never fails on them and the mock works if
+        # a student uncomments it).
+        "COMPANY_ADDRESS_DISPLAY": (f"{city_primary}, {(state_code or '').upper()}".strip(", ") or "Your service area"),
+        "COMPANY_LICENSE_DISPLAY": "Licensed & insured",
     }
 
 
@@ -814,13 +870,27 @@ def copy_gmb_cover(photos_dir: Path, proposal_dir: Path) -> Path | None:
 
 
 def copy_build_iframe(site_dist: Path, proposal_dir: Path) -> bool:
-    """Copy the per-client dist/ into proposal/build/ so the iframe at ../build/index.html resolves."""
+    """Copy the per-client dist/ into proposal/build/ so the iframe at ../build/index.html resolves.
+
+    The Vite SPA is built with an absolute asset base (/assets/...), which 404s when
+    the proposal is hosted on its own domain (the iframe's /assets/ resolves to the
+    proposal root, not build/). As a best-effort fallback we rewrite the snapshot's
+    absolute asset refs to relative so the shell renders. The robust fix is to point
+    the laptop at the client's LIVE deploy via --live-url / vercel-url.txt; this
+    snapshot is only the offline fallback.
+    """
     if not site_dist.exists():
         return False
     target = proposal_dir / "build"
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(site_dist, target)
+    index = target / "index.html"
+    if index.exists():
+        html = index.read_text()
+        html = html.replace('href="/assets/', 'href="assets/').replace('src="/assets/', 'src="assets/')
+        html = html.replace('href="/favicon', 'href="favicon').replace('src="/', 'src="')
+        index.write_text(html)
     return True
 
 
@@ -1248,6 +1318,7 @@ def main() -> int:
     parser.add_argument("--client", required=True, help="Client folder name under clients/")
     parser.add_argument("--skip-build-copy", action="store_true", help="Skip copying [X] Website/dist/ to [X] Proposal/build/")
     parser.add_argument("--dry-run", action="store_true", help="Compose vars + write proposal.html, skip asset copies")
+    parser.add_argument("--live-url", default="", help="Client's live deployed site URL for the laptop preview (overrides auto-detect). The proposal embeds this in the cover mockup, so it must be a hosted https:// URL, not a local path.")
     parser.add_argument('--validate-agency', action='store_true', help='Validate agency-brand.json + exit')
     args = parser.parse_args()
 
@@ -1274,7 +1345,12 @@ def main() -> int:
     print("[1/6] composing vars from pipeline data")
     vars_map = compose_vars(args.client, paths)
     vars_map.update(compose_agency_vars(agency_brand))
-    print(f"  {len(vars_map)} placeholders resolved (e.g. COMPANY_NAME='{vars_map.get('COMPANY_NAME', '')}', CITY_PRIMARY='{vars_map.get('CITY_PRIMARY', '')}', AGENCY_NAME='{vars_map.get('AGENCY_NAME', '')}')")
+    # An explicit --live-url always wins: it is the client's hosted site, which is
+    # what the cover laptop should show. Without it we fall back to vercel-url.txt,
+    # then to the local snapshot (see _resolve_live_preview_url).
+    if args.live_url:
+        vars_map["LIVE_PREVIEW_URL"] = args.live_url
+    print(f"  {len(vars_map)} placeholders resolved (e.g. COMPANY_NAME='{vars_map.get('COMPANY_NAME', '')}', CITY_PRIMARY='{vars_map.get('CITY_PRIMARY', '')}', AGENCY_NAME='{vars_map.get('AGENCY_NAME', '')}', LIVE_PREVIEW_URL='{vars_map.get('LIVE_PREVIEW_URL', '')}')")
 
     proposal_dir = paths["proposal"]
     proposal_dir.mkdir(parents=True, exist_ok=True)
@@ -1282,6 +1358,11 @@ def main() -> int:
     if not args.dry_run:
         print("\n[2/6] copying agency-static dossier (agency-logo.svg + agency-assets/)")
         copy_agency_static(proposal_dir)
+        # Overlay the real /setup-agency media (founder portrait, review avatars,
+        # case studies) from clients/_agency/assets ON TOP of the template statics.
+        # copy_agency_static only lays down the template's placeholder agency-assets/;
+        # the student's actual media lives in AGENCY_ASSETS_DIR and must win.
+        copy_agency_assets(proposal_dir)
 
         print("\n[3/6] copying per-client logo + GMB cover")
         logo_path = copy_client_logo(paths["logo_dir"], proposal_dir)
@@ -1331,6 +1412,13 @@ def main() -> int:
     out = inject_traffic_audit_bullets(out, agency_brand)
     print(f"  injected agency blocks: reviews + client-builds + case-studies + trust/conversion/traffic cards")
 
+    # The injected blocks can re-introduce {{VAR}} literals that substitute() already
+    # ran past (e.g. inject_traffic_feature_card emits a CTA with {{LIVE_PREVIEW_URL}}).
+    # Resolve any var literals the injections brought back. Plain var replacement only,
+    # NOT a full substitute() (which would re-run the PAGE_DATA regex).
+    for k, v in vars_map.items():
+        out = out.replace("{{" + k + "}}", v or "")
+
     # Inject the agency's palette as a <style data-agency-palette> override
     # right before </head> so the agency's brand colors win over the template's
     # :root defaults. If agency-brand.json has no palette block, the template
@@ -1339,6 +1427,13 @@ def main() -> int:
     if palette_block:
         out = out.replace("</head>", f"{palette_block}\n</head>", 1)
         print(f"  injected agency palette overrides")
+
+    # Agency typography overrides (optional). Injected after the palette so the
+    # student's chosen fonts win over the template default Fraunces + Hanken pairing.
+    fonts_block = compose_fonts_css_vars(agency_brand)
+    if fonts_block:
+        out = out.replace("</head>", f"{fonts_block}\n</head>", 1)
+        print(f"  injected agency font overrides")
     proposal_html = proposal_dir / "proposal.html"
     proposal_html.write_text(out)
     # Vercel serves /index.html at the root URL; the canonical artifact is

@@ -37,6 +37,19 @@ Any niche. Module 2D captures the best-of-niche websites, scores them, and scaff
 
 The research and offer crafting stages work for any niche too.
 
+## Sites that do not all look the same
+
+The factory is conversion-first and deterministic, but it is not one rigid
+layout. A variance engine gives each client a distinct look from three dials in
+its `brand-dna.layout` (blueprint = section order, hero = first-screen
+composition, vibe = feel) on top of palette, fonts, and photos, while keeping
+the same lead-capture spine and passing the QA gates. The factory picks a
+sensible default per niche; you can override per client.
+
+- The full menu: `website-factory/templates/website-template/VARIANCE-ENGINE.md`
+- Three filled reference configs (roofer, car garage, plumber), each a different
+  combination: `website-factory/templates/website-template/examples/`
+
 ## How to start
 
 1. Open this folder in Claude Code.

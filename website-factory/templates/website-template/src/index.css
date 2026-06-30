@@ -78,6 +78,11 @@ html {
   --neutral-dim: 100 116 139;
   --silver: 192 198 207;
   --ink: 11 18 32;
+  /* Typography flows through these two vars. inject-theme.mjs overwrites them
+     from brandDNA.typography at prebuild; the base rules + Tailwind fontFamily
+     reference them so a client's fonts actually APPLY (not just load). */
+  --font-heading: 'Oswald', Impact, sans-serif;
+  --font-body: 'Inter', sans-serif;
 }
 /* Optional dark-mode overrides applied via <html data-theme-mode="dark">.
  * inject-theme.mjs sets the attribute from brandDNA.theme_mode; light mode
@@ -103,7 +108,7 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-body, 'Inter', sans-serif);
   background: #fff;
 }
 
@@ -112,7 +117,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Oswald', Impact, sans-serif;
+  font-family: var(--font-heading, 'Oswald', Impact, sans-serif);
   margin: 0;
 }
 
@@ -456,4 +461,95 @@ p { margin: 0; }
   background-color: #FAFBFC !important;
   border: 1px solid rgba(15, 23, 42, 0.2) !important;
   color: rgb(var(--primary)) !important;
+}
+
+/* =====================================================================
+ * VIBE LAYER, the variance engine's finishing pass.
+ *
+ * brandDNA.layout.vibe sets <html data-vibe="signal | editorial | structural">
+ * (written by inject-theme.mjs). The vibe NEVER changes which sections render
+ * or the conversion spine. It changes the FEEL: corner radius, card edge
+ * treatment, button shape, and eyebrow rhythm, so two sites on the same
+ * blueprint still read as different studios built them. Tokens live on
+ * [data-vibe] attribute selectors (not :root) so inject-theme's :root rewrite
+ * never strips them.
+ *
+ * signal      bold, industrial, high-contrast. Sharp corners, hard island
+ *             buttons, layered shadows. Default; suits trades.
+ * editorial   premium, calm, magazine. Generous radii, hairline edges, pill
+ *             buttons, wide airy eyebrows. Suits boutique / personal brands.
+ * structural  clean, modern, soft. Medium radii, diffused ambient shadows.
+ *             Suits modern service brands (auto, dental, clinics).
+ * ===================================================================== */
+html {
+  --radius-card: 0.125rem;
+  --radius-feature: 0.375rem;
+  --radius-button: 0.125rem;
+  --eyebrow-transform: uppercase;
+  --eyebrow-spacing: 0.2em;
+  --eyebrow-weight: 600;
+  --reveal-distance: 30px;
+  --reveal-blur: 0px;
+}
+[data-vibe="editorial"] {
+  --radius-card: 1rem;
+  --radius-feature: 1.5rem;
+  --radius-button: 9999px;
+  --eyebrow-spacing: 0.34em;
+  --eyebrow-weight: 500;
+  --reveal-distance: 46px;
+  --reveal-blur: 6px;
+}
+[data-vibe="structural"] {
+  --radius-card: 0.875rem;
+  --radius-feature: 1.25rem;
+  --radius-button: 0.75rem;
+  --eyebrow-spacing: 0.16em;
+  --reveal-distance: 22px;
+  --reveal-blur: 2px;
+}
+
+/* Shared eyebrow utility (vibe-driven). Hero / section variants use this so
+ * the eyebrow rhythm tracks the vibe instead of a hardcoded tracking value. */
+.eyebrow {
+  text-transform: var(--eyebrow-transform);
+  letter-spacing: var(--eyebrow-spacing);
+  font-weight: var(--eyebrow-weight);
+}
+
+/* Corner radius flows to the standing card + button classes and the opt-in
+ * vibe-* hooks the new variant components use. */
+[data-vibe] .card-elevated,
+[data-vibe] .card-elevated-dark,
+[data-vibe] .vibe-card {
+  border-radius: var(--radius-card);
+}
+[data-vibe] .btn-gold,
+[data-vibe] .vibe-button {
+  border-radius: var(--radius-button);
+}
+[data-vibe] .vibe-feature {
+  border-radius: var(--radius-feature);
+}
+
+/* Editorial: trade the heavy layered shadow for a hairline edge so cards read
+ * like printed plates rather than lifted chips. */
+[data-vibe="editorial"] .card-elevated {
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.10);
+}
+[data-vibe="editorial"] .card-elevated-dark {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+[data-vibe="editorial"] .btn-gold {
+  box-shadow: 0 2px 0 rgb(var(--accent-dark)), 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+/* Structural: a single soft, far-diffused ambient shadow (no hard offset). */
+[data-vibe="structural"] .card-elevated {
+  box-shadow: 0 24px 60px -28px rgba(15, 23, 42, 0.30);
+}
+[data-vibe="structural"] .card-elevated-dark {
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.55);
 }

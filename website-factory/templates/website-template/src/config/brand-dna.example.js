@@ -51,6 +51,9 @@ export const brandDNA = {
     state: "__REQUIRED__STATE_CODE__",
     zip: "__REQUIRED__ZIP__",
     full: "__REQUIRED__ADDRESS_FULL__",
+    // ISO 3166-1 alpha-2 (e.g. "US", "GB", "AU"). Null defaults to "US" in the
+    // JSON-LD. Set it for non-US clients so the LocalBusiness schema is correct.
+    country: null,
     lat: null,
     lng: null,
   },
@@ -113,6 +116,32 @@ export const brandDNA = {
     motif: "__REQUIRED__CORNER_OVERLAY_MOTIF__",
     color: "__REQUIRED__CORNER_OVERLAY_COLOR__",
     opacity: 0.08,
+  },
+
+  // ── Variance engine ──────────────────────────────────────────────────────
+  // These three axes (plus palette, fonts, and photos) make two builds read
+  // like different studios made them, WITHOUT breaking the conversion spine
+  // (hero lead form, sticky call bar, trust, reviews, FAQ, schema all stay) or
+  // the QA gates. inject-theme.mjs writes `blueprint` + `vibe` onto
+  // <html data-blueprint=... data-vibe=...>. Section order per blueprint lives
+  // in src/config/blueprints.js. Pick the combination that fits the niche and
+  // the end customer; do not invent values outside the allowed sets.
+  layout: {
+    // Section ORDER + the hero it pairs with.
+    //   trust-first     hero + form, trust and reviews up top. Urgent trades
+    //                   (roofer, plumber, HVAC) where the buyer wants proof fast.
+    //   showcase-first  work and services lead. Visual proof sells (auto, remodel,
+    //                   landscaping, detailing).
+    //   story-first     founder story leads. Personal / boutique local brands
+    //                   (florist, salon, specialist clinic).
+    blueprint: "trust-first",
+    // Hero composition: split-form | full-bleed | editorial-split.
+    hero: "split-form",
+    // Feel (radius / card edge / button shape / eyebrow): signal | editorial | structural.
+    vibe: "signal",
+    // Optional per-section variant overrides. Omit a key to use the blueprint
+    // default. Allowed: services = grid | bento | list ; reviews = cards | marquee.
+    sections: {},
   },
 
   palette: {

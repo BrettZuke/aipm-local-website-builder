@@ -56,29 +56,51 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = REPO_ROOT / "templates" / "website-template"
 
 
-def build_reference() -> Path:
-    """Run npm install + build inside templates/website-template with the example brand-dna swapped in.
-    Returns the dist directory path."""
-    site = TEMPLATE_DIR
-    bdir = site / "src" / "config"
-    example = bdir / "brand-dna.example.js"
-    target = bdir / "brand-dna.js"
-    if not example.exists():
-        raise RuntimeError(f"missing {example}")
-    # Save the placeholder so we can restore it
-    backup = bdir / "brand-dna.js.bak"
-    if target.exists():
-        shutil.copyfile(target, backup)
-    shutil.copyfile(example, target)
-    try:
-        if not (site / "node_modules").exists():
-            subprocess.run(["npm", "install", "--silent"], cwd=site, check=True)
-        subprocess.run(["npm", "run", "build"], cwd=site, check=True)
-    finally:
-        if backup.exists():
-            shutil.copyfile(backup, target)
-            backup.unlink()
-    return site / "dist"
+def build_reference(client_name: str) -> Path:
+    """Build a structural reference for this client's DOM diff.
+
+    Clones templates/website-template into a scratch dir, overlays THIS CLIENT'S
+    brand-dna.js (and public assets), and builds. Because the variance engine is
+    entirely driven by brand-dna (layout.blueprint / layout.hero / layout.vibe),
+    the reference adopts the SAME archetype the client picked. The diff then
+    permits any allowed archetype and only catches unauthorized component edits
+    (the actual thing this gate protects).
+
+    Builds in a scratch clone so inject-theme's in-place rewrites never mutate
+    the canonical template. Returns the dist path.
+    """
+    client_site = REPO_ROOT / "clients" / client_name / f"{client_name} Website"
+    client_brand_dna = client_site / "src" / "config" / "brand-dna.js"
+    if not client_brand_dna.exists():
+        raise RuntimeError(f"missing client brand-dna.js: {client_brand_dna}")
+
+    ref_site = REPO_ROOT / "clients" / client_name / "Pipeline Data" / "qa" / "reference-build"
+    if ref_site.exists():
+        shutil.rmtree(ref_site)
+    ref_site.parent.mkdir(parents=True, exist_ok=True)
+
+    def _ignore(_dir: str, names: list[str]) -> list[str]:
+        return [n for n in names if n in {"node_modules", "dist", ".git"}]
+
+    shutil.copytree(TEMPLATE_DIR, ref_site, ignore=_ignore)
+    shutil.copyfile(client_brand_dna, ref_site / "src" / "config" / "brand-dna.js")
+
+    # Overlay the client's public assets so asset-driven DOM (img alt, etc.) matches.
+    client_public = client_site / "public"
+    if client_public.exists():
+        for item in client_public.iterdir():
+            target = ref_site / "public" / item.name
+            if item.is_dir():
+                if target.exists():
+                    shutil.rmtree(target)
+                shutil.copytree(item, target)
+            else:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(item, target)
+
+    subprocess.run(["npm", "install", "--silent"], cwd=ref_site, check=True)
+    subprocess.run(["npm", "run", "build"], cwd=ref_site, check=True)
+    return ref_site / "dist"
 
 
 def signature(node: Any) -> dict[str, Any]:
@@ -184,14 +206,12 @@ def main() -> int:
         print(f"ERROR: client site not found: {client_site}", file=sys.stderr)
         return 2
 
-    if args.build_reference:
-        print("Building templates/website-template reference...")
-        ref_dist = build_reference()
+    ref_scratch = REPO_ROOT / "clients" / args.client / "Pipeline Data" / "qa" / "reference-build" / "dist"
+    if args.build_reference or not ref_scratch.exists():
+        print("Building website-template reference with this client's brand-dna (same archetype)...")
+        ref_dist = build_reference(args.client)
     else:
-        ref_dist = TEMPLATE_DIR / "dist"
-        if not ref_dist.exists():
-            print(f"ERROR: reference build not found at {ref_dist}. Run with --build-reference.", file=sys.stderr)
-            return 2
+        ref_dist = ref_scratch
 
     print(f"Diffing client dist vs reference dist...")
     delta = diff_indexes(client_site / "dist", ref_dist)

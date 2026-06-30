@@ -224,8 +224,11 @@ related check is marked N/A and excluded from the pass-rate denominator.
 
 ## GALLERY
 
-- [ ] `gallery.position`, Gallery is between WhyChooseUs and Process
-  Fix: Verify section order in Home page component
+- [ ] `gallery.position`, Gallery (OurWork) renders at the position its
+  blueprint defines (HomePage is data-driven from `src/config/blueprints.js`
+  for `brandDNA.layout.blueprint`), not a fixed slot
+  Fix: Confirm OurWork is present in the active blueprint's section list in
+  `src/config/blueprints.js`; do not hardcode its position in HomePage
 
 - [ ] `gallery.infinite_carousel`, Gallery is an infinite-scrolling
   carousel, not a static grid

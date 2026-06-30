@@ -93,7 +93,7 @@ export default function CTABanner() {
                   {brandDNA.copy.buttonText} →
                 </button>
                 <p className="text-center text-white/35 font-body text-[10px] mt-2">
-                  __REQUIRED__FORM_PRIVACY__
+                  {brandDNA.copy.privacyLine}
                 </p>
               </div>
             </form>

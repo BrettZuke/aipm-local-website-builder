@@ -64,6 +64,31 @@ TRUST_BADGES_DIR = REPO_ROOT / "references" / "trust-badges"
 PLATFORMS_DIR = REPO_ROOT / "references" / "assets" / "platforms"
 OPTIMISE_TOOL = REPO_ROOT / "tools" / "optimise-image.py"
 STACK_STATE_PATH = REPO_ROOT.parent / "stack-state.json"
+AGENCY_BRAND_JSON = REPO_ROOT / "clients" / "_agency" / "agency-brand.json"
+
+
+def _agency_credit() -> dict[str, Any]:
+    """Agency byline baked into every client site footer ("Built by ...").
+
+    Sourced from the student's /setup-agency profile
+    (clients/_agency/agency-brand.json), the same file the proposal builder reads.
+    Falls back to a blank credit (never a __REQUIRED__ sentinel) so the build does
+    not fail closed if the profile is missing; /setup-agency is an earlier gate, so
+    in the normal flow the name is present.
+    """
+    try:
+        data = json.loads(AGENCY_BRAND_JSON.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        print("  WARN: clients/_agency/agency-brand.json not found; footer agency credit left blank (run /setup-agency)", file=sys.stderr)
+        return {"agency": "", "url": None}
+    name = (data.get("name") or "").strip()
+    if not name or "__REQUIRED__" in name:
+        print("  WARN: agency-brand.json has no name; footer agency credit left blank", file=sys.stderr)
+        return {"agency": "", "url": None}
+    url = (data.get("domain") or data.get("url") or "").strip()
+    if url and not url.startswith("http"):
+        url = "https://" + url
+    return {"agency": name, "url": url or None}
 
 
 def resolve_active_template(cli_niche: str | None) -> tuple[Path, str | None]:
@@ -1251,6 +1276,36 @@ def _service_icon(slug: str) -> str:
     return MAP.get(slug, "home")
 
 
+# Variance-engine defaults keyed on voice_register, so two niches with
+# different voices get visibly different layouts out of the box. Stage 7
+# (brand-dna-agent) can override any axis via an explicit `layout` block in
+# brand-dna.json, and the student can override per client.
+LAYOUT_BY_VOICE: dict[str, dict[str, str]] = {
+    "premium":    {"blueprint": "story-first",    "hero": "editorial-split", "vibe": "editorial"},
+    "commercial": {"blueprint": "showcase-first", "hero": "full-bleed",       "vibe": "structural"},
+    "family":     {"blueprint": "trust-first",    "hero": "split-form",       "vibe": "signal"},
+}
+
+
+def _compose_layout(brand_dna_in: dict[str, Any]) -> dict[str, Any]:
+    """Pick the blueprint / hero / vibe (the variance engine) for this client.
+
+    Resolution: an explicit `layout` block in brand-dna.json wins per-axis;
+    otherwise derive a deterministic default from voice_register. Always returns
+    all three axes plus a `sections` override map (empty unless Stage 7 set it).
+    """
+    explicit = brand_dna_in.get("layout") if isinstance(brand_dna_in.get("layout"), dict) else {}
+    voice = pick_first(brand_dna_in.get("voice_register"), "family")
+    base = LAYOUT_BY_VOICE.get(voice, LAYOUT_BY_VOICE["family"])
+    sections = explicit.get("sections") if isinstance(explicit.get("sections"), dict) else {}
+    return {
+        "blueprint": pick_first(explicit.get("blueprint"), base["blueprint"]),
+        "hero": pick_first(explicit.get("hero"), base["hero"]),
+        "vibe": pick_first(explicit.get("vibe"), base["vibe"]),
+        "sections": sections,
+    }
+
+
 def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any]:
     """
     Read every upstream pipeline output for this client and return the brand-dna
@@ -1348,7 +1403,7 @@ def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any
         # Legacy flat shape: {"open": "07:00", "close": "17:00", "tz": "America/Phoenix"}
         weekday = {"dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": hours_obj["open"], "closes": hours_obj["close"]}
         display = [
-            {"label": "Monday – Friday", "value": f"{hours_obj['open']} – {hours_obj['close']}"},
+            {"label": "Monday to Friday", "value": f"{hours_obj['open']} to {hours_obj['close']}"},
         ]
         hours_block = {"weekday": weekday, "saturday": None, "display": display, "emergencyBadge": None}
     elif isinstance(hours_obj, dict) and "weekday" in hours_obj:
@@ -1586,6 +1641,7 @@ def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any
                 0.08,
             ),
         },
+        "layout": _compose_layout(brand_dna_in),
         "palette": {
             "primary": palette.get("primary", REQ),
             "primary_dark": pick_first(palette.get("primary_dark"), palette.get("secondary"), REQ),
@@ -1694,7 +1750,7 @@ def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any
         ),
         "blog_categories": pick_first(brand_dna_in.get("blog_categories"), ["All"]),
         "pages": _compose_pages_block(brand_dna_in, copy_sections, city, state, company_name),
-        "credit": {"agency": "__REQUIRED__AGENCY_NAME__", "url": None},
+        "credit": _agency_credit(),
     }
     return brand_dna
 

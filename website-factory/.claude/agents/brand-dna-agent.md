@@ -4,13 +4,19 @@ Stage 7 executor. Extracts client brand DNA into `brand-dna.json` for downstream
 consumption by Stage 9 (hero generation) and Stage 10.1 (template overlay build).
 
 This agent extracts the universal brand DNA fields that every niche template needs.
-The structure decisions (which sections render, in what order) come from the niche
-template itself (scaffolded by Module 2D), not from a per-client `archetype`. Brand
-DNA stays comprehensive (palette, typography, motif, certifications, founder, contact,
-hours, services, areas), plus these two niche-agnostic fields:
+Brand DNA stays comprehensive (palette, typography, motif, certifications, founder,
+contact, hours, services, areas), plus these niche-agnostic fields:
 
 - `theme_mode: "light" | "dark"`, single mode decision (no toggle ever, default light)
 - `voice_register: "commercial" | "family" | "premium"`, copy tone hint for Stage 6
+- `layout` (OPTIONAL), the variance-engine selection: `blueprint` (section order),
+  `hero` (hero composition), and `vibe` (feel). See
+  `templates/website-template/VARIANCE-ENGINE.md` for the menu and when to use each.
+  Omit it and Stage 10.1 derives a sensible default from `voice_register` (premium ->
+  story-first / editorial-split / editorial; commercial -> showcase-first / full-bleed
+  / structural; family -> trust-first / split-form / signal). Set it explicitly when a
+  client clearly fits a specific look. The engine keeps the conversion spine intact in
+  every combination, so this only changes the look, never the lead path.
 
 `shape_motif` is still extracted because the per-client BackgroundPattern component in
 the niche template selects from its motif SVG library (universal motifs + any niche-

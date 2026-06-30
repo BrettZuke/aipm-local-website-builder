@@ -233,6 +233,12 @@
     "primary_deep": "__REQUIRED__PALETTE_PRIMARY_DEEP_HEX__",
     "accent": "__REQUIRED__PALETTE_ACCENT_HEX__"
   },
+  "fonts": {
+    "_comment": "OPTIONAL. Leave null to keep the default editorial pairing (Fraunces display + Hanken Grotesk body). Set your own so your proposals are unmistakably yours: a display + body CSS font-family stack, plus the Google Fonts import_url that loads them.",
+    "display": null,
+    "body": null,
+    "import_url": null
+  },
   "sop_password": "__REQUIRED__YOUR_SOP_PASSWORD__",
   "blueprint_pdf_path": null,
   "blueprint_pdf_title": "__REQUIRED__BLUEPRINT_DOC_TITLE__"

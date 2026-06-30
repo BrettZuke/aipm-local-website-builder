@@ -24,6 +24,7 @@ import { brandDNA } from '../config/brand-dna'
 const VALID_MOTIFS = new Set([
   'polygon', 'triangle', 'wave', 'arc', 'dot-grid', 'hexagon',
   'chevron', 'diamond', 'cross-hatch', 'mountain', 'topographic',
+  'shingle', 'blueprint-grid',
 ])
 
 const PATTERN_BASE = '/patterns'

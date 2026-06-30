@@ -48,8 +48,11 @@ export default {
         // first family name in each stack here just needs to match
         // brandDNA.typography.heading / .body. Default stack favours
         // variable-font display + humanist sans body per the research.
-        heading: ['Fraunces', 'Oswald', 'Impact', 'serif'],
-        body: ['Plus Jakarta Sans', 'Montserrat', 'Inter', 'sans-serif'],
+        // First slot is the per-client face via CSS var (inject-theme.mjs sets
+        // --font-heading / --font-body from brandDNA.typography); the rest are
+        // fallbacks during font swap. This is why a client's fonts apply.
+        heading: ['var(--font-heading)', 'Oswald', 'Impact', 'serif'],
+        body: ['var(--font-body)', 'Inter', 'sans-serif'],
       },
       // ── Modular type scale (research tactics 3, 4) ──
       // Body scale (1.25 ratio): 14 → 18. Display scale (1.333 ratio): 24 → 100.
