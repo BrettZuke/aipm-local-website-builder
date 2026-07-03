@@ -30,6 +30,7 @@ The websites the factory produces convert the **end customer**. That is what eve
 - `content-engine/`, pre-loaded from `aipm-content-engine`. Deployed to **your own** Vercel after Module 7. **Your lead-gen system, not a client deliverable.**
 - `deployments/`, live URLs and screenshots from your factory and engine builds.
 - `logs/`, audit trail, Apify invocation log.
+- `.claude/skills/editorial-luxury-site/`, a bonus design skill for premium one-page showpieces. Open this repo in Claude Code and ask for a "fancy Editorial Luxury site" for a high-ticket client; a finished example site and a one-command photo generator are bundled inside the skill.
 
 ## Niches the stack supports
 
