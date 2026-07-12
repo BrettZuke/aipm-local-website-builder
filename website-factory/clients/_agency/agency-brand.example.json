@@ -3,6 +3,8 @@
   "$schema-note": "Sample shape only. Copy to agency-brand.json and fill every sentinel placeholder shown below. Drop matching asset files into clients/_agency/assets/. Validated by build-proposal.py at every Stage 13 run.",
   "name": "__REQUIRED__AGENCY_NAME__",
   "domain": "__REQUIRED__AGENCY_DOMAIN__",
+  "$contract_email_note": "OPTIONAL. The address your signed contracts are emailed FROM, shown on the signing screen. Set it to the SAME address as the RESEND_FROM env var on your hosting project (see templates/proposal/api/README.md). Leave empty for a clean line with no address.",
+  "contract_email": "",
   "youtube_channel": null,
   "founder": {
     "name": "__REQUIRED__FOUNDER_FULL_NAME__",
@@ -234,7 +236,7 @@
     "accent": "__REQUIRED__PALETTE_ACCENT_HEX__"
   },
   "fonts": {
-    "_comment": "OPTIONAL. Leave null to keep the default editorial pairing (Fraunces display + Hanken Grotesk body). Set your own so your proposals are unmistakably yours: a display + body CSS font-family stack, plus the Google Fonts import_url that loads them.",
+    "_comment": "OPTIONAL. Leave null to keep the default (Plus Jakarta Sans everywhere: clean, readable, emphasis by weight). Set your own display + body CSS font-family stack plus a Google Fonts import_url to make your proposals unmistakably yours.",
     "display": null,
     "body": null,
     "import_url": null

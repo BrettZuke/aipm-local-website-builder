@@ -39,3 +39,7 @@ tools/.cache/
 clients/_agency/agency-brand.json
 clients/_agency/assets/*
 !clients/_agency/assets/.gitkeep
+
+# per-client build folders stay local; only _agency (your brand) is distributed
+/clients/*/
+!/clients/_agency/

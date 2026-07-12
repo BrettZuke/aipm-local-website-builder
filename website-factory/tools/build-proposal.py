@@ -36,6 +36,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = REPO_ROOT / "templates" / "proposal"
@@ -200,10 +201,75 @@ def compose_agency_vars(brand: dict[str, Any]) -> dict[str, str]:
             return reasons[idx].get(key, "") or ""
         return ""
 
+    def _esc(s: str) -> str:
+        return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+
+    # Logo: use a real logo file if the student dropped one in assets/, else
+    # render the agency name as a styled text wordmark (last word accented).
+    # A missing file must never ship a broken <img>.
+    agency_name = brand.get("name", "")
+    logo_file = next(
+        (AGENCY_ASSETS_DIR / f"agency-logo.{ext}" for ext in ("svg", "png", "webp", "jpg", "jpeg")
+         if (AGENCY_ASSETS_DIR / f"agency-logo.{ext}").exists()),
+        None,
+    )
+    if logo_file:
+        logo_html = f'<img src="agency-assets/{logo_file.name}" alt="{_esc(agency_name)}">'
+    else:
+        words = agency_name.split()
+        if len(words) > 1:
+            wordmark = _esc(" ".join(words[:-1])) + " <em>" + _esc(words[-1]) + "</em>"
+        else:
+            wordmark = _esc(agency_name)
+        logo_html = f'<span class="agency-name">{wordmark}</span>'
+
+    # Founder portrait: prefer the configured portrait file if it exists in
+    # assets/, else scan common names/extensions. Keeps the template working
+    # whether the student ships agency-intro.png, .jpg, or .webp.
+    portrait_src = "agency-assets/agency-intro.png"
+    configured = (founder.get("portrait_path") or "").replace("assets/", "")
+    candidates = [configured] if configured else []
+    candidates += [f"agency-intro.{ext}" for ext in ("jpg", "jpeg", "png", "webp")]
+    candidates += [f"founder-portrait.{ext}" for ext in ("jpg", "jpeg", "png", "webp")]
+    for cand in candidates:
+        if cand and (AGENCY_ASSETS_DIR / cand).exists():
+            portrait_src = f"agency-assets/{cand}"
+            break
+
+    # Favicon: use a real agency-favicon file if one is dropped in assets/,
+    # else fall back to an inline SVG data-uri with the agency initial, so
+    # the page never requests a favicon.ico that does not exist.
+    favicon_file = next(
+        (AGENCY_ASSETS_DIR / f"agency-favicon.{ext}" for ext in ("png", "svg", "ico", "jpg", "webp")
+         if (AGENCY_ASSETS_DIR / f"agency-favicon.{ext}").exists()),
+        None,
+    )
+    if favicon_file:
+        # Inline the favicon as a data-uri so the browser never makes a separate
+        # (cacheable, sometimes-hanging) request for it. Kills "stuck loading" tabs.
+        import base64
+        _fmime = {"png": "image/png", "svg": "image/svg+xml", "ico": "image/x-icon",
+                  "jpg": "image/jpeg", "jpeg": "image/jpeg", "webp": "image/webp"}
+        mime = _fmime.get(favicon_file.suffix.lstrip(".").lower(), "image/png")
+        b64 = base64.b64encode(favicon_file.read_bytes()).decode()
+        favicon_href = f"data:{mime};base64,{b64}"
+    else:
+        initial = (agency_name.strip()[:1] or "A").upper()
+        favicon_svg = (
+            "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"
+            "<rect width='64' height='64' rx='14' fill='#1C1712'/>"
+            f"<text x='32' y='44' text-anchor='middle' font-family='Georgia, serif' font-weight='700' font-size='36' fill='#FBF7F0'>{_esc(initial)}</text>"
+            "</svg>"
+        )
+        favicon_href = "data:image/svg+xml," + quote(favicon_svg, safe="")
+
     return {
         # Agency identity
         "AGENCY_NAME": brand.get("name", ""),
         "AGENCY_DOMAIN": brand.get("domain", ""),
+        "AGENCY_LOGO_HTML": logo_html,
+        "AGENCY_FAVICON_HREF": favicon_href,
+        "AGENCY_PORTRAIT_SRC": portrait_src,
         "AGENCY_FOUNDER_FIRST_NAME": founder.get("first_name", ""),
         "AGENCY_FOUNDER_FULL_NAME": founder.get("name", ""),
         "AGENCY_FOUNDER_TITLE": founder.get("title", ""),
@@ -272,6 +338,14 @@ def compose_agency_vars(brand: dict[str, Any]) -> dict[str, str]:
         # Footer tagline + AI mock messages + form privacy
         "AGENCY_FOOTER_TAGLINE": brand.get("footer_tagline", f"Built by {brand.get('name', 'the agency')}."),
         "AGENCY_FORM_PRIVACY": brand.get("form_privacy", "We will never share your information."),
+        # Contract send-note: your own sending address (agency-brand.json "contract_email"),
+        # which must match the RESEND_FROM env var on your hosting project. Empty = a
+        # clean generic line with no address, so nothing hardcoded ships.
+        "AGENCY_CONTRACT_EMAIL": (brand.get("contract_email") or ""),
+        "AGENCY_CONTRACT_NOTE": (
+            "Once you both sign, the executed agreement is emailed to both parties as a PDF"
+            + (f" from {brand.get('contract_email')}." if brand.get("contract_email") else ".")
+        ),
         "AGENCY_VALUE_PROP_HEADLINE": intro.get("headline", intro.get("promise", "")),
         "AGENCY_AI_MOCK_MESSAGE_INBOUND": brand.get("ai_mock_message_inbound", "Hi, I need help with my project. Can someone come by today?"),
         "AGENCY_AI_MOCK_MESSAGE_REPLY": brand.get("ai_mock_message_reply", "Sorry to hear that , emergency calls go straight to {{OWNER_FIRST_NAME}}'s mobile. I just paged them and locked you a 7&nbsp;AM slot. What's the best number to text the address to?"),
@@ -390,7 +464,7 @@ def compose_fonts_css_vars(brand: dict[str, Any]) -> str:
 def inject_review_carousel(html: str, brand: dict[str, Any]) -> str:
     """Replace AGENCY_REVIEWS_INJECTED marker block with cards from brand['reviews']."""
     reviews = brand.get("reviews", []) or []
-    fb_svg = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M22 12.07C22 6.51 17.52 2 12 2S2 6.51 2 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.03H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.77l-.44 2.9h-2.33V22c4.78-.75 8.44-4.91 8.44-9.93z"/></svg>'
+    fb_svg = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#1877F2" d="M22 12.07C22 6.51 17.52 2 12 2S2 6.51 2 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.03H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.77l-.44 2.9h-2.33V22c4.78-.75 8.44-4.91 8.44-9.93z"/></svg>'
     google_svg = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0012 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18a10.99 10.99 0 000 9.86l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/></svg>'
 
     cards = []
@@ -398,22 +472,21 @@ def inject_review_carousel(html: str, brand: dict[str, Any]) -> str:
         platform = (r.get("platform") or "facebook").lower()
         svg = google_svg if platform == "google" else fb_svg
         platform_label = platform.capitalize()
-        rating = r.get("rating", 5.0)
         avatar = r.get("avatar_path", "")
         # Asset paths are copied into proposal_dir/agency-assets/, so rewrite the prefix:
         avatar_rel = avatar.replace("assets/", "agency-assets/")
         cards.append(
-            f'<div class="agency-review-card">'
-            f'<div class="agency-review-card-platform" aria-label="{platform_label}">{svg}</div>'
-            f'<div class="agency-review-card-header">'
-            f'<img class="agency-review-card-img" src="{avatar_rel}" alt="{r.get("name", "")}" loading="lazy">'
-            f'<div class="agency-review-card-info">'
-            f'<div class="agency-review-card-name">{r.get("name", "")}</div>'
-            f'<div class="agency-review-card-stars"><span class="star-num">{rating}</span>&#9733;&#9733;&#9733;&#9733;&#9733;</div>'
-            f'<div class="agency-review-card-source">{platform_label} Review</div>'
-            f'</div></div>'
-            f'<div class="agency-review-card-text">{r.get("text", "")}</div>'
+            f'<figure class="agency-review-card">'
+            f'<blockquote class="agency-review-quote">{r.get("text", "")}</blockquote>'
+            f'<figcaption class="agency-review-foot">'
+            f'<img src="{avatar_rel}" alt="{r.get("name", "")}" loading="lazy">'
+            f'<div class="agency-review-foot-id">'
+            f'<div class="agency-review-foot-name">{r.get("name", "")}</div>'
+            f'<div class="agency-review-foot-src">{svg}<span>{platform_label} review</span></div>'
             f'</div>'
+            f'<div class="agency-review-stars" aria-label="5 star rating">&#9733;&#9733;&#9733;&#9733;&#9733;</div>'
+            f'</figcaption>'
+            f'</figure>'
         )
 
     injected = "\n          ".join(cards)
@@ -431,15 +504,22 @@ def inject_client_builds(html: str, brand: dict[str, Any]) -> str:
     tiles = []
     for b in builds:
         screenshot = b.get("screenshot_path", "").replace("assets/", "agency-assets/")
+        url = (b.get("url") or "").strip()
+        img = f'<img class="client-build-img" src="{screenshot}" alt="{b.get("name", "")} website" loading="lazy">'
+        if url:
+            frame = (
+                f'<a class="client-build-img-wrap" href="{url}" target="_blank" rel="noopener" '
+                f'aria-label="{b.get("name", "")}, open live site">{img}</a>'
+            )
+        else:
+            frame = f'<div class="client-build-img-wrap">{img}</div>'
         tiles.append(
             f'<article class="client-build-tile">'
-            f'<a class="client-build-img-wrap" href="{b.get("url", "#")}" target="_blank" rel="noopener" aria-label="{b.get("name", "")}, open live site">'
-            f'<img class="client-build-img" src="{screenshot}" alt="{b.get("name", "")} website" loading="lazy">'
-            f'<div class="client-build-review-overlay">'
-            f'<div class="client-build-review-name">{b.get("owner_name", "")}</div>'
-            f'<div class="client-build-review-text">{b.get("owner_quote", "")}</div>'
+            f'{frame}'
+            f'<div class="client-build-caption">'
+            f'<div class="client-build-cap-name">{b.get("owner_name", "")}</div>'
+            f'<div class="client-build-cap-quote">{b.get("owner_quote", "")}</div>'
             f'</div>'
-            f'</a>'
             f'</article>'
         )
 
@@ -576,6 +656,31 @@ def inject_traffic_audit_bullets(html: str, brand: dict[str, Any]) -> str:
         html,
         flags=re.DOTALL,
     )
+
+
+def strip_optional_blocks(html: str, brand: dict[str, Any]) -> str:
+    """Remove optional template regions whose agency config is absent.
+
+    Regions are fenced with <!-- OPTIONAL_<NAME>_START/END --> markers. Every
+    region sharing a name is stripped, so one feature can fence its trigger
+    button and its modal dialogs independently. Missing media must never ship
+    a dead button or a 404 iframe."""
+    def strip(name: str, doc: str) -> str:
+        return re.sub(
+            rf"[ \t]*<!-- OPTIONAL_{name}_START -->.*?<!-- OPTIONAL_{name}_END -->",
+            "",
+            doc,
+            flags=re.DOTALL,
+        )
+
+    out = html
+    if not brand.get("blueprint_pdf_path"):
+        out = strip("BLUEPRINT", out)
+    if not (brand.get("proof", {}) or {}).get("video_url"):
+        out = strip("PROOF_VIDEO", out)
+    if not brand.get("review_total_count"):
+        out = strip("REVIEW_AGGREGATE", out)
+    return out
 
 
 def copy_agency_assets(proposal_dir: Path) -> None:
@@ -771,6 +876,7 @@ def compose_vars(client_name: str, paths: dict[str, Path]) -> dict[str, str]:
         # template, but the validator scans comments too — give them graceful,
         # never-empty values so the build never fails on them and the mock works if
         # a student uncomments it).
+        "CLIENT_EMAIL": str(intake.get("email") or ""),
         "COMPANY_ADDRESS_DISPLAY": (f"{city_primary}, {(state_code or '').upper()}".strip(", ") or "Your service area"),
         "COMPANY_LICENSE_DISPLAY": "Licensed & insured",
     }
@@ -1364,6 +1470,16 @@ def main() -> int:
         # the student's actual media lives in AGENCY_ASSETS_DIR and must win.
         copy_agency_assets(proposal_dir)
 
+        # Ship the contract-email function with the proposal (Vercel picks up
+        # api/ + package.json; needs RESEND_API_KEY / RESEND_FROM / AGENCY_EMAIL
+        # env vars on the hosting project).
+        api_src = TEMPLATE_DIR / "api"
+        if api_src.exists():
+            shutil.copytree(api_src, proposal_dir / "api", dirs_exist_ok=True)
+        pkg_src = TEMPLATE_DIR / "package.json"
+        if pkg_src.exists():
+            shutil.copyfile(pkg_src, proposal_dir / "package.json")
+
         print("\n[3/6] copying per-client logo + GMB cover")
         logo_path = copy_client_logo(paths["logo_dir"], proposal_dir)
         if logo_path:
@@ -1411,6 +1527,9 @@ def main() -> int:
     out = inject_traffic_feature_card(out, agency_brand)
     out = inject_traffic_audit_bullets(out, agency_brand)
     print(f"  injected agency blocks: reviews + client-builds + case-studies + trust/conversion/traffic cards")
+
+    # Drop optional regions with no config (blueprint PDF, proof video).
+    out = strip_optional_blocks(out, agency_brand)
 
     # The injected blocks can re-introduce {{VAR}} literals that substitute() already
     # ran past (e.g. inject_traffic_feature_card emits a CTA with {{LIVE_PREVIEW_URL}}).

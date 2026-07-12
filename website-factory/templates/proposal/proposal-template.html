@@ -23,8 +23,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your Custom {{NICHE_NOUN_TITLE}} Website Is Ready · {{COMPANY_NAME}} | {{AGENCY_NAME}}</title>
+<link rel="icon" href="{{AGENCY_FAVICON_HREF}}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 <style>
 :root {
   /* Agency palette defaults - neutral fallback, OVERRIDDEN by build-proposal.py from agency-brand.json palette block */
@@ -34,9 +35,9 @@
   --agency-accent-soft: rgba(234, 179, 8, 0.32);
   --agency-primary-soft: rgba(15, 23, 42, 0.30);
   /* Typography - OVERRIDABLE by build-proposal.py from agency-brand.json fonts block.
-     Default pairing: Fraunces (high-contrast editorial serif) + Hanken Grotesk. */
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-body: 'Hanken Grotesk', -apple-system, 'Segoe UI', sans-serif;
+     Default: Plus Jakarta Sans everywhere (clean readable sans; emphasis by weight). */
+  --font-display: 'Plus Jakarta Sans', -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, 'Segoe UI', sans-serif;
   /* Editorial-luxury surface tokens (warm cream + espresso ink + hairlines + diffuse light) */
   --ink: #1F1A15;
   --cream: #FBF7F0;
@@ -146,7 +147,8 @@ a{color:inherit;text-decoration:none}
 .agency-personal-sig-title{font-family:var(--font-display);font-size:11px;font-weight:600;color:var(--agency-accent);letter-spacing:0.12em;text-transform:uppercase;margin-top:6px}
 .agency-personal-portrait-wrap{position:relative;width:100%;max-width:480px;margin-left:auto;margin-right:auto;display:block}
 .agency-personal-portrait{width:100%;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,#1F2124 0%,#0E1430 100%);position:relative;box-shadow:0 18px 48px rgba(0,0,0,0.5),0 0 0 1px rgba(238,182,68,0.18)}
-.agency-personal-portrait::before{content:'';position:absolute;inset:0;background-image:url('agency-assets/agency-badge-3.webp');background-size:60% auto;background-repeat:no-repeat;background-position:center;opacity:0.12;pointer-events:none}
+/* no watermark over the founder photo: a badge stamped across a real face reads as defacement */
+.agency-personal-portrait::before{content:none}
 .agency-personal-portrait img{width:100%;height:100%;object-fit:cover;display:block}
 .agency-personal-portrait-caption{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.55);white-space:nowrap}
 /* Money-back badge · sibling of .agency-personal-portrait inside .agency-personal-portrait-wrap so corner overflow is visible */
@@ -189,12 +191,15 @@ a{color:inherit;text-decoration:none}
 .section-agency-personal-light .agency-personal-reviews-block .agency-reviews-aggregate{color:rgba(3,3,3,0.78)}
 .section-agency-personal-light .agency-personal-reviews-block .agency-reviews-aggregate .num{color:#030303}
 .section-agency-personal-light .agency-personal-reviews-block .agency-reviews-aggregate .platform-icon{box-shadow:0 0 0 1px rgba(3,3,3,0.08)}
-/* Force the FB review cards to stay solid dark/black on cream bg () */
-.section-agency-personal-light .agency-personal-reviews-block .agency-review-card{background:#1F2124;border:1px solid rgba(255,255,255,0.06);box-shadow:0 12px 32px rgba(0,0,0,0.18);color:#fff}
-.section-agency-personal-light .agency-personal-reviews-block .agency-review-card-name{color:#fff}
-.section-agency-personal-light .agency-personal-reviews-block .agency-review-card-stars .star-num{color:#fff}
-.section-agency-personal-light .agency-personal-reviews-block .agency-review-card-source{color:rgba(255,255,255,0.55)}
-.section-agency-personal-light .agency-personal-reviews-block .agency-review-card-text{color:rgba(255,255,255,0.80)}
+/* Review cards on the light personal section: paper cards, ink text (readable on cream) */
+.section-agency-personal-light .agency-personal-reviews-block .agency-review-card{background:#FFFFFF;border:1px solid var(--hair, rgba(31,26,21,0.12));box-shadow:0 12px 32px rgba(31,26,21,0.08);color:var(--ink, #1F1A15)}
+.section-agency-personal-light .agency-personal-reviews-block .agency-review-card-name{color:var(--ink, #1F1A15)}
+.section-agency-personal-light .agency-personal-reviews-block .agency-review-card-stars .star-num{color:var(--ink, #1F1A15)}
+.section-agency-personal-light .agency-personal-reviews-block .agency-review-card-source{color:rgba(31,26,21,0.55)}
+.section-agency-personal-light .agency-personal-reviews-block .agency-review-card-text{color:rgba(31,26,21,0.82)}
+.section-agency-personal-light .agency-personal-reviews-block .agency-review-card-img{background:#EFE9E0}
+.section-agency-personal-light .agency-reviews-aggregate{color:rgba(31,26,21,0.78)}
+.section-agency-personal-light .agency-reviews-aggregate .num{color:var(--ink, #1F1A15)}
 
 /* === §B · CLIENT FRUSTRATIONS INTO SOLUTIONS (agency-style big cards) === */
 .frustration-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:54px;align-items:stretch}
@@ -262,7 +267,7 @@ a{color:inherit;text-decoration:none}
 @media (max-width:680px){.client-build-tile{flex:0 0 86%}}
 .client-build-img-wrap{display:block;border-radius:14px;overflow:hidden;background:#0e0e10;border:1px solid rgba(238,182,68,0.14);box-shadow:0 20px 48px rgba(0,0,0,0.55);transition:transform 0.28s ease,border-color 0.28s ease,box-shadow 0.28s ease;text-decoration:none}
 .client-build-img-wrap:hover{transform:translateY(-5px);border-color:rgba(238,182,68,0.36);box-shadow:0 28px 64px rgba(0,0,0,0.6)}
-.client-build-img-wrap img{display:block;width:100%;height:auto;aspect-ratio:570/427;object-fit:cover}
+.client-build-img-wrap img{display:block;width:100%;height:auto;aspect-ratio:570/427;object-fit:cover;object-position:top center;background:#fff}
 /* Parallax overlay card , sits offset to bottom-right of the mockup, half-overlapping the image */
 .client-build-review-card{position:absolute;right:-14px;bottom:-52px;width:min(82%,320px);background:#1F2124;color:#fff;border-radius:12px;padding:16px 18px 16px;box-shadow:0 22px 48px rgba(0,0,0,0.65),0 1px 0 rgba(255,255,255,0.04) inset;font-family:-apple-system,'SF Pro Text','Inter',sans-serif;border:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:10px}
 .client-build-review-card::after{content:'';position:absolute;left:-9px;bottom:22px;width:0;height:0;border-top:9px solid transparent;border-bottom:9px solid transparent;border-right:11px solid #1F2124;filter:drop-shadow(-2px 0 2px rgba(0,0,0,0.30))}
@@ -857,7 +862,10 @@ details.proposal-collapsible[open] > .ps-summary{
 .setup-fee-amount-row{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
 .setup-fee-amount{font-family:var(--font-display);font-size:78px;font-weight:900;color:#fff;line-height:1;letter-spacing:-0.025em;outline:none;padding:4px 8px;border-radius:8px;transition:background 0.15s}
 .setup-fee-amount[contenteditable="true"]:hover,.setup-fee-amount[contenteditable="true"]:focus{background:rgba(238,182,68,0.12)}
-.setup-fee-edit{font-family:var(--font-display);font-size:10px;font-weight:700;color:rgba(255,255,255,0.04);letter-spacing:0.12em;text-transform:uppercase;background:none;border:none;cursor:pointer;padding:8px 12px;border-radius:4px;transition:color 0.2s,background 0.2s,opacity 0.2s;display:inline-flex;align-items:center;gap:6px;opacity:0.06}
+.setup-fee-edit{font-family:var(--font-display);font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:0.10em;text-transform:uppercase;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.35);cursor:pointer;padding:8px 14px;border-radius:999px;transition:color 0.2s,background 0.2s,border-color 0.2s;display:inline-flex;align-items:center;gap:6px;vertical-align:middle}
+.setup-fee-edit:hover{background:rgba(255,255,255,0.16);border-color:rgba(255,255,255,0.6);color:#fff}
+.setup-fee-edit.is-active{background:var(--agency-accent);border-color:var(--agency-accent);color:#1C1712}
+.setup-fee-amount-row{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
 .setup-fee-edit.is-active{color:var(--agency-accent);background:rgba(238,182,68,0.16);opacity:1;font-weight:800;font-size:11px;border:1px solid rgba(238,182,68,0.45)}
 .setup-fee-edit.is-active:hover{background:rgba(238,182,68,0.24)}
 .setup-fee-sub{position:relative;z-index:1;font-size:14px;color:rgba(255,255,255,0.72);line-height:1.55;max-width:400px;margin:0 auto 26px}
@@ -1353,13 +1361,13 @@ details.proposal-collapsible[open] > .ps-summary{
 
 /* ============================================================
    EDITORIAL SKIN - appended override layer (2026-06-27)
-   Warm editorial-luxury system: Fraunces display + Hanken Grotesk,
+   Warm editorial-luxury system: Plus Jakarta Sans,
    cream/espresso surfaces, hairline rules, diffuse light, sentence
    case. Last in the cascade so it wins; the agency palette block is
    injected after the document head and still controls accent colour.
    ============================================================ */
 body{background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;opacity:0.04;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* film-grain overlay removed 2026-07-11: a fixed full-viewport mix-blend layer forces whole-page compositing on every scroll frame (scroll jank) */
 
 /* type - sentence-case editorial headings */
 .section-title{text-transform:none!important;font-weight:360;letter-spacing:-0.018em;font-size:clamp(34px,3.0vw,54px);line-height:1.06}
@@ -1399,15 +1407,379 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
 
 /* money-back row - hairline, not loud gold */
 .money-back-row{border:1px solid var(--hair)!important;border-radius:12px!important}
+
+/* text wordmark (used when the agency has no logo file) */
+.agency-mark .agency-name{font-size:15px;color:#fff}
+.footer-inner > .agency-name{display:block;margin:0 auto 18px;font-family:var(--font-display);font-weight:800;font-size:16px;letter-spacing:0.08em;text-transform:uppercase;color:#fff}
+.footer-inner > .agency-name em{font-style:normal;color:var(--agency-accent)}
+
+/* ============================================================
+   FORMAT PASS 2 (2026-07-11) - editorial folio numbers, static
+   grids instead of carousels, vertical timeline rail, ledger
+   pricing card, numbered cover rows, scroll reveals.
+   ============================================================ */
+
+/* magazine folio index above every section title */
+body{counter-reset:secidx}
+.section-inner > .section-title::before{counter-increment:secidx;content:counter(secidx,decimal-leading-zero);display:block;font-family:var(--font-body);font-weight:700;font-size:11px;letter-spacing:0.28em;color:var(--agency-primary);margin-bottom:12px}
+/* (dark-band folio colour now handled by the theme layer's outlined ghost numerals) */
+
+/* cover: numbered hairline rows instead of icon chips */
+.cover-bullets{display:flex;flex-direction:column;gap:0;list-style:none;padding:0}
+.cover-bullets li{display:flex;align-items:baseline;gap:18px;padding:13px 0;margin:0;border-top:1px solid rgba(255,255,255,0.10)}
+.cover-bullets li:last-child{border-bottom:1px solid rgba(255,255,255,0.10)}
+.cb-num{font-family:var(--font-body);font-weight:700;font-size:11px;letter-spacing:0.22em;color:var(--agency-accent);min-width:30px;flex-shrink:0}
+.cb-num-eq{font-family:var(--font-display);font-size:17px;letter-spacing:0}
+
+/* reviews: static 2-up editorial quote grid */
+.agency-reviews-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:1060px;margin:10px auto 0}
+@media (max-width:820px){.agency-reviews-grid{grid-template-columns:1fr}}
+.agency-reviews-grid .agency-review-card{position:relative;margin:0;background:#fff;border:1px solid var(--hair);border-radius:14px;padding:24px 26px 20px;display:flex;flex-direction:column;gap:15px;box-shadow:0 14px 34px rgba(31,26,21,0.05)}
+.agency-review-card::before{content:'\201C';font-family:var(--font-display);font-weight:600;font-size:46px;line-height:0.55;color:var(--agency-primary);display:block;height:18px}
+.agency-review-quote{margin:0;font-size:15px;line-height:1.66;color:rgba(31,26,21,0.85)}
+.agency-review-foot{display:flex;align-items:center;gap:12px;border-top:1px solid var(--hair);padding-top:14px;margin-top:auto}
+.agency-review-foot img{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#EFE9E0;flex-shrink:0}
+.agency-review-foot-id{display:flex;flex-direction:column;gap:3px;min-width:0}
+.agency-review-foot-name{font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--ink);line-height:1.1}
+.agency-review-foot-src{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(31,26,21,0.5)}
+.agency-review-foot-src svg{width:12px;height:12px;flex-shrink:0}
+.agency-review-stars{margin-left:auto;color:var(--agency-accent);font-size:12.5px;letter-spacing:2.5px;white-space:nowrap}
+@media (max-width:480px){.agency-review-stars{display:none}}
+
+/* client builds: static 3-up grid, caption row under each frame */
+.client-builds-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:42px}
+@media (max-width:900px){.client-builds-grid{grid-template-columns:1fr;max-width:480px;margin-left:auto;margin-right:auto}}
+.client-builds-grid .client-build-tile{padding:0;flex:none}
+.client-build-caption{display:flex;flex-direction:column;gap:3px;padding:12px 4px 0}
+.client-build-cap-name{font-family:var(--font-display);font-weight:700;font-size:14.5px;color:#fff;letter-spacing:0.01em}
+.client-build-cap-quote{font-size:13px;line-height:1.5;color:rgba(255,255,255,0.55);font-style:italic}
+
+/* timeline: vertical editorial rail instead of four cards */
+.section-inner .timeline{display:flex;flex-direction:column;gap:0;max-width:820px;margin:40px auto 0}
+.tl-step{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 26px;align-items:start;padding:24px 6px;background:none!important;border:0;border-top:1px solid var(--hair);border-radius:0!important;box-shadow:none!important;overflow:visible}
+.tl-step:last-of-type{border-bottom:1px solid var(--hair)}
+.tl-emoji{display:none}
+.tl-step-top{display:flex}
+.tl-meta{display:flex;flex-direction:column;gap:6px}
+.tl-body{display:flex;flex-direction:column;gap:8px}
+.tl-step.win{border-top:1px solid var(--agency-accent)}
+.tl-step.win .tl-headline,.tl-step.win .tl-detail{color:var(--ink)}
+.tl-step.win .tl-detail strong{color:var(--ink)}
+.tl-step.win .tl-when{color:var(--ink)}
+.tl-go-live{position:static;display:inline-flex;align-self:flex-start;background:var(--agency-accent);color:#1C1712;font-family:var(--font-display);font-weight:800;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin:0 0 4px;transform:none}
+@media (max-width:640px){.tl-step{grid-template-columns:1fr;gap:6px;padding:20px 2px}}
+
+/* pricing: cream ledger card instead of the navy gradient block */
+.pricing-hero{background:#fff;border:1px solid var(--hair);border-radius:14px;padding:24px 28px 8px;color:var(--ink);overflow:visible}
+.pricing-hero::before,.pricing-hero::after{display:none}
+.ph-headline{color:var(--agency-primary);margin-bottom:4px}
+.pricing-tiers{flex-direction:column;align-items:stretch;gap:0;margin-bottom:0}
+.pricing-tier{flex-direction:row;justify-content:space-between;align-items:baseline;padding:18px 2px;border-top:1px solid var(--hair)}
+.pricing-tier.primary{border-top:0}
+.pricing-tier-plus{display:none}
+.pt-label{color:rgba(31,26,21,0.55)}
+.pt-amount{color:var(--ink);font-weight:700}
+.pricing-tier.primary .pt-amount{font-size:38px}
+.pricing-tier.secondary .pt-amount{font-size:26px}
+.pt-amount em{font-style:normal;font-size:14px;color:rgba(31,26,21,0.5);margin-left:4px}
+
+/* slim laptop chrome: no mac traffic lights */
+.cover-laptop .laptop-dots{display:none}
+
+/* specificity fixes: ledger amounts in ink (base rules are 2-3 selectors deep) */
+.pricing-hero .pricing-tier .pt-amount{color:var(--ink);font-weight:700;text-shadow:none}
+.pricing-hero .pricing-tier.primary .pt-amount{font-size:38px;color:var(--ink);text-shadow:none}
+.pricing-hero .pricing-tier.secondary .pt-amount{font-size:26px;color:var(--ink)}
+.pricing-hero .pricing-tier .pt-amount em{font-size:13px;color:rgba(31,26,21,0.5);text-transform:none}
+.pricing-hero .pt-label{color:rgba(31,26,21,0.55)}
+
+/* timeline rail: kill the legacy card top-gradient, pin the LIVE chip, ink the win row */
+.tl-step::before{display:none}
+.tl-step.win{position:relative}
+.tl-step.win .tl-num{color:var(--agency-primary)}
+.tl-go-live{position:absolute;top:24px;right:8px;margin:0}
+
+/* growth-equation ledger: expandable lever rows */
+.formula-ledger{max-width:1020px;margin:30px auto 0;display:flex;flex-direction:column}
+.fl-row{border-top:1px solid var(--hair)}
+.fl-summary{display:grid;grid-template-columns:56px minmax(0,1fr) 40px;align-items:baseline;gap:18px;padding:26px 6px;cursor:pointer;list-style:none;user-select:none}
+.fl-summary::-webkit-details-marker{display:none}
+.fl-summary::marker{content:none}
+.fl-num{font-family:var(--font-body);font-weight:700;font-size:11px;letter-spacing:0.22em;color:var(--agency-primary)}
+.fl-head{display:flex;flex-direction:column;gap:5px;min-width:0}
+.fl-term{font-family:var(--font-display);font-weight:420;font-size:clamp(24px,2.2vw,34px);letter-spacing:-0.012em;color:var(--ink);line-height:1.05}
+.fl-tag{font-size:14px;color:rgba(31,26,21,0.55)}
+.fl-toggle{font-family:var(--font-display);font-weight:300;font-size:28px;line-height:1;color:var(--agency-primary);justify-self:end;transition:transform 0.45s cubic-bezier(0.22,0.61,0.36,1);transform-origin:center}
+.fl-row[open] .fl-toggle{transform:rotate(45deg)}
+.fl-row:hover .fl-term{color:var(--agency-primary)}
+.fl-body{padding:2px 6px 38px 74px}
+.fl-body .formula-how-content{display:block}
+.fl-result{display:grid;grid-template-columns:56px minmax(0,1fr);align-items:baseline;gap:18px;padding:26px 6px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.fl-num-eq{font-family:var(--font-display);font-size:20px;letter-spacing:0;color:var(--agency-primary)}
+.fl-term-result em{font-style:italic;color:var(--agency-primary)}
+@media (max-width:760px){
+  .fl-summary{grid-template-columns:34px minmax(0,1fr) 28px;gap:12px;padding:20px 2px}
+  .fl-body{padding:0 2px 30px 0}
+  .fl-result{grid-template-columns:34px minmax(0,1fr);gap:12px;padding:20px 2px}
+}
+
+/* scroll reveal: gentle one-shot fade-up (failsafe timer + print rule guarantee content is never left hidden) */
+.rv{opacity:0;transform:translateY(16px);transition:opacity 0.7s cubic-bezier(0.22,0.61,0.36,1),transform 0.7s cubic-bezier(0.22,0.61,0.36,1)}
+.rv.rv-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+@media print{.rv{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* ============================================================
+   THEME: CREAM + MOTION (2026-07-11)
+   Light off-white base (approved), dark cinematic cover band,
+   Plus Jakarta Sans everywhere, ghost folio numerals, cursor
+   spotlights, drifting cover orbs, ticker, staggered reveals.
+   ============================================================ */
+
+/* typography: functional sans, emphasis via weight + gold */
+.section-title{color:var(--ink)!important;font-weight:800!important;font-size:clamp(31px,3vw,48px);letter-spacing:-0.022em;line-height:1.08;text-align:left;position:relative;z-index:1;max-width:820px;margin-left:0;margin-right:auto}
+.section-title em,.section-inner > .section-title em{color:var(--agency-primary)!important;font-style:normal!important;font-weight:800!important}
+.section-sub{text-align:left!important;margin-left:0!important;max-width:640px}
+.section-inner > .section-title{text-align:left!important;margin-left:0!important;margin-right:auto!important;max-width:820px!important}
+.section-inner > .section-sub{text-align:left!important;margin-left:0!important;max-width:640px!important}
+.cover h1{font-weight:800;letter-spacing:-0.025em}
+.cover h1 .h1-bold{font-weight:800}
+.cover h1 .h1-for{font-style:normal;font-weight:500}
+.cover h1 em{font-style:normal}
+
+/* ghost folio numerals behind left-set titles */
+.section-inner{position:relative}
+.section-inner > .section-title::before{position:absolute;left:-8px;top:-74px;font-family:var(--font-display);font-weight:800;font-size:clamp(110px,11vw,170px);line-height:1;letter-spacing:-0.02em;color:transparent;-webkit-text-stroke:1.5px rgba(31,26,21,0.10);margin:0;z-index:-1;pointer-events:none}
+.section-trust .section-inner > .section-title::before,.section-proof .section-inner > .section-title::before,.section-dark .section-inner > .section-title::before,.section-roi .section-inner > .section-title::before{-webkit-text-stroke:1.5px rgba(245,240,230,0.14)}
+.section-trust .section-title,.section-proof .section-title,.section-dark .section-title,.section-roi .section-title{color:#fff!important}
+.section-trust .section-sub,.section-roi .section-sub{color:rgba(255,255,255,0.65)!important}
+/* the personal + formula sections carry .section-trust but are LIGHT: undo the dark-band scoping */
+.section-trust.section-agency-personal-light .section-title,.section-trust.section-formula-light .section-title{color:var(--ink)!important}
+.section-trust.section-agency-personal-light .section-sub,.section-trust.section-formula-light .section-sub{color:rgba(31,26,21,0.62)!important}
+.section-trust.section-agency-personal-light .section-inner > .section-title::before,.section-trust.section-formula-light .section-inner > .section-title::before{color:transparent;-webkit-text-stroke:1.5px rgba(31,26,21,0.10)}
+/* seller-only price control in the footer */
+.footer-admin{background:none;border:0;color:inherit;font-size:inherit;font-family:inherit;letter-spacing:inherit;opacity:0.22;cursor:pointer;padding:0 2px;transition:opacity 0.2s,color 0.2s}
+.footer-admin:hover{opacity:0.95;color:var(--agency-accent)}
+
+/* scroll progress bar */
+.scroll-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:12000;pointer-events:none}
+.scroll-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--agency-accent),var(--agency-primary));transform-origin:0 50%;transform:scaleX(0);will-change:transform}
+
+/* cover: idle float + cursor parallax on the mockup */
+.cover-laptop{animation:laptopFloat 7s ease-in-out infinite alternate}
+@keyframes laptopFloat{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+.laptop-screen{transform:perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform 0.3s ease-out;will-change:transform}
+
+/* magnetic CTAs + 3D tilt cards */
+.magnetic{transition:transform 0.4s cubic-bezier(0.22,0.61,0.36,1);will-change:transform}
+.tilt{transform:perspective(900px) rotateX(var(--tx,0deg)) rotateY(var(--ty,0deg));transition:transform 0.35s cubic-bezier(0.22,0.61,0.36,1);will-change:transform}
+
+/* contract send */
+.accept-send{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:26px}
+.accept-send-btn{display:inline-flex;align-items:center;gap:12px;padding:16px 30px;background:var(--ink);color:var(--cream);border:1px solid var(--ink);border-radius:999px;font-family:var(--font-body);font-weight:800;font-size:14px;letter-spacing:0.02em;cursor:pointer;transition:background 0.2s,border-color 0.2s,color 0.2s}
+.accept-send-btn:hover{background:var(--agency-primary);border-color:var(--agency-primary);color:#fff}
+.accept-send-btn:disabled{opacity:0.72;cursor:default}
+.accept-send-note{font-size:12.5px;color:rgba(31,26,21,0.55);text-align:center;max-width:520px;line-height:1.5}
+.accept-send-note.is-error{color:#A33B2E}
+
+/* mobile pass */
+@media (max-width:640px){
+  .cover h1{font-size:38px}
+  .ticker-item{font-size:10px;letter-spacing:0.16em}
+  .fl-body .formula-how-content{overflow-x:auto}
+  .accept-send-btn{width:100%;justify-content:center}
+  .section{padding-top:72px;padding-bottom:72px}
+  .section-inner > .section-title::before{font-size:92px;top:-56px}
+  .cover-laptop{animation:none}
+}
+@media (prefers-reduced-motion:reduce){.cover-laptop{animation:none}.scroll-progress{display:none}}
+
+/* ---------- ART DIRECTION PASS (2026-07-11) ---------- */
+/* fixed film grain (perf-safe: no blend-mode, single composited layer) */
+.grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:0.35;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");background-size:160px 160px}
+
+/* cover: layered aurora + bolder headline + eyebrow chip + credential chips */
+.cover-inner{position:relative;z-index:2}
+.cover-orb,.cover-aurora{z-index:0}
+.cover-aurora{position:absolute;inset:-25%;pointer-events:none;filter:blur(18px);opacity:0.9;background:
+  radial-gradient(42% 52% at 20% 32%,rgba(212,169,78,0.20),transparent 60%),
+  radial-gradient(38% 46% at 82% 18%,rgba(232,182,68,0.16),transparent 60%),
+  radial-gradient(46% 56% at 62% 84%,rgba(156,123,46,0.18),transparent 62%);
+  animation:auroraDrift 28s ease-in-out infinite alternate;will-change:transform}
+@keyframes auroraDrift{from{transform:translate3d(0,0,0) rotate(0deg) scale(1)}to{transform:translate3d(-34px,22px,0) rotate(7deg) scale(1.1)}}
+.cover h1{font-size:clamp(56px,5.4vw,94px)!important;font-weight:800!important;letter-spacing:-0.03em!important;line-height:1.0!important}
+.cover-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid rgba(212,169,78,0.42);border-radius:999px;background:rgba(212,169,78,0.09);color:var(--agency-accent);font-family:var(--font-body);font-weight:700;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:22px}
+.cover-eyebrow::before{display:none!important}
+.cover-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.cover-chips span{display:inline-flex;align-items:center;gap:9px;padding:9px 15px;border:1px solid rgba(255,255,255,0.16);border-radius:999px;background:rgba(255,255,255,0.05);font-family:var(--font-body);font-size:12.5px;font-weight:600;color:rgba(245,240,230,0.85)}
+.cover-chips span::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--agency-accent);flex-shrink:0}
+.laptop-screen{box-shadow:0 60px 150px rgba(212,169,78,0.16),0 30px 70px rgba(0,0,0,0.5)!important}
+
+/* signature gold rule under every section title (distinct from the source layout) */
+.section-inner > .section-title::after{content:'';display:block;width:54px;height:3px;border-radius:3px;margin-top:20px;background:linear-gradient(90deg,var(--agency-accent),var(--agency-primary))}
+
+/* ---------- SELLER TOOLBAR + EDIT MODE ---------- */
+.admin-bar{background:#0A0806;border-top:1px solid rgba(212,169,78,0.18);padding:16px 0}
+.admin-bar-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.admin-bar-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-body);font-weight:800;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--agency-accent)}
+.admin-bar-tag svg{width:15px;height:15px}
+.admin-bar-btn{font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--cream);background:rgba(255,255,255,0.06);border:1px solid rgba(212,169,78,0.4);border-radius:999px;padding:9px 18px;cursor:pointer;transition:background 0.18s,border-color 0.18s,transform 0.12s}
+.admin-bar-btn:hover{background:rgba(212,169,78,0.16);border-color:var(--agency-accent)}
+.admin-bar-btn:active{transform:scale(0.97)}
+.admin-bar-note{font-size:12px;color:rgba(245,240,230,0.4);margin-left:auto}
+@media (max-width:600px){.admin-bar-note{margin-left:0;width:100%}}
+body.edit-mode [data-edit]{outline:2px dashed rgba(212,169,78,0.75);outline-offset:4px;border-radius:4px;cursor:text;transition:outline-color 0.15s,background 0.15s}
+body.edit-mode [data-edit]:hover,body.edit-mode [data-edit]:focus{outline-color:var(--agency-primary);background:rgba(212,169,78,0.08)}
+.edit-hud{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(30px);z-index:11000;display:none;align-items:center;gap:16px;background:#0A0806;color:var(--cream);border:1px solid rgba(212,169,78,0.4);border-radius:999px;padding:12px 14px 12px 22px;box-shadow:0 20px 50px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.3s,transform 0.3s cubic-bezier(0.22,0.61,0.36,1)}
+.edit-hud span{font-family:var(--font-body);font-size:13px;color:rgba(245,240,230,0.85)}
+.edit-hud button{font-family:var(--font-body);font-weight:800;font-size:13px;color:#0A0806;background:var(--agency-accent);border:0;border-radius:999px;padding:9px 20px;cursor:pointer}
+body.edit-mode .edit-hud{display:flex;opacity:1;transform:translateX(-50%) translateY(0)}
+/* Growth Equation pillar interaction polish */
+.fl-summary{cursor:pointer;border-radius:10px;transition:background 0.25s ease,padding-left 0.25s ease}
+.fl-summary:hover{background:rgba(212,169,78,0.06)}
+.fl-row[open] > .fl-summary{background:rgba(212,169,78,0.05)}
+.fl-toggle{transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1),color 0.2s}
+.fl-summary:hover .fl-toggle{color:var(--agency-primary)}
+.fl-tag::after{content:' \2192';color:var(--agency-accent);opacity:0;transition:opacity 0.25s,transform 0.25s;display:inline-block}
+.fl-summary:hover .fl-tag::after{opacity:1}
+/* the sitemap nodes inside a pillar are clickable (open a page detail) */
+.page-box{cursor:pointer;transition:transform 0.2s cubic-bezier(0.22,0.61,0.36,1),box-shadow 0.2s,border-color 0.2s}
+.page-box:hover{transform:translateY(-2px);border-color:var(--agency-primary)!important;box-shadow:0 8px 20px rgba(156,123,46,0.22)}
+
+@media print{.admin-bar,.edit-hud,.grain{display:none!important}}
+
+/* delivery-guarantee vector seal (replaces the baked money-back webp) */
+.mbp-seal{width:78px;height:78px;flex-shrink:0;filter:drop-shadow(0 6px 14px rgba(156,123,46,0.34))}
+.mbp-seal svg{width:100%;height:100%;display:block}
+@media (max-width:520px){.mbp-seal{width:64px;height:64px}}
+
+/* seller admin dialog */
+.admin-dialog{padding:0;border:none;border-radius:18px;max-width:min(520px,94vw);width:520px;background:#fff;color:var(--ink);box-shadow:0 40px 90px rgba(0,0,0,0.35);position:fixed;inset:0;margin:auto}
+.admin-dialog::backdrop{background:rgba(12,10,8,0.55);backdrop-filter:blur(4px)}
+.admin-inner{padding:26px 28px 22px}
+.admin-head{display:flex;align-items:center;justify-content:space-between;font-family:var(--font-body);font-weight:800;font-size:17px;letter-spacing:-0.01em;margin-bottom:18px}
+.admin-x{background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:rgba(31,26,21,0.5);width:32px;height:32px;border-radius:50%;transition:background 0.15s,color 0.15s}
+.admin-x:hover{background:rgba(31,26,21,0.06);color:var(--ink)}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.admin-field{display:flex;flex-direction:column;gap:6px}
+.admin-field:first-child,.admin-field:nth-child(2),.admin-field-wide{grid-column:1 / -1}
+.admin-field textarea{font-family:var(--font-body);font-size:14px;color:var(--ink);padding:11px 13px;border:1px solid rgba(31,26,21,0.16);border-radius:10px;background:#FBF9F5;resize:vertical;min-height:70px;line-height:1.5}
+.admin-field textarea:focus{outline:none;border-color:var(--agency-primary);box-shadow:0 0 0 3px rgba(156,123,46,0.14)}
+.admin-field span{font-family:var(--font-body);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:rgba(31,26,21,0.55)}
+.admin-field input{font-family:var(--font-body);font-size:15px;font-weight:600;color:var(--ink);padding:11px 13px;border:1px solid rgba(31,26,21,0.16);border-radius:10px;background:#FBF9F5;transition:border-color 0.15s,box-shadow 0.15s}
+.admin-field input:focus{outline:none;border-color:var(--agency-primary);box-shadow:0 0 0 3px rgba(156,123,46,0.14)}
+.admin-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.admin-reset{background:none;border:1px solid rgba(31,26,21,0.18);color:rgba(31,26,21,0.7);font-family:var(--font-body);font-weight:700;font-size:13px;padding:11px 18px;border-radius:999px;cursor:pointer;transition:background 0.15s}
+.admin-reset:hover{background:rgba(31,26,21,0.05)}
+.admin-save{background:var(--ink);border:1px solid var(--ink);color:var(--cream);font-family:var(--font-body);font-weight:800;font-size:13px;padding:11px 22px;border-radius:999px;cursor:pointer;transition:background 0.15s}
+.admin-save:hover{background:var(--agency-primary);border-color:var(--agency-primary);color:#fff}
+.admin-note{margin-top:14px;font-size:12px;color:rgba(31,26,21,0.5);text-align:center}
+@media (max-width:520px){.admin-grid{grid-template-columns:1fr}.admin-field:first-child,.admin-field:nth-child(2){grid-column:auto}}
+
+/* ---- richer cards: layered shadow + machined top sheen + press ---- */
+.agency-review-card,.pricing-card,.money-back-prominent,.accept-block,.fl-body .formula-how-content{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.72),0 1px 2px rgba(31,26,21,0.04),0 22px 54px -18px rgba(31,26,21,0.18),0 6px 14px -8px rgba(31,26,21,0.10)!important;
+}
+.agency-review-card{transition:transform 0.4s cubic-bezier(0.22,0.61,0.36,1),box-shadow 0.4s cubic-bezier(0.22,0.61,0.36,1),border-color 0.3s}
+.agency-review-card:hover{border-color:rgba(212,169,78,0.55)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.8),0 34px 70px -20px rgba(156,123,46,0.28),0 10px 22px -10px rgba(31,26,21,0.12)!important}
+.client-build-img-wrap{box-shadow:0 1px 0 rgba(255,255,255,0.06) inset,0 26px 60px -20px rgba(0,0,0,0.55),0 8px 18px -10px rgba(0,0,0,0.4)!important;transition:transform 0.4s cubic-bezier(0.22,0.61,0.36,1),box-shadow 0.4s cubic-bezier(0.22,0.61,0.36,1),border-color 0.3s}
+.client-build-img-wrap:hover{border-color:rgba(212,169,78,0.5)!important;box-shadow:0 1px 0 rgba(255,255,255,0.08) inset,0 40px 80px -22px rgba(156,123,46,0.3),0 12px 26px -12px rgba(0,0,0,0.45)!important}
+
+/* reason rows: hover wash + gold rail so clicking/scanning feels alive */
+.section-three-reasons .reason{position:relative;transition:background 0.3s,padding-left 0.3s}
+.section-three-reasons .reason::after{content:'';position:absolute;left:0;top:12px;bottom:12px;width:2px;background:var(--agency-accent);transform:scaleY(0);transform-origin:top;transition:transform 0.4s cubic-bezier(0.22,0.61,0.36,1);display:block!important}
+.section-three-reasons .reason:hover{background:rgba(212,169,78,0.05);padding-left:16px}
+.section-three-reasons .reason:hover::after{transform:scaleY(1)}
+
+/* button press feedback everywhere */
+.setup-reveal-btn-outside,.cover-open-live,.accept-send-btn,.admin-save,.fl-summary{transition:transform 0.15s cubic-bezier(0.22,0.61,0.36,1),box-shadow 0.3s,background 0.2s,color 0.2s,border-color 0.2s}
+.setup-reveal-btn-outside:active,.cover-open-live:active,.accept-send-btn:active,.admin-save:active{transform:scale(0.97)}
+
+/* ---- animated accordion (JS-driven height) ---- */
+.fl-body{overflow:hidden;box-sizing:border-box;transition:height 0.5s cubic-bezier(0.22,0.61,0.36,1)}
+.fl-row[open] .fl-summary .fl-toggle{transform:rotate(45deg)}
+.fl-row[open] .fl-body .formula-how-content{animation:panelIn 0.55s cubic-bezier(0.22,0.61,0.36,1) both}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.fl-summary:hover .fl-term{color:var(--agency-primary)}
+@media (prefers-reduced-motion:reduce){.fl-body{transition:none}.fl-row[open] .fl-body .formula-how-content{animation:none}}
+
+/* founder promise block: gold tint, not the legacy red */
+.agency-personal-intro-body .agency-personal-promise,.section-trust.section-agency-personal-light .agency-personal-promise{background:linear-gradient(90deg,rgba(212,169,78,0.14) 0%,transparent 100%);border-left:4px solid var(--agency-accent);color:var(--ink)}
+.agency-personal-promise strong{color:var(--agency-primary)}
+
+/* three reasons: numbered rows on the light band */
+.section-three-reasons{background:var(--cream-2, #F2EDE3)}
+.section-three-reasons .section-title{color:var(--ink)}
+.section-three-reasons .reasons{display:flex;flex-direction:column;gap:0;max-width:900px;margin:36px 0 0}
+.section-three-reasons .reason{display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:24px;row-gap:6px;padding:26px 4px;background:none;border:0;border-top:1px solid var(--hair);border-radius:0;box-shadow:none!important}
+.section-three-reasons .reason:last-child{border-bottom:1px solid var(--hair)}
+.section-three-reasons .reason::before,.section-three-reasons .reason::after{display:none}
+.section-three-reasons .reason-num{grid-row:1 / span 2;font-family:var(--font-body);font-size:11px;font-weight:800;letter-spacing:0.22em;color:var(--agency-primary);margin:7px 0 0;opacity:1;text-shadow:none}
+.section-three-reasons .reason-title{color:var(--ink);margin-bottom:4px;font-weight:700}
+.section-three-reasons .reason-body{color:rgba(31,26,21,0.68);font-size:15px;max-width:660px}
+
+/* growth-equation row bodies: white document panels on cream */
+.fl-body .formula-how-content{background:#fff;border:1px solid var(--hair);border-radius:18px;padding:30px 30px 34px;box-shadow:0 18px 44px rgba(31,26,21,0.06)}
+@media (max-width:760px){.fl-body .formula-how-content{padding:18px 14px 22px}}
+.fl-term{font-weight:700}
+
+/* acceptance contract: white document panel */
+.accept-block{background:#fff;border:1px solid var(--hair);border-radius:18px;padding:38px 40px;box-shadow:0 18px 44px rgba(31,26,21,0.06)}
+@media (max-width:760px){.accept-block{padding:22px 18px}}
+
+/* money-back slip: quiet */
+.money-back-row{box-shadow:none!important}
+
+/* win step: no lingering card wash */
+.section-timeline-visible .timeline .tl-step.win{background:none!important;box-shadow:none!important}
+.tl-step.win::before,.tl-step.win::after{display:none!important}
+
+/* ---------------- MOTION PACK ---------------- */
+
+/* drifting gold orbs on the dark cover */
+.cover{position:relative;overflow:hidden}
+.cover-orb{position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(232,182,68,0.20) 0%,rgba(232,182,68,0.05) 45%,transparent 68%);will-change:transform}
+.cover-orb-a{width:560px;height:560px;top:-160px;right:-80px;animation:orbDriftA 18s ease-in-out infinite alternate}
+.cover-orb-b{width:420px;height:420px;bottom:-140px;left:-60px;animation:orbDriftB 23s ease-in-out infinite alternate}
+@keyframes orbDriftA{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-70px,50px,0) scale(1.12)}}
+@keyframes orbDriftB{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(60px,-40px,0) scale(1.08)}}
+
+/* ticker strip under the cover */
+.ticker{overflow:hidden;background:var(--cream);border-bottom:1px solid var(--hair);padding:14px 0;position:relative}
+.ticker-track{display:inline-flex;white-space:nowrap;animation:tickerMove 30s linear infinite;will-change:transform}
+.ticker-item{font-family:var(--font-body);font-weight:800;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(31,26,21,0.72);padding:0 18px;display:inline-flex;align-items:center;gap:36px}
+.ticker-item::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--agency-accent);display:inline-block}
+@keyframes tickerMove{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+
+/* cursor spotlight on cards */
+.spot{position:relative}
+.spot::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity 0.4s cubic-bezier(0.22,0.61,0.36,1);background:radial-gradient(320px circle at var(--mx,50%) var(--my,50%),rgba(212,169,78,0.18),transparent 65%)}
+.spot:hover::after{opacity:1}
+
+/* hover lift on cards + frames */
+.agency-review-card,.client-build-img-wrap,.pricing-card,.money-back-row,.accept-block,.fl-body .formula-how-content{transition:transform 0.5s cubic-bezier(0.22,0.61,0.36,1),box-shadow 0.5s cubic-bezier(0.22,0.61,0.36,1)}
+
+
+/* pulsing reveal CTA + live chip */
+@keyframes ctaPulse{0%,100%{box-shadow:0 14px 32px rgba(238,182,68,0.40)}50%{box-shadow:0 18px 52px rgba(238,182,68,0.68)}}
+.setup-reveal-btn-outside{animation:ctaPulse 2.8s ease-in-out infinite}
+@keyframes chipPulse{0%,100%{opacity:1}50%{opacity:0.68}}
+.tl-go-live{animation:chipPulse 2.2s ease-in-out infinite}
+
+@media (prefers-reduced-motion:reduce){
+  .cover-orb,.ticker-track,.setup-reveal-btn-outside,.tl-go-live{animation:none!important}
+  .spot::after{display:none}
+}
 </style>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 
 <!-- ============================ TOP BAR ============================ -->
 <div class="topbar">
   <div class="topbar-inner">
     <div class="agency-mark">
-      <img src="agency-logo.svg" alt="{{AGENCY_NAME}}">
+      {{AGENCY_LOGO_HTML}}
     </div>
     <div class="topbar-client-mark" aria-label="Prepared exclusively for {{COMPANY_NAME}}">
       <span class="topbar-prep-label">Prepared Exclusively For:</span>
@@ -1418,16 +1790,19 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
 
 <!-- ============================ COVER ============================ -->
 <section class="cover">
+  <div class="cover-orb cover-orb-a" aria-hidden="true"></div>
+  <div class="cover-orb cover-orb-b" aria-hidden="true"></div>
+  <div class="cover-aurora" aria-hidden="true"></div>
   <div class="cover-inner">
     <div class="cover-grid">
       <div class="cover-content">
-        <div class="cover-eyebrow">Prepared Exclusively For {{COMPANY_NAME}}</div>
-        <h1>{{NICHE_NOUN_TITLE}} <span class="h1-bold">Website That Wins Work</span><br><span class="h1-for">for</span> <em>{{COMPANY_BRAND}}</em>.</h1>
+        <div class="cover-eyebrow">Prepared Exclusively For <span data-cvar="company">{{COMPANY_NAME}}</span></div>
+        <h1>{{NICHE_NOUN_TITLE}} <span class="h1-bold">Website That Wins Work</span><br><span class="h1-for">for</span> <em data-cvar="brand">{{COMPANY_BRAND}}</em>.</h1>
         <ul class="cover-bullets">
-          <li><div class="cb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><path d="M3 17l6-6 4 4 7-7"/><path d="M16 8h5v5"/></svg></div><div class="cb-label">Generates More <span class="bold-key">Traffic</span></div></li>
-          <li><div class="cb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><path d="M12 3l7 3v5c0 4.4-3 7.8-7 9-4-1.2-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="cb-label">Wins <span class="bold-key">Trust</span> of {{NICHE_END_CUSTOMER_TITLE_PLURAL}}</div></li>
-          <li><div class="cb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v4M16 3v4"/></svg></div><div class="cb-label"><span class="bold-key">Converts</span> Them Into Leads</div></li>
-          <li class="cb-result"><div class="cb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><path d="M3 8a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M16.5 12.5h4"/></svg></div><div class="cb-label"><span class="cb-equals">=</span> You <em>{{AGENCY_FORMULA_OUTCOME}}</em></div></li>
+          <li><span class="cb-num">01</span><div class="cb-label">Generates More <span class="bold-key">Traffic</span></div></li>
+          <li><span class="cb-num">02</span><div class="cb-label">Wins <span class="bold-key">Trust</span> of {{NICHE_END_CUSTOMER_TITLE_PLURAL}}</div></li>
+          <li><span class="cb-num">03</span><div class="cb-label"><span class="bold-key">Converts</span> Them Into Leads</div></li>
+          <li class="cb-result"><span class="cb-num cb-num-eq">=</span><div class="cb-label">You <em data-cvar="outcome">{{AGENCY_FORMULA_OUTCOME}}</em></div></li>
         </ul>
       </div>
 
@@ -1447,6 +1822,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
     </div>
   </div>
 </section>
+
 
 <!-- ============================ TRUST · HELLO IM {{AGENCY_FOUNDER_FIRST_NAME}} (merged §A + §B per agency content brief) ============================ -->
 <section class="section section-trust section-agency-personal-light">
@@ -1473,14 +1849,15 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
 
       <div class="agency-personal-portrait-wrap">
         <div class="agency-personal-portrait" role="img" aria-label="{{AGENCY_PORTRAIT_CAPTION}}">
-          <img src="agency-assets/agency-intro.png" alt="{{AGENCY_PRIMARY_CONTACT}}, the agency Founder" loading="lazy">
+          <img src="{{AGENCY_PORTRAIT_SRC}}" alt="{{AGENCY_PRIMARY_CONTACT}}, the agency Founder" loading="lazy">
           <div class="agency-personal-portrait-caption">{{AGENCY_PRIMARY_CONTACT}} &middot; Founder of {{AGENCY_NAME}}</div>
         </div>
       </div>
     </div>
 
-    <!-- ============================ AGENCY-INTRO REVIEW CAROUSEL FB REVIEW CAROUSEL (moved 2026-05-10 - was a standalone .section-reviews on the dark band; 
+    <!-- ============================ AGENCY-INTRO REVIEW CAROUSEL (moved 2026-05-10 - was a standalone .section-reviews on the dark band) ============================ -->
     <div class="agency-personal-reviews-block">
+      <!-- OPTIONAL_REVIEW_AGGREGATE_START -->
       <div class="agency-reviews-aggregate">
         <span class="num">{{AGENCY_REVIEW_COUNT}}</span>
         <span>5-star reviews on</span>
@@ -1494,15 +1871,12 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
         </span>
         <span>Google + Facebook</span>
       </div>
-      <div class="agency-reviews-carousel-wrap">
-        <button class="agency-reviews-arrow agency-reviews-prev" aria-label="Previous review">&lsaquo;</button>
-        <div class="agency-reviews-carousel" id="agency-reviews-carousel">
-          <!-- AGENCY_REVIEWS_INJECTED_START -->
-          <!-- build-proposal.py injects review cards here from clients/_agency/agency-brand.json reviews[] -->
-          <!-- Each card pattern: <div class="agency-review-card"><svg/></svg><img/><name/><stars/><source/><text/></div> -->
-          <!-- AGENCY_REVIEWS_INJECTED_END -->
-        </div>
-        <button class="agency-reviews-arrow agency-reviews-next" aria-label="Next review">&rsaquo;</button>
+      <!-- OPTIONAL_REVIEW_AGGREGATE_END -->
+      <div class="agency-reviews-grid">
+        <!-- AGENCY_REVIEWS_INJECTED_START -->
+        <!-- build-proposal.py injects review figures here from clients/_agency/agency-brand.json reviews[] -->
+        <!-- Each card pattern: <figure class="agency-review-card"><blockquote/><figcaption: img + name + platform + stars/></figure> -->
+        <!-- AGENCY_REVIEWS_INJECTED_END -->
       </div>
     </div>
   </div>
@@ -1515,17 +1889,12 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
     <h2 class="section-title">Built to <em>set the standard.</em></h2>
     <p class="section-sub">Every brand below was built by {{AGENCY_NAME}}. <strong>Real sites. Real owners. Real reviews.</strong></p>
 
-    <!-- Auto-sliding CAROUSEL · 3-up · each slide = website mockup + dark review card overlapping bottom-right (parallax style). Injected from clients/_agency/agency-brand.json client_builds[]. -->
-    <div class="client-builds-carousel-wrap">
-      <button type="button" class="cb-carousel-arrow cb-carousel-prev" aria-label="Previous client build">&lsaquo;</button>
-      <div class="client-builds-carousel" id="client-builds-carousel">
-        <!-- AGENCY_CLIENT_BUILDS_INJECTED_START -->
-        <!-- build-proposal.py injects client-build tiles here from clients/_agency/agency-brand.json client_builds[] -->
-        <!-- Each tile pattern: <article class="client-build-tile"><a><website-screenshot><review-overlay/></a></article> -->
-        <!-- AGENCY_CLIENT_BUILDS_INJECTED_END -->
-      </div>
-      <button type="button" class="cb-carousel-arrow cb-carousel-next" aria-label="Next client build">&rsaquo;</button>
-      <div class="cb-carousel-dots" id="cb-carousel-dots" aria-hidden="true"></div>
+    <!-- Static 3-up grid · each tile = website screenshot with a caption row beneath. Injected from clients/_agency/agency-brand.json client_builds[]. -->
+    <div class="client-builds-grid">
+      <!-- AGENCY_CLIENT_BUILDS_INJECTED_START -->
+      <!-- build-proposal.py injects client-build tiles here from clients/_agency/agency-brand.json client_builds[] -->
+      <!-- Each tile pattern: <article class="client-build-tile"><img-frame/><caption: name + quote/></article> -->
+      <!-- AGENCY_CLIENT_BUILDS_INJECTED_END -->
     </div>
   </div>
 </section>
@@ -1535,11 +1904,13 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
   <div class="section-inner">
     <h2 class="proof-stat">{{AGENCY_PROOF_STAT}}<span class="small">{{AGENCY_PROOF_STAT_SUBTITLE}}</span></h2>
     <p class="proof-sub">{{AGENCY_PROOF_INTRO_PARAGRAPH}}</p>
+    <!-- OPTIONAL_PROOF_VIDEO_START -->
     <a class="proof-video-wrap" href="{{AGENCY_PROOF_VIDEO_URL}}" target="_blank" rel="noopener" aria-label="Watch {{AGENCY_PROOF_VIDEO_TITLE}} on {{AGENCY_NAME}}'s channel">
       <img src="{{AGENCY_PROOF_VIDEO_THUMBNAIL_URL}}" alt="" loading="lazy">
       <div class="proof-play-btn" aria-hidden="true"></div>
       <span class="proof-caption">{{AGENCY_PROOF_VIDEO_CAPTION}}</span>
     </a>
+    <!-- OPTIONAL_PROOF_VIDEO_END -->
 
     <!-- Case-studies grid · injected from clients/_agency/agency-brand.json case_studies[] -->
     <div class="case-studies-grid">
@@ -1558,8 +1929,8 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
     <div class="reasons">
       <div class="reason">
         <div class="reason-num">01</div>
-        <div class="reason-title">100% Money-Back Guarantee</div>
-        <p class="reason-body">If we don't deliver a website that meets your expectations within 30 days of going live, you get a full refund, no questions asked. The risk is on us.</p>
+        <div class="reason-title">{{AGENCY_REASON_ONE_TITLE}}</div>
+        <p class="reason-body">{{AGENCY_REASON_ONE_BODY}}</p>
       </div>
       <div class="reason">
         <div class="reason-num">02</div>
@@ -1576,73 +1947,41 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
 </section>
 
 <!-- ============================ THE WINNING FORMULA (visible · horizontal 3-col · How? accordions per pillar - moved + restructured 2026-05-09 per agency content brief) ============================ -->
-<section class="section section-trust section-formula section-formula-light section-formula-horizontal">
+<section class="section section-trust section-formula section-formula-light section-formula-ledger">
   <div class="section-inner">
     <h2 class="section-title">The <em>Growth Equation.</em></h2>
     <p class="section-sub">Three levers. Pull all three and the math works every time.</p>
 
+    <!-- OPTIONAL_BLUEPRINT_START -->
     <div class="formula-blueprint-link-wrap">
-      <button type="button" class="formula-blueprint-link" onclick="openSopPasswordGate()" aria-label="View the {{AGENCY_BLUEPRINT_NAME}} (the agency password required)">
+      <button type="button" class="formula-blueprint-link" onclick="openSopPasswordGate()" aria-label="View {{AGENCY_BLUEPRINT_NAME}} (password required)">
         <svg class="gdocs-icon" viewBox="0 0 47 65" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M29.375 0H4.4C1.98 0 0 1.98 0 4.4v56.2C0 63.02 1.98 65 4.4 65h38.2c2.42 0 4.4-1.98 4.4-4.4V17.625L29.375 0z" fill="#4285F4"/>
           <path d="M29.375 13.225V0L46.998 17.625H33.775c-2.42 0-4.4-1.98-4.4-4.4z" fill="#0066DA"/>
           <path d="M11 28.875h25v3.667H11zM11 36.208h25v3.667H11zM11 43.542h17.708v3.667H11z" fill="#fff"/>
         </svg>
-        <span>View the {{AGENCY_BLUEPRINT_NAME}}</span>
+        <span>View {{AGENCY_BLUEPRINT_NAME}}</span>
       </button>
     </div>
+    <!-- OPTIONAL_BLUEPRINT_END -->
 
-    <!-- Equation row: 01 Traffic + 02 Trust + 03 Conversion = agency winning-formula outcome (per agency content brief) -->
-    <div class="formula-horizontal">
+    <!-- Growth-equation ledger (format pass 2026-07-11): three expandable lever rows +
+         a result line. Native <details>, no JS. Each lever's deep-dive (feature cards,
+         sitemap pyramid, SEO audit) lives inside its own row body. -->
+    <div class="formula-ledger">
 
-      <div class="formula-pillar" data-pillar="traffic">
-        <div class="formula-pillar-head">
-          <span class="formula-pillar-num">01</span>
-          <span class="formula-pillar-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><path d="M3 17l6-6 4 4 7-7"/><path d="M16 8h5v5"/></svg></span>
-        </div>
-        <span class="formula-pillar-term">Traffic</span>
-        <span class="formula-pillar-tag">Get found first on Google + AI</span>
-        <button type="button" class="formula-how-btn" aria-expanded="false" aria-controls="formula-how-panel">How?<span class="formula-how-chevron" aria-hidden="true"></span></button>
-      </div>
+      <details class="fl-row" data-pillar="traffic">
+        <summary class="fl-summary">
+          <span class="fl-num">01</span>
+          <span class="fl-head">
+            <span class="fl-term">Traffic</span>
+            <span class="fl-tag">Get found first on Google + AI</span>
+          </span>
+          <span class="fl-toggle" aria-hidden="true">+</span>
+        </summary>
+        <div class="fl-body">
+          <div class="formula-how-content" data-content="traffic">
 
-      <div class="formula-op" aria-hidden="true">+</div>
-
-      <div class="formula-pillar" data-pillar="trust">
-        <div class="formula-pillar-head">
-          <span class="formula-pillar-num">02</span>
-          <span class="formula-pillar-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><path d="M12 3l7 3v5c0 4.4-3 7.8-7 9-4-1.2-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
-        </div>
-        <span class="formula-pillar-term">Trust</span>
-        <span class="formula-pillar-tag">Win them in 5 seconds</span>
-        <button type="button" class="formula-how-btn" aria-expanded="false" aria-controls="formula-how-panel">How?<span class="formula-how-chevron" aria-hidden="true"></span></button>
-      </div>
-
-      <div class="formula-op" aria-hidden="true">+</div>
-
-      <div class="formula-pillar" data-pillar="conversion">
-        <div class="formula-pillar-head">
-          <span class="formula-pillar-num">03</span>
-          <span class="formula-pillar-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v4M16 3v4"/></svg></span>
-        </div>
-        <span class="formula-pillar-term">Conversion</span>
-        <span class="formula-pillar-tag">Turn visits into booked estimates</span>
-        <button type="button" class="formula-how-btn" aria-expanded="false" aria-controls="formula-how-panel">How?<span class="formula-how-chevron" aria-hidden="true"></span></button>
-      </div>
-
-      <div class="formula-op formula-op-equals" aria-hidden="true">=</div>
-
-      <div class="formula-result-pill">
-        <div class="formula-result-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><circle cx="12" cy="9" r="5"/><path d="M9 13.2L7.5 21 12 18.3 16.5 21 15 13.2"/></svg></div>
-        <div class="formula-result-text">{{AGENCY_FORMULA_OUTCOME}}</div>
-        <div class="formula-result-boom"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><path d="M3 8a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M16.5 12.5h4"/></svg></span> Cha-Ching</div>
-      </div>
-
-    </div>
-
-    <!-- Unified accordion panel BELOW the equation row · only one pillar's content visible at a time (per agency content brief 2026-05-09) -->
-    <div class="formula-how-panel" id="formula-how-panel" hidden>
-
-      <div class="formula-how-content" data-content="traffic" hidden>
 
         <!-- AGENCY_TRAFFIC_FEATURE_CARD_INJECTED_START -->
         <!-- build-proposal.py injects the lead Traffic feature card here from
@@ -1769,29 +2108,59 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
           </aside>
 
         </div>
+          </div>
+        </div>
+      </details>
 
-      </div>
+      <details class="fl-row" data-pillar="trust">
+        <summary class="fl-summary">
+          <span class="fl-num">02</span>
+          <span class="fl-head">
+            <span class="fl-term">Trust</span>
+            <span class="fl-tag">Win them in 5 seconds</span>
+          </span>
+          <span class="fl-toggle" aria-hidden="true">+</span>
+        </summary>
+        <div class="fl-body">
+          <div class="formula-how-content" data-content="trust">
 
-      <div class="formula-how-content" data-content="trust" hidden>
 
 
         <!-- AGENCY_TRUST_CARDS_INJECTED_START -->
         <!-- build-proposal.py injects Trust feature cards here from clients/_agency/agency-brand.json
              winning_formula.trust.cards[]. Each card: { title, tag, meta, bullets[], stat_num, stat_text, cta_label, cta_anchor }. -->
         <!-- AGENCY_TRUST_CARDS_INJECTED_END -->
-      
+          </div>
+        </div>
+      </details>
 
-      </div>
+      <details class="fl-row" data-pillar="conversion">
+        <summary class="fl-summary">
+          <span class="fl-num">03</span>
+          <span class="fl-head">
+            <span class="fl-term">Conversion</span>
+            <span class="fl-tag">Turn visits into booked estimates</span>
+          </span>
+          <span class="fl-toggle" aria-hidden="true">+</span>
+        </summary>
+        <div class="fl-body">
+          <div class="formula-how-content" data-content="conversion">
 
-      <div class="formula-how-content" data-content="conversion" hidden>
 
 
         <!-- AGENCY_CONVERSION_CARDS_INJECTED_START -->
         <!-- build-proposal.py injects Conversion feature cards here from clients/_agency/agency-brand.json
              winning_formula.conversion.cards[]. Each card: { title, tag, meta, bullets[], stat_num, stat_text, cta_label, cta_anchor, day_night_mockup? }. -->
         <!-- AGENCY_CONVERSION_CARDS_INJECTED_END -->
-      
+          </div>
+        </div>
+      </details>
 
+      <div class="fl-result">
+        <span class="fl-num fl-num-eq" aria-hidden="true">=</span>
+        <span class="fl-head">
+          <span class="fl-term fl-term-result">You <em data-cvar="outcome">{{AGENCY_FORMULA_OUTCOME}}</em></span>
+        </span>
       </div>
 
     </div>
@@ -1821,7 +2190,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
           <input type="range" id="ticket" min="5000" max="40000" step="500" value="{{ROI_DEFAULT_TICKET_NUMERIC}}">
         </div>
         <div class="roi-input-group">
-          <label><span class="lbl-text">Lift after we ship<span class="lbl-hint">the agency avg: 30&ndash;50%</span></span><span class="val">+<span id="lift-pct-val">30</span><span class="post">%</span></span></label>
+          <label><span class="lbl-text">Lift after we ship<span class="lbl-hint">the agency avg: 30 to 50%</span></span><span class="val">+<span id="lift-pct-val">30</span><span class="post">%</span></span></label>
           <input type="range" id="lift" min="10" max="80" value="30">
         </div>
       </div>
@@ -1882,7 +2251,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
           </div>
         </div>
         <div class="tl-body">
-          <h3 class="tl-headline">{{OWNER_FIRST_NAME}} tells the story once.</h3>
+          <h3 class="tl-headline"><span data-cvar="ownerFirst">{{OWNER_FIRST_NAME}}</span> tells the story once.</h3>
           <p class="tl-detail">15-min brand call &middot; we capture voice, photos, service-area , <strong>you write nothing</strong>.</p>
         </div>
       </div>
@@ -1891,7 +2260,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
           <div class="tl-emoji" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><path d="M15 7a4 4 0 01-5.2 5.2L5 17l-2 2 2 2 2-2 4.8-4.8A4 4 0 0117 9l-2.5.5L13 8z"/></svg></div>
           <div class="tl-meta">
             <div class="tl-num">Step 03</div>
-            <div class="tl-when">Days 2&ndash;3</div>
+            <div class="tl-when">Days 2-3</div>
           </div>
         </div>
         <div class="tl-body">
@@ -1958,13 +2327,13 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
         <div class="ph-headline">Your Investment</div>
         <div class="pricing-tiers">
           <div class="pricing-tier primary">
-            <div class="pt-label">One-Time Setup</div>
-            <div class="pt-amount">{{AGENCY_SETUP_FEE_PRICE}}</div>
+            <div class="pt-label">Standard Setup</div>
+            <div class="pt-amount" id="figSetup">{{AGENCY_SETUP_FEE_PRICE}}</div>
           </div>
           <div class="pricing-tier-plus" aria-hidden="true">+</div>
           <div class="pricing-tier secondary">
             <div class="pt-label">Then</div>
-            <div class="pt-amount">{{AGENCY_MONTHLY_FEE_PRICE}}<em>/mo</em></div>
+            <div class="pt-amount" id="figMonthly">{{AGENCY_MONTHLY_FEE_PRICE}}<em>/mo</em></div>
           </div>
         </div>
       </div>
@@ -1981,10 +2350,10 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
 
     <!-- Money-back guarantee · prominent badge below the pricing card per agency content brief 2026-05-09 -->
     <div class="money-back-prominent">
-      <div class="money-back-prominent-badge" aria-hidden="true"></div>
+      <div class="mbp-seal" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="mbpG" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E7CE93"/><stop offset="1" stop-color="#B8912F"/></linearGradient></defs><circle cx="32" cy="32" r="30" fill="url(#mbpG)" stroke="#9C7B2E" stroke-width="1.4"/><circle cx="32" cy="32" r="23.5" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1" stroke-dasharray="2 3.4"/><path d="M21 33.5l7.2 7.2L44 24.5" stroke="#fff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="money-back-prominent-text">
-        <div class="money-back-prominent-headline"><em>100%</em> Money-Back Guarantee</div>
-        <div class="money-back-prominent-sub">Cancel any time after month 3 &middot; <strong>no long-term contracts</strong> &middot; the risk is on us.</div>
+        <div class="money-back-prominent-headline"><em>Delivery</em> Guarantee</div>
+        <div class="money-back-prominent-sub">We build until it's right. We keep refining at no extra cost until your site meets the scope we agreed. <strong>Cancel the monthly plan any time after month 3.</strong></div>
       </div>
     </div>
   </div>
@@ -1998,8 +2367,8 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
     <div class="accept-block">
       <div class="accept-side">
         <h3>{{AGENCY_NAME}}</h3>
-        <div class="accept-row"><div class="label">Name</div><div class="pre-filled">{{AGENCY_PRIMARY_CONTACT}}, CEO</div></div>
-        <div class="accept-row"><div class="label">Company</div><div class="pre-filled">{{AGENCY_NAME}} LLC</div></div>
+        <div class="accept-row"><div class="label">Name</div><div class="pre-filled">{{AGENCY_FOUNDER_FULL_NAME}}, {{AGENCY_FOUNDER_TITLE}}</div></div>
+        <div class="accept-row"><div class="label">Company</div><div class="pre-filled">{{AGENCY_NAME}}</div></div>
         <div class="accept-row accept-row-date">
           <div class="label">Date</div>
           <input type="date" class="accept-date-input" data-side="agency" aria-label="the agency signature date">
@@ -2012,8 +2381,8 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
       </div>
       <div class="accept-side">
         <h3>Client</h3>
-        <div class="accept-row"><div class="label">Name</div><div class="pre-filled">{{OWNER_FULL_NAME}}</div></div>
-        <div class="accept-row"><div class="label">Company</div><div class="pre-filled">{{COMPANY_NAME}}, LLC</div></div>
+        <div class="accept-row"><div class="label">Name</div><div class="pre-filled" data-cvar="ownerFull">{{OWNER_FULL_NAME}}</div></div>
+        <div class="accept-row"><div class="label">Company</div><div class="pre-filled"><span data-cvar="company">{{COMPANY_NAME}}</span>, LLC</div></div>
         <div class="accept-row accept-row-date">
           <div class="label">Date</div>
           <input type="date" class="accept-date-input" data-side="client" aria-label="Client signature date">
@@ -2025,6 +2394,10 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
         </div>
       </div>
     </div>
+    <div class="accept-send">
+      <button type="button" class="accept-send-btn" id="contractSendBtn" onclick="sendContract()"><span>Email the signed agreement</span><span aria-hidden="true">&rarr;</span></button>
+      <div class="accept-send-note" id="contractSendNote">{{AGENCY_CONTRACT_NOTE}}</div>
+    </div>
     <p style="text-align:center;font-size:12px;color:#7A7A7A;margin-top:24px">By signing you agree to our <a href="https://{{AGENCY_DOMAIN}}/terms" style="color:var(--agency-primary);text-decoration:underline">Terms of Agreement</a> available on {{AGENCY_DOMAIN}}.</p>
   </div>
 </section>
@@ -2032,10 +2405,10 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
 <!-- ============================ FOOTER ============================ -->
 <footer class="footer">
   <div class="footer-inner">
-    <img src="agency-logo.svg" alt="{{AGENCY_NAME}}">
+    {{AGENCY_LOGO_HTML}}
     <p class="footer-tag">{{AGENCY_FOOTER_TAGLINE}}</p>
     <div class="footer-meta">
-      © <span id="year">2026</span> {{AGENCY_NAME}} · <a href="https://{{AGENCY_DOMAIN}}/">{{AGENCY_DOMAIN}}</a> · Proposal prepared for {{COMPANY_NAME}}
+      © <span id="year">2026</span> {{AGENCY_NAME}} · <a href="https://{{AGENCY_DOMAIN}}/">{{AGENCY_DOMAIN}}</a> · Proposal prepared for <span data-cvar="company">{{COMPANY_NAME}}</span>
     </div>
   </div>
 </footer>
@@ -2256,85 +2629,6 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;pointer-events:none;o
   });
 })();
 
-// the agency written-reviews carousel arrows
-(function(){
-  var track=document.getElementById('agency-reviews-carousel');
-  if(!track) return;
-  var prev=document.querySelector('.agency-reviews-prev'), next=document.querySelector('.agency-reviews-next');
-  function step(){
-    var card=track.querySelector('.agency-review-card');
-    if(!card) return 360;
-    var styles=getComputedStyle(track);
-    return card.getBoundingClientRect().width + parseFloat(styles.gap||18);
-  }
-  prev && prev.addEventListener('click',function(){track.scrollBy({left:-step(),behavior:'smooth'})});
-  next && next.addEventListener('click',function(){track.scrollBy({left: step(),behavior:'smooth'})});
-})();
-
-// CLIENT-BUILDS carousel · auto-advance + arrows + dots (re-added 2026-05-11 , grid → carousel with parallax cards intact)
-(function(){
-  var track=document.getElementById('client-builds-carousel');
-  if(!track) return;
-  var prev=document.querySelector('.cb-carousel-prev'), next=document.querySelector('.cb-carousel-next');
-  var dotsHost=document.getElementById('cb-carousel-dots');
-  var slides=Array.prototype.slice.call(track.querySelectorAll('.client-build-tile'));
-  function step(){
-    var card=slides[0]; if(!card) return 360;
-    var styles=getComputedStyle(track);
-    return card.getBoundingClientRect().width + parseFloat(styles.gap||28);
-  }
-  function activeIndex(){
-    var s=step(); if(!s) return 0;
-    return Math.round(track.scrollLeft / s);
-  }
-  var dots=[];
-  if(dotsHost){
-    slides.forEach(function(_,i){
-      var b=document.createElement('button');
-      b.type='button';
-      b.setAttribute('aria-label','Go to slide '+(i+1));
-      b.addEventListener('click',function(){
-        track.scrollTo({left:i*step(),behavior:'smooth'});
-        resetTimer();
-      });
-      dotsHost.appendChild(b);
-      dots.push(b);
-    });
-  }
-  function syncDots(){
-    var i=activeIndex();
-    dots.forEach(function(d,di){d.classList.toggle('is-active',di===i);});
-  }
-  syncDots();
-  track.addEventListener('scroll',function(){
-    if(track._t) cancelAnimationFrame(track._t);
-    track._t=requestAnimationFrame(syncDots);
-  });
-  prev && prev.addEventListener('click',function(){track.scrollBy({left:-step(),behavior:'smooth'});resetTimer();});
-  next && next.addEventListener('click',function(){track.scrollBy({left: step(),behavior:'smooth'});resetTimer();});
-  var timer=null;
-  function tick(){
-    var s=step(); if(!s) return;
-    var max=track.scrollWidth-track.clientWidth-2;
-    if(track.scrollLeft+1>=max){
-      track.scrollTo({left:0,behavior:'smooth'});
-    } else {
-      track.scrollBy({left:s,behavior:'smooth'});
-    }
-  }
-  function start(){ if(!timer) timer=setInterval(tick,5500); }
-  function stop(){ if(timer){ clearInterval(timer); timer=null; } }
-  function resetTimer(){ stop(); start(); }
-  track.addEventListener('mouseenter',stop);
-  track.addEventListener('mouseleave',start);
-  track.addEventListener('touchstart',stop,{passive:true});
-  if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(entries){
-      entries.forEach(function(e){ e.isIntersecting ? start() : stop(); });
-    },{threshold:0.25});
-    io.observe(track);
-  } else { start(); }
-})();
 
 // the agency videos - 4 tall cards, click to play with native controls
 (function(){
@@ -2463,8 +2757,12 @@ function openPage(id){
 
 // ===== Setup-fee modal (editable + persisted in localStorage) =====
 function getSetupFee(){
-  try{ return localStorage.getItem('agency-one-time-offer-{{CLIENT_SLUG}}') || '5,000'; }
-  catch(e){ return '5,000'; }
+  // Default comes from agency-brand.json one_time_offer_price_display; the
+  // seller can retype the amount live in the modal (Edit) and it persists
+  // per client in localStorage.
+  var DEFAULT_OTO = '{{AGENCY_ONE_TIME_OFFER_PRICE}}'.replace(/[^0-9,]/g, '') || '1,000';
+  try{ return localStorage.getItem('agency-one-time-offer-{{CLIENT_SLUG}}') || DEFAULT_OTO; }
+  catch(e){ return DEFAULT_OTO; }
 }
 function saveSetupFee(rawText){
   var num = parseInt(String(rawText).replace(/[^0-9]/g,''), 10);
@@ -2479,7 +2777,7 @@ function openSetupFeeModal(){
   var amt = document.getElementById('setupFeeAmount');
   if(amt){ amt.textContent = '$' + getSetupFee(); amt.setAttribute('contenteditable','false'); }
   var btn = document.getElementById('setupFeeEditBtn');
-  if(btn){ btn.innerHTML = 'Edit'; btn.classList.remove('is-active'); }
+  if(btn){ btn.innerHTML = 'Edit price'; btn.classList.remove('is-active'); }
   document.getElementById('setupFeeModal').showModal();
 }
 function toggleSetupFeeEdit(){
@@ -2490,7 +2788,7 @@ function toggleSetupFeeEdit(){
     // Save mode → commit + lock + hide button again
     saveSetupFee(amt.textContent);
     amt.setAttribute('contenteditable','false');
-    btn.innerHTML = 'Edit';
+    btn.innerHTML = 'Edit price';
     btn.classList.remove('is-active');
   } else {
     // Edit mode → unlock + focus + reveal button as "Save"
@@ -2504,7 +2802,7 @@ function toggleSetupFeeEdit(){
       sel.removeAllRanges();
       sel.addRange(range);
     }catch(e){}
-    btn.innerHTML = 'Save';
+    btn.innerHTML = 'Save price';
     btn.classList.add('is-active');
   }
 }
@@ -2519,7 +2817,7 @@ document.addEventListener('DOMContentLoaded', function(){
       saveSetupFee(amt.textContent);
       amt.setAttribute('contenteditable','false');
       var btn = document.getElementById('setupFeeEditBtn');
-      if(btn){ btn.innerHTML = 'Edit'; btn.classList.remove('is-active'); }
+      if(btn){ btn.innerHTML = 'Edit price'; btn.classList.remove('is-active'); }
     }
   });
   // Enter key commits (don't insert newline)
@@ -2606,6 +2904,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 <!-- ============================ PAGE-LEVEL MODAL DIALOGS - kept at body root so they are never nested inside the §5-§13 accordions (showModal() on a dialog inside a closed <details> misbehaves) ============================ -->
 <!-- SOP modal dialog (native <dialog>, opened by the button above) -->
+<!-- OPTIONAL_BLUEPRINT_START -->
   <dialog id="sopDialog" class="sop-dialog" aria-labelledby="sopDialogTitle">
     <div class="sop-dialog-head">
       <div class="sop-dialog-title" id="sopDialogTitle">
@@ -2618,6 +2917,7 @@ document.addEventListener('DOMContentLoaded', function(){
       <iframe class="sop-dialog-pdf" src="agency-assets/agency-blueprint.pdf#toolbar=1&navpanes=0&scrollbar=1" title="{{AGENCY_BLUEPRINT_NAME}}"></iframe>
     </div>
   </dialog>
+<!-- OPTIONAL_BLUEPRINT_END -->
 
 <!-- Shared page-card modal · populated by openPage() in JS at the bottom of <body> -->
   <dialog id="pageDialog" class="page-card-dialog" aria-labelledby="pageDialogTitle">
@@ -2631,18 +2931,20 @@ document.addEventListener('DOMContentLoaded', function(){
   </dialog>
 
 <!-- Password gate before §4 SOP-PDF reveal · pw set via {{AGENCY_SOP_PASSWORD}} from clients/_agency/agency-brand.json -->
+<!-- OPTIONAL_BLUEPRINT_START -->
   <dialog id="sopPwModal" class="sop-pw-modal" aria-labelledby="sopPwTitle">
     <div class="sop-pw-inner">
       <button type="button" class="sop-pw-close" aria-label="Close" onclick="document.getElementById('sopPwModal').close()">×</button>
       <div class="sop-pw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1em;height:1em;vertical-align:middle"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></div>
-      <div class="sop-pw-eyebrow">Restricted &middot; the agency Internal</div>
+      <div class="sop-pw-eyebrow">Restricted &middot; Internal</div>
       <div class="sop-pw-title" id="sopPwTitle">Enter password to view the SOP</div>
-      <p class="sop-pw-sub">The {{AGENCY_BLUEPRINT_NAME}} is the agency proprietary. Ask {{AGENCY_FOUNDER_FIRST_NAME}} for the access code.</p>
+      <p class="sop-pw-sub">{{AGENCY_BLUEPRINT_NAME}} is proprietary to {{AGENCY_NAME}}. Ask {{AGENCY_FOUNDER_FIRST_NAME}} for the access code.</p>
       <input type="password" class="sop-pw-input" id="sopPwInput" placeholder="ENTER ACCESS CODE" autocomplete="off" spellcheck="false" maxlength="32">
       <div class="sop-pw-error" id="sopPwError">Wrong code. Try again</div>
       <button type="button" class="sop-pw-submit" onclick="submitSopPassword()">Unlock SOP &rarr;</button>
     </div>
   </dialog>
+<!-- OPTIONAL_BLUEPRINT_END -->
 
 <!-- Setup-fee reveal modal · shown from §12 Pricing. Amount is editable + persisted in localStorage. -->
   <dialog id="setupFeeModal" class="setup-fee-modal" aria-labelledby="setupFeeModalTitle">
@@ -2653,11 +2955,331 @@ document.addEventListener('DOMContentLoaded', function(){
       <div class="setup-fee-amount-row">
         <span class="setup-fee-amount" id="setupFeeAmount" contenteditable="false" spellcheck="false">{{AGENCY_ONE_TIME_OFFER_PRICE}}</span>
       </div>
-      <p class="setup-fee-sub">Sign on the call , lock in this rate instead of the standard <strong>{{AGENCY_SETUP_FEE_STANDARD}} setup</strong>. Everything included: build, AI, content, SEO, launch. <strong>100% money-back guaranteed.</strong></p>
-      <button type="button" class="setup-fee-edit" onclick="toggleSetupFeeEdit()" id="setupFeeEditBtn">Edit</button>
+      <p class="setup-fee-sub">Sign on the call, lock in this rate instead of the standard <strong id="figSetupStandard">{{AGENCY_SETUP_FEE_STANDARD}}</strong> setup. Everything included: build, AI, content, SEO, launch. <strong>Backed by our delivery guarantee.</strong></p>
       <div style="margin-top:18px"><button type="button" class="setup-fee-cta" onclick="document.getElementById('setupFeeModal').close()">Got it , let's roll</button></div>
     </div>
   </dialog>
 
+<script>
+// scroll reveal: one-shot fade-up on section content as it enters the viewport.
+// Failsafe: everything force-reveals 2.5s after load so content can never stay
+// hidden (fast scrolling, printing, odd embedders).
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  var els = document.querySelectorAll('.section-inner > *, .cover-content > *');
+  els.forEach(function(el){ el.classList.add('rv'); });
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('rv-in'); io.unobserve(e.target); }
+    });
+  }, {rootMargin: '0px 0px -8% 0px', threshold: 0.05});
+  els.forEach(function(el, i){ el.style.transitionDelay = ((i % 5) * 70) + 'ms'; io.observe(el); });
+  function revealAll(){ els.forEach(function(el){ el.classList.add('rv-in'); io.unobserve(el); }); }
+  window.addEventListener('beforeprint', revealAll);
+  setTimeout(revealAll, 2500);
+})();
+
+// cursor spotlight: gold highlight follows the pointer across cards
+(function(){
+  var targets = document.querySelectorAll('.agency-review-card, .client-build-img-wrap, .section-three-reasons .reason, .fl-summary, .fl-body .formula-how-content, .pricing-card, .money-back-row, .accept-block, .tl-step');
+  targets.forEach(function(t){
+    t.classList.add('spot');
+    t.addEventListener('pointermove', function(e){
+      var r = t.getBoundingClientRect();
+      t.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      t.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+})();
+
+// ---- editable figures (offer / setup / monthly), persisted per client per browser ----
+var CLIENT_SLUG = '{{CLIENT_SLUG}}';
+var FIG_DEFAULTS = { offer: '{{AGENCY_ONE_TIME_OFFER_PRICE}}', setup: '{{AGENCY_SETUP_FEE_PRICE}}', monthly: '{{AGENCY_MONTHLY_FEE_PRICE}}' };
+function figKey(n){ return 'agency-fig-' + n + '-' + CLIENT_SLUG; }
+function figGet(n){
+  var def = String(FIG_DEFAULTS[n] || '').replace(/[^0-9,]/g, '');
+  try{ return localStorage.getItem(figKey(n)) || def; }catch(e){ return def; }
+}
+function figSet(n, raw){
+  var num = parseInt(String(raw).replace(/[^0-9]/g, ''), 10);
+  if(isNaN(num) || num < 0) return false;
+  try{ localStorage.setItem(figKey(n), num.toLocaleString('en-US')); }catch(e){}
+  applyFigures();
+  return true;
+}
+function applyFigures(){
+  var setEl = function(id, html){ var el = document.getElementById(id); if(el) el.innerHTML = html; };
+  setEl('figSetup', '$' + figGet('setup'));
+  setEl('figMonthly', '$' + figGet('monthly') + '<em>/mo</em>');
+  setEl('figSetupStandard', '$' + figGet('setup'));
+  var amt = document.getElementById('setupFeeAmount'); if(amt) amt.textContent = '$' + figGet('offer');
+  var leads = document.getElementById('leads'); if(leads){ try{ leads.dispatchEvent(new Event('input')); }catch(e){} }
+}
+// back-compat aliases used by the reveal modal + contract payload
+function getSetupFee(){ return figGet('offer'); }
+function saveSetupFee(raw){ return figSet('offer', raw); }
+function termsKey(){ return 'agency-terms-' + CLIENT_SLUG; }
+function termsGet(){ try{ return localStorage.getItem(termsKey()) || ''; }catch(e){ return ''; } }
+function termsSet(v){ try{ localStorage.setItem(termsKey(), String(v||'').trim()); }catch(e){} }
+
+// ---- live client-name editing (the person being pitched) ----
+var CVAR_DEFAULTS = { company: '{{COMPANY_NAME}}', brand: '{{COMPANY_BRAND}}', ownerFull: '{{OWNER_FULL_NAME}}', ownerFirst: '{{OWNER_FIRST_NAME}}', outcome: '{{AGENCY_FORMULA_OUTCOME}}' };
+function cvarKey(n){ return 'agency-cvar-' + n + '-' + CLIENT_SLUG; }
+function cvarGet(n){ try{ return localStorage.getItem(cvarKey(n)) || CVAR_DEFAULTS[n] || ''; }catch(e){ return CVAR_DEFAULTS[n] || ''; } }
+function applyClient(){
+  ['company','brand','ownerFull','ownerFirst','outcome'].forEach(function(k){
+    var v = cvarGet(k);
+    document.querySelectorAll('[data-cvar="' + k + '"]').forEach(function(el){ el.textContent = v; });
+  });
+}
+function setClient(company, contact){
+  company = (company || '').trim(); contact = (contact || '').trim();
+  try{
+    if(company){ localStorage.setItem(cvarKey('company'), company); localStorage.setItem(cvarKey('brand'), company); }
+    if(contact){ localStorage.setItem(cvarKey('ownerFull'), contact); localStorage.setItem(cvarKey('ownerFirst'), contact.split(' ')[0]); }
+  }catch(e){}
+  applyClient();
+}
+
+// ---- seller admin dialog (footer "edit page") ----
+function adminOpen(){
+  document.getElementById('adm-company').value = cvarGet('company');
+  document.getElementById('adm-contact').value = cvarGet('ownerFull');
+  document.getElementById('adm-offer').value = figGet('offer');
+  document.getElementById('adm-setup').value = figGet('setup');
+  document.getElementById('adm-monthly').value = figGet('monthly');
+  document.getElementById('adm-outcome').value = cvarGet('outcome');
+  document.getElementById('adm-terms').value = termsGet();
+  var d = document.getElementById('adminDialog');
+  if(d.showModal) d.showModal(); else d.setAttribute('open','');
+}
+function adminSave(){
+  figSet('offer', document.getElementById('adm-offer').value);
+  figSet('setup', document.getElementById('adm-setup').value);
+  figSet('monthly', document.getElementById('adm-monthly').value);
+  setClient(document.getElementById('adm-company').value, document.getElementById('adm-contact').value);
+  var oc = document.getElementById('adm-outcome').value.trim();
+  try{ if(oc){ localStorage.setItem(cvarKey('outcome'), oc); } }catch(e){}
+  termsSet(document.getElementById('adm-terms').value);
+  applyClient();
+  document.getElementById('adminDialog').close();
+}
+function adminReset(){
+  ['offer','setup','monthly'].forEach(function(n){ try{ localStorage.removeItem(figKey(n)); }catch(e){} });
+  ['company','brand','ownerFull','ownerFirst','outcome'].forEach(function(n){ try{ localStorage.removeItem(cvarKey(n)); }catch(e){} });
+  try{ localStorage.removeItem(termsKey()); }catch(e){}
+  applyFigures(); applyClient(); adminOpen();
+}
+// apply saved settings on load
+(function(){
+  function init(){ applyFigures(); applyClient(); }
+  if(document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
+})();
+
+// Growth Equation accordion: one pillar open at a time, animates height,
+// and scrolls the opened pillar toward the top so its detail is in view.
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var rows = Array.prototype.slice.call(document.querySelectorAll('.fl-row'));
+  function bodyOf(row){ return row.querySelector('.fl-body'); }
+  function closeRow(row){
+    if(!row.hasAttribute('open')) return;
+    var body = bodyOf(row);
+    if(reduce){ row.removeAttribute('open'); if(body) body.style.height=''; return; }
+    body.style.height = body.scrollHeight + 'px';
+    requestAnimationFrame(function(){ body.style.height = '0px'; });
+    body.addEventListener('transitionend', function te(){ row.removeAttribute('open'); body.style.height=''; body.removeEventListener('transitionend', te); }, {once:true});
+  }
+  function scrollToRow(row){
+    var top = row.getBoundingClientRect().top + window.scrollY - 90;
+    window.scrollTo({ top: top, behavior: reduce ? 'auto' : 'smooth' });
+  }
+  function openRow(row){
+    var body = bodyOf(row);
+    row.setAttribute('open','');
+    if(reduce){ if(body) body.style.height='auto'; scrollToRow(row); return; }
+    var h = body.scrollHeight;
+    body.style.height = '0px';
+    requestAnimationFrame(function(){ body.style.height = h + 'px'; });
+    body.addEventListener('transitionend', function te2(){ body.style.height='auto'; body.removeEventListener('transitionend', te2); scrollToRow(row); }, {once:true});
+  }
+  rows.forEach(function(row){
+    var summary = row.querySelector('.fl-summary');
+    if(!summary) return;
+    summary.addEventListener('click', function(e){
+      e.preventDefault();
+      var wasOpen = row.hasAttribute('open');
+      rows.forEach(function(r){ if(r !== row) closeRow(r); });
+      if(wasOpen){ closeRow(row); } else { openRow(row); }
+    });
+  });
+})();
+
+// proof stat count-up (e.g. "2.1x" counts from 0 when it scrolls into view)
+
+// contract send: both signatures -> executed PDF emailed to both parties
+var CONTRACT_META = {
+  agencyName: '{{AGENCY_NAME}}',
+  agencySigner: '{{AGENCY_FOUNDER_FULL_NAME}}',
+  company: '{{COMPANY_NAME}}',
+  clientName: '{{OWNER_FULL_NAME}}',
+  clientEmail: '{{CLIENT_EMAIL}}',
+  monthly: '{{AGENCY_PRICING_MONTHLY_FEE}}'
+};
+function sendContract(){
+  var btn = document.getElementById('contractSendBtn'), note = document.getElementById('contractSendNote');
+  var cAg = document.querySelector('.accept-sig-canvas[data-side="agency"]');
+  var cCl = document.querySelector('.accept-sig-canvas[data-side="client"]');
+  if(!btn || !note || !cAg || !cCl) return;
+  if(!cAg.classList.contains('is-signed') || !cCl.classList.contains('is-signed')){
+    note.textContent = 'Both signatures are required before the agreement can be sent.';
+    note.classList.add('is-error');
+    return;
+  }
+  note.classList.remove('is-error');
+  var dateEl = document.querySelector('.accept-date-input[data-side="agency"]');
+  var payload = {
+    agencyName: CONTRACT_META.agencyName,
+    agencySigner: CONTRACT_META.agencySigner,
+    clientEmail: CONTRACT_META.clientEmail,
+    date: (dateEl && dateEl.value) || '',
+    setup: figGet('offer'),
+    monthly: figGet('monthly'),
+    paymentTerms: termsGet(),
+    company: cvarGet('company'),
+    clientName: cvarGet('ownerFull'),
+    sigAgency: cAg.toDataURL('image/png'),
+    sigClient: cCl.toDataURL('image/png')
+  };
+  var label = btn.querySelector('span');
+  btn.disabled = true; label.textContent = 'Sending the executed copy...';
+  fetch('api/send-contract', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)})
+    .then(function(r){ return r.json().then(function(j){ return {ok: r.ok, j: j}; }); })
+    .then(function(x){
+      if(x.ok){
+        label.textContent = 'Agreement emailed to both parties';
+        note.textContent = ('{{AGENCY_CONTRACT_EMAIL}}' ? 'Sent from {{AGENCY_CONTRACT_EMAIL}}. ' : '') + 'The executed PDF is on its way to both parties.';
+      } else {
+        btn.disabled = false; label.textContent = 'Email the signed agreement';
+        note.textContent = (x.j && x.j.error) || 'Send failed. Try again.';
+        note.classList.add('is-error');
+      }
+    })
+    .catch(function(){
+      btn.disabled = false; label.textContent = 'Email the signed agreement';
+      note.textContent = 'Network error. Try again.';
+      note.classList.add('is-error');
+    });
+}
+
+// interaction layer: progress bar, cover parallax, magnetic CTAs, 3D tilt
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var bar = document.createElement('div');
+  bar.className = 'scroll-progress'; bar.setAttribute('aria-hidden','true'); bar.innerHTML = '<i></i>';
+  document.body.appendChild(bar);
+  var fill = bar.firstChild, ticking = false;
+  function paint(){
+    var h = document.documentElement, max = h.scrollHeight - h.clientHeight;
+    fill.style.transform = 'scaleX(' + (max > 0 ? h.scrollTop / max : 0) + ')';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking = true; requestAnimationFrame(paint); } }, {passive:true});
+  paint();
+  if(reduce) return;
+  var cover = document.querySelector('.cover'), screenEl = document.querySelector('.laptop-screen');
+  if(cover && screenEl){
+    cover.addEventListener('pointermove', function(e){
+      var r = cover.getBoundingClientRect();
+      var nx = (e.clientX - r.left) / r.width * 2 - 1, ny = (e.clientY - r.top) / r.height * 2 - 1;
+      screenEl.style.setProperty('--ry', (nx * 4) + 'deg');
+      screenEl.style.setProperty('--rx', (-ny * 3) + 'deg');
+    });
+    cover.addEventListener('pointerleave', function(){
+      screenEl.style.setProperty('--ry', '0deg'); screenEl.style.setProperty('--rx', '0deg');
+    });
+  }
+  ['.cover-open-live', '.setup-reveal-btn-outside', '.accept-send-btn'].forEach(function(sel){
+    var el = document.querySelector(sel);
+    if(!el) return;
+    el.classList.add('magnetic');
+    el.addEventListener('pointermove', function(e){
+      var r = el.getBoundingClientRect();
+      var dx = (e.clientX - r.left - r.width / 2) / r.width, dy = (e.clientY - r.top - r.height / 2) / r.height;
+      el.style.transform = 'translate(' + (dx * 10) + 'px,' + (dy * 8) + 'px)';
+    });
+    el.addEventListener('pointerleave', function(){ el.style.transform = ''; });
+  });
+  document.querySelectorAll('.client-build-img-wrap, .agency-review-card').forEach(function(el){
+    el.classList.add('tilt');
+    el.addEventListener('pointermove', function(e){
+      var r = el.getBoundingClientRect();
+      var nx = (e.clientX - r.left) / r.width * 2 - 1, ny = (e.clientY - r.top) / r.height * 2 - 1;
+      el.style.setProperty('--ty', (nx * 5) + 'deg');
+      el.style.setProperty('--tx', (-ny * 5) + 'deg');
+    });
+    el.addEventListener('pointerleave', function(){
+      el.style.setProperty('--ty', '0deg'); el.style.setProperty('--tx', '0deg');
+    });
+  });
+})();
+
+// proof stat count-up (e.g. "2.1x" counts from 0 when it scrolls into view)
+(function(){
+  var el = document.querySelector('.proof-stat');
+  if(!el || !('IntersectionObserver' in window)) return;
+  var raw = el.childNodes[0] && el.childNodes[0].nodeType === 3 ? el.childNodes[0].nodeValue.trim() : '';
+  var m = raw.match(/^([0-9]+(?:\.[0-9]+)?)(.*)$/);
+  if(!m) return;
+  var target = parseFloat(m[1]), suffix = m[2] || '', decimals = (m[1].split('.')[1] || '').length;
+  var done = false;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting || done) return;
+      done = true; io.disconnect();
+      var t0 = null, DUR = 1100;
+      function tick(ts){
+        if(t0 === null) t0 = ts;
+        var p = Math.min(1, (ts - t0) / DUR);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.childNodes[0].nodeValue = (target * eased).toFixed(decimals) + suffix;
+        if(p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }, {threshold: 0.4});
+  io.observe(el);
+})();
+</script>
+
+<!-- Visible seller toolbar (bottom of page). Leads never touch it; it never prints. -->
+<div class="admin-bar" aria-label="Seller tools">
+  <div class="admin-bar-inner">
+    <span class="admin-bar-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg> Seller tools</span>
+    <button type="button" class="admin-bar-btn" onclick="adminOpen()">Edit proposal</button>
+    <span class="admin-bar-note">Only you see this bar. Your leads never do.</span>
+  </div>
+</div>
+
+<!-- Seller-only settings dialog. Values persist to this browser; leads never open it. -->
+<dialog id="adminDialog" class="admin-dialog" aria-label="Proposal settings">
+  <div class="admin-inner">
+    <div class="admin-head"><span>Proposal settings</span><button type="button" class="admin-x" aria-label="Close" onclick="document.getElementById('adminDialog').close()">&times;</button></div>
+    <div class="admin-grid">
+      <label class="admin-field"><span>Client company</span><input id="adm-company" type="text" autocomplete="off"></label>
+      <label class="admin-field"><span>Client contact</span><input id="adm-contact" type="text" autocomplete="off"></label>
+      <label class="admin-field"><span>One-time offer ($)</span><input id="adm-offer" inputmode="numeric" autocomplete="off"></label>
+      <label class="admin-field"><span>Standard setup ($)</span><input id="adm-setup" inputmode="numeric" autocomplete="off"></label>
+      <label class="admin-field"><span>Monthly retainer ($)</span><input id="adm-monthly" inputmode="numeric" autocomplete="off"></label>
+      <label class="admin-field"><span>Headline outcome</span><input id="adm-outcome" type="text" autocomplete="off"></label>
+      <label class="admin-field admin-field-wide"><span>Contract payment terms (optional)</span><textarea id="adm-terms" rows="3" autocomplete="off" placeholder="Leave blank for the standard setup + retainer terms. Example: $3,000 due today, $3,000 on launch. No monthly retainer."></textarea></label>
+    </div>
+    <div class="admin-actions">
+      <button type="button" class="admin-reset" onclick="adminReset()">Reset</button>
+      <button type="button" class="admin-save" onclick="adminSave()">Save changes</button>
+    </div>
+    <div class="admin-note">Saved to this browser only. Your leads never see this panel.</div>
+  </div>
+</dialog>
 </body>
 </html>

@@ -17,7 +17,7 @@ clients/_agency/
 ├── agency-brand.example.json       sample shape, never edit, never used at build
 ├── agency-brand.json               YOUR populated brand profile (gitignored)
 └── assets/                         YOUR brand assets (gitignored)
-    ├── founder-portrait.{jpg,png}  square, ≥800x800
+    ├── founder-portrait.{jpg,png}  YOUR photo, square, ≥800x800 (agency-intro.{jpg,png} also works)
     ├── agency-logo.svg             your wordmark/disc, transparent bg
     ├── guarantee-seal.png          your money-back / guarantee badge
     ├── proof-video.mp4             your flagship proof video (optional, can be a URL instead)
@@ -34,6 +34,29 @@ clients/_agency/
         ├── 2.webp
         └── ...
 ```
+
+## The essentials to make it yours
+
+At minimum, before you send a proposal to anyone, set these so it is
+unmistakably YOUR agency and not the factory default:
+
+- **A photo of yourself** at `assets/founder-portrait.jpg` (or `agency-intro.jpg`),
+  square, at least 800x800. This is the face on the "Hello, I'm ..." section.
+- **Your name and company name** (`founder.name`, `founder.title`, `name`).
+- **Your reviews and client-build screenshots** (`reviews[]`, `client_builds[]`)
+  from real work you have done, with real screenshots in `assets/`.
+- **Your prices** (`pricing`) and **your guarantee wording** (`guarantee`,
+  `three_reasons`).
+- **Your colours and fonts** (`palette`, `fonts`) so it does not look like
+  anyone else's.
+- **Your contract email**: set `contract_email` to the address your signed
+  agreements send from, and connect it on your hosting project. See
+  `templates/proposal/api/README.md` for the 3 environment variables. Until you
+  do, the signing screen shows a clean generic line and the send button says
+  email is not configured.
+
+The guarantee badge is now a built-in gold vector seal, so `guarantee-seal.png`
+is optional; drop one in only if you want your own badge image.
 
 ## How to populate
 
