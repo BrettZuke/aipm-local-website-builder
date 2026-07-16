@@ -1005,13 +1005,31 @@ details.proposal-collapsible[open] > .ps-summary{
 .accept-row-date .accept-date-input:focus{border-bottom-color:var(--agency-primary);border-bottom-width:2px;padding-bottom:1px}
 .accept-row-date .accept-date-input::-webkit-calendar-picker-indicator{cursor:pointer;filter:invert(0.4) sepia(1) saturate(6) hue-rotate(330deg);margin-left:6px}
 /* Signature canvas · click-and-drag to sign */
-.accept-row-sig .label{display:flex;align-items:center;justify-content:space-between;gap:14px}
-.accept-row-sig .accept-sig-clear{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--agency-primary);background:transparent;border:1px solid rgba(174,49,45,0.40);border-radius:4px;padding:4px 10px;cursor:pointer;transition:background 0.15s,color 0.15s,border-color 0.15s}
-.accept-row-sig .accept-sig-clear:hover{background:var(--agency-primary);color:#fff;border-color:var(--agency-primary)}
-.accept-row-sig .accept-sig-canvas{display:block;width:100%;height:120px;border-bottom:1px solid #030303;background:#FCFBF7;cursor:crosshair;touch-action:none;border-radius:4px 4px 0 0}
-.accept-row-sig .accept-sig-canvas.is-signed{background:#fff}
-.accept-row-sig .accept-sig-hint{font-family:var(--font-body);font-size:10.5px;color:#9A9A9A;margin-top:6px;font-style:italic;letter-spacing:0.02em}
-.accept-row-sig .accept-sig-canvas.is-signed + .accept-sig-hint{display:none}
+/* Send-to-sign: client detail inputs, agency on-file line, agreement review block */
+.accept-input{font-family:var(--font-display);font-size:18px;font-weight:800;color:#030303;width:100%;height:36px;border:0;border-bottom:1px solid #030303;background:transparent;outline:none;padding:2px 4px;-webkit-appearance:none;appearance:none;border-radius:0}
+.accept-input::placeholder{color:#B9B4AB;font-weight:600}
+.accept-input:focus{border-bottom-color:var(--agency-primary);border-bottom-width:2px;padding-bottom:1px}
+.accept-onfile{font-family:var(--font-body);font-size:13.5px;color:#6a655c;font-style:italic;padding-bottom:6px;border-bottom:1px dashed #cfc9bf}
+.agreement-review{border:1px solid var(--hair,#e7e2d8);border-radius:12px;background:#fff;margin:24px 0 8px;overflow:hidden}
+.agreement-review-head{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;background:#fbfaf6;border-bottom:1px solid var(--hair,#e7e2d8)}
+.agreement-review-head h3{margin:0;font-family:var(--font-display);font-size:12.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--agency-primary)}
+.agreement-toggle{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#6a655c;background:transparent;border:1px solid rgba(0,0,0,0.14);border-radius:4px;padding:5px 12px;cursor:pointer}
+.agreement-head-actions{display:flex;align-items:center;gap:8px}
+.agreement-edit-toggle{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--agency-accent,#b8912f);background:transparent;border:1px solid rgba(0,0,0,0.14);border-radius:4px;padding:5px 12px;cursor:pointer}
+.agreement-edit-toggle.active{background:var(--agency-accent,#b8912f);color:#030303;border-color:var(--agency-accent,#b8912f)}
+.agreement-doc{max-height:340px;overflow-y:auto;padding:22px 24px}
+.agreement-doc.collapsed{display:none}
+.agreement-doc.editing p[data-editable]{outline:1px dashed rgba(184,145,47,0.75);outline-offset:3px;border-radius:3px;background:rgba(238,182,68,0.07);padding:4px 6px;margin-left:-6px;margin-right:-6px;cursor:text}
+.adoc-editnote{font-size:11.5px;color:#6a655c;font-style:italic;margin:0 0 14px;padding:9px 12px;background:rgba(238,182,68,0.10);border:1px solid rgba(238,182,68,0.35);border-radius:6px}
+.adoc-editnote.hidden{display:none}
+.agreement-doc .adoc-title{text-align:center;font-family:var(--font-display);font-weight:800;letter-spacing:0.04em;font-size:14px;margin-bottom:2px}
+.agreement-doc .adoc-meta{text-align:center;color:#8a857c;font-size:12px;margin-bottom:16px}
+.agreement-doc h4{margin:0 0 3px;font-size:13px;font-weight:700;color:#030303}
+.agreement-doc p{margin:0 0 14px;font-size:13px;line-height:1.55;color:#3a352e}
+.accept-reveal{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:28px}
+.accept-reveal-btn{display:inline-flex;align-items:center;gap:12px;padding:16px 30px;background:var(--ink);color:var(--cream);border:1px solid var(--ink);border-radius:999px;font-family:var(--font-body);font-weight:800;font-size:14px;letter-spacing:0.02em;cursor:pointer;transition:background 0.2s,border-color 0.2s,color 0.2s}
+.accept-reveal-btn:hover{background:var(--agency-primary);border-color:var(--agency-primary);color:#fff}
+.accept-reveal-hint{font-size:12.5px;color:rgba(31,26,21,0.55);text-align:center;max-width:520px;line-height:1.5}
 
 /* ============================ COMPETITOR GALLERY (added 2026-05-06) ============================ */
 .section-competitors{background:linear-gradient(180deg,#030303 0%,#1F2124 100%);color:#fff;padding:88px 0}
@@ -2362,43 +2380,49 @@ body.edit-mode .edit-hud{display:flex;opacity:1;transform:translateX(-50%) trans
 <!-- ============================ ACCEPTANCE ============================ -->
 <section id="accept" class="section section-white">
   <div class="section-inner">
-    <h2 class="section-title">Add your name. <em>We start building.</em></h2>
-    <p class="section-sub">Your signature below represents acceptance of this proposal. Setup fee is invoiced same-day , we start building the moment it clears.</p>
+    <h2 class="section-title">Send <em><span data-cvar="company">{{COMPANY_NAME}}</span></em> the agreement to sign.</h2>
+    <p class="section-sub">Fill in the client's details and send. They get a private link to review the full agreement and sign it from their own inbox. The moment they sign, a signed PDF lands with both of you.</p>
+
+    <div class="agreement-review">
+      <div class="agreement-review-head">
+        <h3>The full agreement</h3>
+        <div class="agreement-head-actions">
+          <button type="button" class="agreement-edit-toggle" id="agreementEditToggle" hidden>Edit clauses</button>
+          <button type="button" class="agreement-toggle" id="agreementToggle" aria-expanded="false">Show</button>
+        </div>
+      </div>
+      <div class="agreement-doc collapsed" id="agreementDoc"></div>
+    </div>
+
+    <div class="accept-reveal" id="acceptReveal">
+      <button type="button" class="accept-reveal-btn" id="showFormBtn" onclick="showSendForm()"><span>Fill in details &amp; send</span><span aria-hidden="true">&rarr;</span></button>
+      <p class="accept-reveal-hint">Review the agreement above. When you are ready, open the form to enter the client's details and send it to sign.</p>
+    </div>
+    <div id="sendForm" hidden>
     <div class="accept-block">
       <div class="accept-side">
         <h3>{{AGENCY_NAME}}</h3>
         <div class="accept-row"><div class="label">Name</div><div class="pre-filled">{{AGENCY_FOUNDER_FULL_NAME}}, {{AGENCY_FOUNDER_TITLE}}</div></div>
         <div class="accept-row"><div class="label">Company</div><div class="pre-filled">{{AGENCY_NAME}}</div></div>
-        <div class="accept-row accept-row-date">
-          <div class="label">Date</div>
-          <input type="date" class="accept-date-input" data-side="agency" aria-label="the agency signature date">
-        </div>
-        <div class="accept-row accept-row-sig">
-          <div class="label"><span>Signature</span><button type="button" class="accept-sig-clear" data-side="agency">Clear</button></div>
-          <canvas class="accept-sig-canvas" data-side="agency" aria-label="the agency signature pad , draw with mouse or finger"></canvas>
-          <div class="accept-sig-hint">Sign with mouse or finger</div>
-        </div>
+        <div class="accept-row"><div class="label">Signature</div><div class="accept-onfile">On file &mdash; added automatically when you send</div></div>
       </div>
       <div class="accept-side">
         <h3>Client</h3>
-        <div class="accept-row"><div class="label">Name</div><div class="pre-filled" data-cvar="ownerFull">{{OWNER_FULL_NAME}}</div></div>
-        <div class="accept-row"><div class="label">Company</div><div class="pre-filled"><span data-cvar="company">{{COMPANY_NAME}}</span>, LLC</div></div>
+        <div class="accept-row"><div class="label">Name</div><input type="text" class="accept-input" id="clientNameInput" placeholder="Client full name" value="{{OWNER_FULL_NAME}}" autocomplete="off"></div>
+        <div class="accept-row"><div class="label">Business</div><div class="pre-filled"><span data-cvar="company">{{COMPANY_NAME}}</span></div></div>
+        <div class="accept-row"><div class="label">Location</div><input type="text" class="accept-input" id="clientLocationInput" placeholder="City, State (business location)" autocomplete="off"></div>
         <div class="accept-row accept-row-date">
           <div class="label">Date</div>
-          <input type="date" class="accept-date-input" data-side="client" aria-label="Client signature date">
+          <input type="date" class="accept-date-input" data-side="client" aria-label="Agreement date">
         </div>
-        <div class="accept-row accept-row-sig">
-          <div class="label"><span>Signature</span><button type="button" class="accept-sig-clear" data-side="client">Clear</button></div>
-          <canvas class="accept-sig-canvas" data-side="client" aria-label="Client signature pad , draw with mouse or finger"></canvas>
-          <div class="accept-sig-hint">Sign with mouse or finger</div>
-        </div>
+        <div class="accept-row"><div class="label">Email</div><input type="email" class="accept-input" id="clientEmailInput" placeholder="client@email.com" value="{{CLIENT_EMAIL}}" autocomplete="off"></div>
       </div>
     </div>
     <div class="accept-send">
-      <button type="button" class="accept-send-btn" id="contractSendBtn" onclick="sendContract()"><span>Email the signed agreement</span><span aria-hidden="true">&rarr;</span></button>
+      <button type="button" class="accept-send-btn" id="contractSendBtn" onclick="sendContract()"><span>Send contract to sign</span><span aria-hidden="true">&rarr;</span></button>
       <div class="accept-send-note" id="contractSendNote">{{AGENCY_CONTRACT_NOTE}}</div>
     </div>
-    <p style="text-align:center;font-size:12px;color:#7A7A7A;margin-top:24px">By signing you agree to our <a href="https://{{AGENCY_DOMAIN}}/terms" style="color:var(--agency-primary);text-decoration:underline">Terms of Agreement</a> available on {{AGENCY_DOMAIN}}.</p>
+    </div>
   </div>
 </section>
 
@@ -2534,7 +2558,6 @@ body.edit-mode .edit-hud{display:flex;opacity:1;transform:translateX(-50%) trans
 (function(){
   var SLUG='{{CLIENT_SLUG}}';
   var dkey=function(side){return 'agency-proposal-date-'+side+'-'+SLUG};
-  var skey=function(side){return 'agency-proposal-sig-'+side+'-'+SLUG};
 
   // Date inputs · default to today, persist on change
   var todayISO=new Date().toISOString().split('T')[0];
@@ -2545,88 +2568,6 @@ body.edit-mode .edit-hud{display:flex;opacity:1;transform:translateX(-50%) trans
     input.addEventListener('change',function(){try{localStorage.setItem(dkey(side),input.value)}catch(e){}});
   });
 
-  // Signature canvases · mouse + touch, retina-crisp, clearable, persisted as data-URL
-  document.querySelectorAll('.accept-sig-canvas').forEach(function(canvas){
-    var side=canvas.dataset.side;
-    var ctx=canvas.getContext('2d');
-    var dpr=window.devicePixelRatio||1;
-
-    function setupCanvas(){
-      var rect=canvas.getBoundingClientRect();
-      canvas.width=Math.max(1,Math.round(rect.width*dpr));
-      canvas.height=Math.max(1,Math.round(rect.height*dpr));
-      ctx.setTransform(1,0,0,1,0,0);
-      ctx.scale(dpr,dpr);
-      ctx.lineWidth=2;
-      ctx.lineCap='round';
-      ctx.lineJoin='round';
-      ctx.strokeStyle='#030303';
-    }
-    function restore(){
-      var saved;try{saved=localStorage.getItem(skey(side))}catch(e){saved=null}
-      if(!saved)return;
-      var img=new Image();
-      img.onload=function(){
-        var rect=canvas.getBoundingClientRect();
-        ctx.drawImage(img,0,0,rect.width,rect.height);
-        canvas.classList.add('is-signed');
-      };
-      img.src=saved;
-    }
-    setupCanvas();
-    restore();
-
-    var drawing=false,last=null,dirty=false;
-    function localPos(e){
-      var rect=canvas.getBoundingClientRect();
-      var t=(e.touches&&e.touches[0])||e;
-      return {x:t.clientX-rect.left,y:t.clientY-rect.top};
-    }
-    function start(e){e.preventDefault();drawing=true;last=localPos(e);dirty=true;canvas.classList.add('is-signed')}
-    function move(e){
-      if(!drawing)return;
-      e.preventDefault();
-      var p=localPos(e);
-      ctx.beginPath();
-      ctx.moveTo(last.x,last.y);
-      ctx.lineTo(p.x,p.y);
-      ctx.stroke();
-      last=p;
-    }
-    function end(){
-      if(!drawing)return;
-      drawing=false;
-      if(dirty){try{localStorage.setItem(skey(side),canvas.toDataURL('image/png'))}catch(e){}}
-    }
-
-    canvas.addEventListener('mousedown',start);
-    canvas.addEventListener('mousemove',move);
-    canvas.addEventListener('mouseup',end);
-    canvas.addEventListener('mouseleave',end);
-    canvas.addEventListener('touchstart',start,{passive:false});
-    canvas.addEventListener('touchmove',move,{passive:false});
-    canvas.addEventListener('touchend',end);
-
-    // Re-fit on resize (signature data-URL re-rendered at new dimensions)
-    var resizeT;
-    window.addEventListener('resize',function(){
-      clearTimeout(resizeT);
-      resizeT=setTimeout(function(){setupCanvas();restore()},120);
-    });
-  });
-
-  // Clear buttons · wipe canvas + drop the persisted signature
-  document.querySelectorAll('.accept-sig-clear').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var side=btn.dataset.side;
-      var canvas=document.querySelector('.accept-sig-canvas[data-side="'+side+'"]');
-      if(!canvas)return;
-      var ctx=canvas.getContext('2d');
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      canvas.classList.remove('is-signed');
-      try{localStorage.removeItem('agency-proposal-sig-'+side+'-'+SLUG)}catch(e){}
-    });
-  });
 })();
 
 
@@ -3117,56 +3058,164 @@ function adminReset(){
 
 // proof stat count-up (e.g. "2.1x" counts from 0 when it scrolls into view)
 
-// contract send: both signatures -> executed PDF emailed to both parties
+// contract send-to-sign: agency fills client details -> signed link emailed to client
 var CONTRACT_META = {
   agencyName: '{{AGENCY_NAME}}',
-  agencySigner: '{{AGENCY_FOUNDER_FULL_NAME}}',
-  company: '{{COMPANY_NAME}}',
-  clientName: '{{OWNER_FULL_NAME}}',
-  clientEmail: '{{CLIENT_EMAIL}}',
-  monthly: '{{AGENCY_PRICING_MONTHLY_FEE}}'
+  agencySigner: '{{AGENCY_FOUNDER_FULL_NAME}}'
 };
+var CONTRACT_DATA = {{CONTRACT_DATA_JSON}};
+var AGENCY_JURISDICTION = '{{AGENCY_JURISDICTION}}';
+// Seller edits to individual clauses: sectionIndex -> final clause text. Only
+// changed clauses are stored; they ride inside the signed link, so the client's
+// copy and the executed PDF show exactly what was sent (tamper-proof via HMAC).
+var CONTRACT_OVERRIDES = {};
+
+// Render the full agreement into the on-page review block so the client reads
+// exactly what they will sign, before it is sent. On the call the seller can
+// toggle "Edit clauses" to reword any clause inline.
+(function renderAgreement(){
+  var box = document.getElementById('agreementDoc');
+  if(!box || !CONTRACT_DATA || !CONTRACT_DATA.sections) return;
+  function money(s){ return String(s==null?'':s).replace(/[^0-9,]/g,'').slice(0,12); }
+  function buildPayBody(setup, monthly, terms){
+    terms = String(terms||'').trim(); if(terms) return terms;
+    var s = money(setup)||'0', m = money(monthly)||'0', mNum = parseInt(m.replace(/[^0-9]/g,''),10)||0;
+    var body = 'The Client agrees to pay a one-time setup fee of $' + s + ' due in full upon signing this Agreement';
+    body += mNum > 0 ? ', followed by a recurring monthly service fee of $' + m + ' beginning thirty (30) days after the website goes live.' : '. No monthly retainer applies to this Agreement.';
+    return body;
+  }
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var locEl = document.getElementById('clientLocationInput');
+  var nameEl = document.getElementById('clientNameInput');
+  var editToggle = document.getElementById('agreementEditToggle');
+  var toggle = document.getElementById('agreementToggle');
+  var editing = false;
+
+  function makeFill(){
+    var loc = (locEl && locEl.value.trim()) || '';
+    var ctx = {
+      AGENCY: CONTRACT_META.agencyName,
+      COMPANY: cvarGet('company'),
+      CLIENT: (nameEl && nameEl.value.trim()) || cvarGet('ownerFull'),
+      CLIENT_LOCATION: loc,
+      CLIENT_LOCATION_CLAUSE: loc ? (' of ' + loc) : '',
+      DATE: new Date().toISOString().slice(0,10),
+      PAYBODY: buildPayBody(figGet('offer'), figGet('monthly'), termsGet()),
+      JURISDICTION: AGENCY_JURISDICTION
+    };
+    return { ctx: ctx, fill: function(str){ return String(str)
+      .split('{AGENCY}').join(ctx.AGENCY).split('{COMPANY}').join(ctx.COMPANY).split('{CLIENT}').join(ctx.CLIENT)
+      .split('{CLIENT_LOCATION_CLAUSE}').join(ctx.CLIENT_LOCATION_CLAUSE).split('{CLIENT_LOCATION}').join(ctx.CLIENT_LOCATION)
+      .split('{DATE}').join(ctx.DATE).split('{PAYBODY}').join(ctx.PAYBODY).split('{JURISDICTION}').join(ctx.JURISDICTION); } };
+  }
+  function defaultBody(i){ return makeFill().fill(CONTRACT_DATA.sections[i][1]); }
+
+  function render(){
+    var f = makeFill(), ctx = f.ctx, fill = f.fill;
+    var html = '<div class="adoc-title">' + esc(CONTRACT_DATA.title || 'WEBSITE SERVICES AGREEMENT') + '</div>';
+    html += '<div class="adoc-meta">' + esc(ctx.AGENCY) + '  x  ' + esc(ctx.COMPANY) + '</div>';
+    html += '<p class="adoc-editnote' + (editing ? '' : ' hidden') + '">Editing is on. Click any clause below to change its wording. Your edits lock into the signing link and appear on the client’s copy and the signed PDF. Click Done when finished.</p>';
+    CONTRACT_DATA.sections.forEach(function(sec, i){
+      var body = CONTRACT_OVERRIDES.hasOwnProperty(i) ? CONTRACT_OVERRIDES[i] : fill(sec[1]);
+      html += '<h4>' + esc(fill(sec[0])) + '</h4><p data-editable="' + i + '">' + esc(body) + '</p>';
+    });
+    box.innerHTML = html;
+    if(editing) applyEditable();
+  }
+  function applyEditable(){
+    box.classList.add('editing');
+    Array.prototype.forEach.call(box.querySelectorAll('p[data-editable]'), function(el){
+      var i = parseInt(el.getAttribute('data-editable'), 10);
+      el.setAttribute('contenteditable', 'true');
+      el.setAttribute('spellcheck', 'true');
+      el.addEventListener('input', function(){
+        var txt = el.innerText.replace(/\s+$/, '');
+        if(txt === defaultBody(i)) delete CONTRACT_OVERRIDES[i];
+        else CONTRACT_OVERRIDES[i] = txt;
+      });
+    });
+  }
+  function clearEditable(){
+    box.classList.remove('editing');
+    Array.prototype.forEach.call(box.querySelectorAll('p[data-editable]'), function(el){ el.removeAttribute('contenteditable'); });
+  }
+
+  render();
+  if(nameEl) nameEl.addEventListener('input', render);
+  if(locEl) locEl.addEventListener('input', render);
+
+  if(toggle){ toggle.addEventListener('click', function(){
+    var collapsed = box.classList.toggle('collapsed');
+    toggle.textContent = collapsed ? 'Show' : 'Hide';
+    toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if(editToggle) editToggle.hidden = collapsed;
+    if(collapsed && editing){ editing = false; if(editToggle){ editToggle.classList.remove('active'); editToggle.textContent = 'Edit clauses'; } clearEditable(); var _n = box.querySelector('.adoc-editnote'); if(_n) _n.classList.add('hidden'); }
+  }); }
+
+  if(editToggle){ editToggle.addEventListener('click', function(){
+    editing = !editing;
+    editToggle.classList.toggle('active', editing);
+    editToggle.textContent = editing ? 'Done' : 'Edit clauses';
+    var note = box.querySelector('.adoc-editnote'); if(note) note.classList.toggle('hidden', !editing);
+    if(editing) applyEditable(); else clearEditable();
+  }); }
+})();
+
+function showSendForm(){
+  var f = document.getElementById('sendForm'), r = document.getElementById('acceptReveal');
+  if(f) f.hidden = false;
+  if(r) r.style.display = 'none';
+  var n = document.getElementById('clientNameInput'); if(n) n.focus();
+}
 function sendContract(){
   var btn = document.getElementById('contractSendBtn'), note = document.getElementById('contractSendNote');
-  var cAg = document.querySelector('.accept-sig-canvas[data-side="agency"]');
-  var cCl = document.querySelector('.accept-sig-canvas[data-side="client"]');
-  if(!btn || !note || !cAg || !cCl) return;
-  if(!cAg.classList.contains('is-signed') || !cCl.classList.contains('is-signed')){
-    note.textContent = 'Both signatures are required before the agreement can be sent.';
-    note.classList.add('is-error');
-    return;
-  }
+  if(!btn || !note) return;
+  var nameEl = document.getElementById('clientNameInput');
+  var emailEl = document.getElementById('clientEmailInput');
+  var locEl = document.getElementById('clientLocationInput');
+  var dateEl = document.querySelector('.accept-date-input[data-side="client"]');
+  var clientName = (nameEl && nameEl.value.trim()) || '';
+  var clientEmail = (emailEl && emailEl.value.trim()) || '';
   note.classList.remove('is-error');
-  var dateEl = document.querySelector('.accept-date-input[data-side="agency"]');
+  if(!clientName){ note.textContent = 'Enter the client name first.'; note.classList.add('is-error'); return; }
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(clientEmail)){ note.textContent = 'Enter a valid client email so we can send the contract to sign.'; note.classList.add('is-error'); return; }
+  var overrides = [];
+  Object.keys(CONTRACT_OVERRIDES).forEach(function(k){
+    var i = parseInt(k, 10);
+    var t = String(CONTRACT_OVERRIDES[k] == null ? '' : CONTRACT_OVERRIDES[k]).trim();
+    if(!isNaN(i) && t) overrides.push([i, t]);
+  });
+  var ovChars = overrides.reduce(function(a, o){ return a + o[1].length; }, 0);
+  if(ovChars > 8000){ note.textContent = 'That is a lot of contract edits — please shorten them a little so they fit inside the secure signing link.'; note.classList.add('is-error'); return; }
   var payload = {
     agencyName: CONTRACT_META.agencyName,
     agencySigner: CONTRACT_META.agencySigner,
-    clientEmail: CONTRACT_META.clientEmail,
+    company: cvarGet('company'),
+    clientName: clientName,
+    clientLocation: (locEl && locEl.value.trim()) || '',
+    clientEmail: clientEmail,
     date: (dateEl && dateEl.value) || '',
     setup: figGet('offer'),
     monthly: figGet('monthly'),
     paymentTerms: termsGet(),
-    company: cvarGet('company'),
-    clientName: cvarGet('ownerFull'),
-    sigAgency: cAg.toDataURL('image/png'),
-    sigClient: cCl.toDataURL('image/png')
+    overrides: overrides
   };
   var label = btn.querySelector('span');
-  btn.disabled = true; label.textContent = 'Sending the executed copy...';
+  btn.disabled = true; label.textContent = 'Sending the signing link...';
   fetch('api/send-contract', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)})
     .then(function(r){ return r.json().then(function(j){ return {ok: r.ok, j: j}; }); })
     .then(function(x){
       if(x.ok){
-        label.textContent = 'Agreement emailed to both parties';
-        note.textContent = ('{{AGENCY_CONTRACT_EMAIL}}' ? 'Sent from {{AGENCY_CONTRACT_EMAIL}}. ' : '') + 'The executed PDF is on its way to both parties.';
+        label.textContent = 'Sent · awaiting client signature';
+        note.textContent = 'Contract sent to ' + clientEmail + '. They get a link to review and sign it; the signed PDF then lands with both of you.';
       } else {
-        btn.disabled = false; label.textContent = 'Email the signed agreement';
+        btn.disabled = false; label.textContent = 'Send contract to sign';
         note.textContent = (x.j && x.j.error) || 'Send failed. Try again.';
         note.classList.add('is-error');
       }
     })
     .catch(function(){
-      btn.disabled = false; label.textContent = 'Email the signed agreement';
+      btn.disabled = false; label.textContent = 'Send contract to sign';
       note.textContent = 'Network error. Try again.';
       note.classList.add('is-error');
     });

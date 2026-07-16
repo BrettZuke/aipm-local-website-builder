@@ -37,7 +37,7 @@ Write to: `name`, `domain`, `youtube_channel`, `niche.{noun, noun_title, verb, e
 - "What's your title? (e.g. 'Owner of Acme Growth', 'Founder & CEO')"
 - "Drop a square portrait photo of yourself in `clients/_agency/assets/founder-portrait.{jpg|png}`. Aim for at least 800x800. Tell me when it's there."
 - "What caption goes under the portrait in the proposal? (e.g. 'Mike, Founder of Acme Roofing', 'Sarah, Founder of Acme Growth')"
-- "Optional: drop a signature SVG at `assets/founder-signature.svg`. Skip if you don't have one."
+- Draw your signature once: run the `/set-signature` command (it runs `python3 tools/set-signature.py`). It opens a drawing page in the browser; the student draws, clicks **Save**, and it is written to `clients/_agency/assets/founder-signature.png` automatically and stamped on every contract they send. Nothing to move. If they skip it, their typed founder name is used instead (a valid electronic signature), so contracts still work.
 
 Verify portrait file exists. Write to: `founder.{name, first_name, title, portrait_path, portrait_caption, signature_path}`
 
@@ -238,6 +238,26 @@ Validate each value matches `/^#[0-9A-Fa-f]{6}$/`. Reject if not. Write to: `pal
 
 Write to: `sop_password`, `blueprint_pdf_path`, `blueprint_pdf_title`
 
+### Section 14 — Email sender (Resend) [REQUIRED for contract signing]
+
+This powers the automated contract emails: sending a client the agreement to sign, and emailing the signed PDF to both parties when they sign. Without it the proposal's "Send contract to sign" button returns a clear "email is not configured" message. Walk the student through it; do not skip.
+
+Tell the student, in plain English:
+
+1. "Create a free Resend account at https://resend.com/signup. The free plan is plenty (thousands of emails a month, no card needed)."
+2. "In Resend go to Domains, add a domain you own, and add the few DNS records Resend shows you at your domain registrar. That is what lets email send FROM your address. It is a one-time, roughly ten-minute job. If you do not own a domain yet, buy one first at any registrar; you cannot send professional contract emails without one." (Full copy-paste walkthrough: `website-factory/templates/proposal/RESEND-SETUP.md`.)
+3. "In Resend go to API Keys, create one, and paste it here." → capture as `RESEND_API_KEY`
+4. "What address should contracts send FROM? Use your verified domain, e.g. `Your Agency <hello@youragency.com>`." → capture as `RESEND_FROM`
+5. "What inbox should the signed copies land in for you? (can be the same address)" → capture as `AGENCY_EMAIL`
+
+Then the agent does the wiring. Do NOT print secret values back to the screen:
+
+- Append `RESEND_API_KEY`, `RESEND_FROM`, `AGENCY_EMAIL` to the repo-root `.env.local` (create it from `.env.example` if missing; it is gitignored, never commit it).
+- Generate a random `SIGNING_SECRET` with `openssl rand -hex 32` and append it to `.env.local`. It signs each contract's signing link so a client cannot alter the price or terms.
+- Set `contract_email` in `agency-brand.json` to the plain email part of `RESEND_FROM` (shown to the client as "from ...").
+
+These four values are pushed to the proposal's Vercel project automatically at deploy time by `tools/wire-proposal-email.py`, so the student never touches the Vercel dashboard.
+
 ## Validation
 
 After every section, write incremental progress to `agency-brand.json`. After the final section:
@@ -245,6 +265,7 @@ After every section, write incremental progress to `agency-brand.json`. After th
 1. Schema validation: every `__REQUIRED__*__` sentinel from the example file must be replaced. Run a substring grep on the written JSON; any surviving sentinel halts with the field name flagged.
 2. Asset existence check: every referenced `assets/...` path must exist as a real file.
 3. Minimum-viable check: must have at least 3 reviews, at least 1 client-build entry OR 1 case-study video, a populated proof section, a sop_password, and three populated value props.
+4. Email-sender check: `.env.local` must contain non-empty `RESEND_API_KEY`, `RESEND_FROM`, `AGENCY_EMAIL`, and `SIGNING_SECRET`, and `agency-brand.json` `contract_email` must be set. If missing, return to Section 14.
 
 If any check fails, return to the failing section and re-prompt the student.
 

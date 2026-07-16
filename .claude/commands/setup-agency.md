@@ -11,7 +11,7 @@ Why it matters: Stage 13 (proposal builder) reads `website-factory/clients/_agen
 What the agent collects:
 
 1. **Agency identity + niche vocab**: agency name, domain, YouTube channel, plus the niche noun (e.g. "roofing", "painting"), title-case version, niche verb, and your client's end customer (e.g. "homeowner"). The niche vocab fills the niche-specific sentinels in the proposal so the same template works for any vertical.
-2. **Founder profile**: full name, first name, title, portrait photo, signature, owner pronoun
+2. **Founder profile**: full name, first name, title, portrait photo, signature (draw it once via the `/set-signature` command — it opens a drawing page, they draw and click Save, and it is auto-stamped on every contract; nothing to move, and skipping it just falls back to their typed name), owner pronoun
 3. **Intro section**: three value-prop bullets (numbered stats with descriptors), a one-line promise, a bold conclusion line, portrait caption
 4. **Review carousel**: 3+ written testimonials with reviewer name, platform (google/facebook/etc.), rating, avatar photo, full text. Pulled from your existing past work.
 5. **Client-build carousel**: 3+ websites you've built. Live URL + screenshot + owner quote + owner name.
@@ -34,6 +34,7 @@ What the agent collects:
    - Accent hex (eyebrows, secondary highlights; often gold or warm contrast)
    - `tools/build-proposal.py` injects these as CSS variables on `:root`, overriding the template defaults so every proposal renders in YOUR agency's brand colors.
 15. **SOP password**: the password you give clients to unlock the technical SOP PDF mid-proposal. Plus the blueprint PDF path/title.
+16. **Email sender (Resend) [REQUIRED]**: a free Resend account + verified sending domain + API key, so your proposals can email the contract to sign and the signed PDF to both parties. The agent captures your key into the gitignored `.env.local`, generates a signing secret, and these get pushed to your proposal's Vercel project automatically at deploy. Full walkthrough: `website-factory/templates/proposal/RESEND-SETUP.md`.
 
 The agent writes everything to `website-factory/clients/_agency/agency-brand.json`. Both that file and the assets folder are gitignored, so your real testimonials, real client URLs, and real photos never accidentally get pushed to a public clone.
 

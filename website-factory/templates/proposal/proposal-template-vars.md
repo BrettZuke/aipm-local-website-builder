@@ -148,3 +148,29 @@ See [`sops/design-intelligence.md`](../sops/design-intelligence.md) §`operator_
 4. Open the proposal locally, click each "See it in..." link → confirm the build scrolls to the right section.
 5. Click each Tier-1 + Tier-2 page card in the §10 sitemap → confirm the modal opens with rendered sections.
 6. Open the §16 Investment section → confirm the setup-fee modal shows `${{SETUP_FEE_DEFAULT}}` formatted on first load (clear localStorage if testing).
+
+---
+
+## Contract signing (send-to-sign flow)
+
+The acceptance section is a **send-to-sign** flow: the operator enters the client's
+name, location, date, and email and clicks **Send contract to sign**; the client
+signs privately from an emailed link; a signed PDF then goes to both parties.
+
+| Variable | Source | Where it surfaces |
+|---|---|---|
+| `{{CONTRACT_DATA_JSON}}` | `api/contract.json` (title + sections), inlined by build-proposal.py | The on-page "full agreement" review block **and** `sign.html`. Same source feeds the PDF, so wording never drifts. |
+| `{{AGENCY_JURISDICTION}}` | `agency-brand.json` `jurisdiction` (default "England and Wales") | Contract Section 11 (governing law) on page, signing page, and PDF. |
+| `{{AGENCY_PRIMARY}}` | `agency-brand.json` `palette.primary` (default `#b8912f`) | Accent color on the standalone `sign.html`. |
+| `{{CLIENT_EMAIL}}` | per-client intake (may be empty) | Prefills the client email box; the operator can edit it on the call. |
+
+**Generated files:** `sign.html` (client signing page) and `api/_agency.json` (the
+agency's on-file signature + jurisdiction, baked server-side, never in the link).
+
+**Env vars on the Vercel project:** `RESEND_API_KEY`, `RESEND_FROM`, `AGENCY_EMAIL`,
+and **`SIGNING_SECRET`** (new). See [`api/README.md`](api/README.md). Without
+`SIGNING_SECRET` the send button returns a clear "signing is not configured" message.
+
+**Note:** the inlined `{{CONTRACT_DATA_JSON}}` uses single-brace tokens like
+`{AGENCY}` / `{COMPANY}` internally; these are filled by JS at render time and do
+**not** trip the `grep '{{'` validation (which matches double-brace placeholders).

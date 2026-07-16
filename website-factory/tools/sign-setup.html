@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set your signature · one time</title>
+<style>
+  :root{ --ink:#1f1a15; --cream:#faf8f3; --hair:#e7e2d8; --muted:#6a655c; --gold:#b8912f; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:600px;margin:0 auto;padding:48px 22px 80px}
+  .brand{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:13px;letter-spacing:0.10em;text-transform:uppercase;color:var(--gold)}
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:29px;line-height:1.2;margin:8px 0 6px}
+  .sub{color:var(--muted);font-size:15.5px;margin:0 0 28px}
+  .card{background:#fff;border:1px solid var(--hair);border-radius:16px;padding:28px 28px;box-shadow:0 18px 44px rgba(31,26,21,0.06)}
+  .siglab{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .sigclear{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(0,0,0,0.14);border-radius:4px;padding:5px 12px;cursor:pointer}
+  canvas#pad{display:block;width:100%;height:200px;border:1px solid var(--ink);border-radius:8px;background:#fff;cursor:crosshair;touch-action:none}
+  .baseline{position:relative;margin-top:-48px;margin-bottom:48px;height:0;border-top:1px dashed rgba(31,26,21,0.22);margin-left:24px;margin-right:24px;pointer-events:none}
+  .hint{font-size:12px;color:#9a958c;font-style:italic;margin-top:8px}
+  .btn{margin-top:22px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:17px 28px;background:var(--ink);color:#fff;border:1px solid var(--ink);border-radius:999px;font-weight:700;font-size:15.5px;cursor:pointer;transition:background .2s,border-color .2s}
+  .btn:hover{background:var(--gold);border-color:var(--gold)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .note{margin-top:16px;font-size:14px;text-align:center;min-height:22px;color:var(--muted)}
+  .note.ok{color:#2e7d46;font-weight:600}
+  .note.err{color:#a33b2e;font-weight:600}
+  .saved{display:none;text-align:center;padding:14px 10px 4px}
+  .saved .tick{width:56px;height:56px;border-radius:50%;background:#2e7d46;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:12px}
+  .saved h2{font-family:Georgia,serif;font-size:22px;margin:0 0 4px}
+  .saved p{color:var(--muted);font-size:14.5px;margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">Agency setup · one time</div>
+  <h1>Draw your signature once</h1>
+  <p class="sub">Sign here a single time. From then on every contract you send is stamped with this signature automatically, so you never sign a proposal again.</p>
+  <div class="card" id="card">
+    <div id="pane">
+      <div class="siglab"><span>Your signature</span><button type="button" class="sigclear" id="clear">Clear</button></div>
+      <canvas id="pad" aria-label="Signature pad, draw with mouse or finger"></canvas>
+      <div class="baseline" aria-hidden="true"></div>
+      <div class="hint">Sign with your mouse or finger, the same way your client signs their link.</div>
+      <button type="button" class="btn" id="save"><span>Save my signature</span><span aria-hidden="true">&rarr;</span></button>
+      <div class="note" id="note"></div>
+    </div>
+    <div class="saved" id="savedPane">
+      <div class="tick">&#10003;</div>
+      <h2>Saved</h2>
+      <p>Your signature is set. It will be stamped on every proposal you build. You can close this tab.</p>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var canvas = document.getElementById('pad'), ctx = canvas.getContext('2d'), dpr = window.devicePixelRatio || 1;
+  var drew = false;
+  function setup(){
+    var rect = canvas.getBoundingClientRect();
+    var prev = drew ? canvas.toDataURL('image/png') : null;
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+    ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
+    ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#1f1a15';
+    if(prev){ var img = new Image(); img.onload = function(){ ctx.drawImage(img, 0, 0, rect.width, rect.height); }; img.src = prev; }
+  }
+  setup();
+  var drawing = false, last = null;
+  function pos(e){ var r = canvas.getBoundingClientRect(); var t = (e.touches && e.touches[0]) || e; return {x:t.clientX-r.left, y:t.clientY-r.top}; }
+  function start(e){ e.preventDefault(); drawing = true; last = pos(e); drew = true; }
+  function move(e){ if(!drawing) return; e.preventDefault(); var q = pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(q.x,q.y); ctx.stroke(); last = q; }
+  function end(){ drawing = false; }
+  canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move);
+  canvas.addEventListener('mouseup',end); canvas.addEventListener('mouseleave',end);
+  canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); canvas.addEventListener('touchend',end);
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(setup, 150); });
+
+  var note = document.getElementById('note'), saveBtn = document.getElementById('save');
+  function msg(t, cls){ note.textContent = t; note.className = 'note' + (cls ? ' ' + cls : ''); }
+  document.getElementById('clear').addEventListener('click', function(){ ctx.clearRect(0,0,canvas.width,canvas.height); drew = false; msg(''); });
+
+  function showSaved(){ document.getElementById('pane').style.display = 'none'; document.getElementById('savedPane').style.display = 'block'; }
+
+  // Trim transparent margins so the embedded PDF signature is tight and centered.
+  function trimmed(src){
+    var w = src.width, h = src.height, d = src.getContext('2d').getImageData(0,0,w,h).data;
+    var minX=w, minY=h, maxX=0, maxY=0, found=false;
+    for(var y=0;y<h;y++){ for(var x=0;x<w;x++){ if(d[(y*w+x)*4+3] > 12){ found=true; if(x<minX)minX=x; if(x>maxX)maxX=x; if(y<minY)minY=y; if(y>maxY)maxY=y; } } }
+    if(!found) return src.toDataURL('image/png');
+    var pad = Math.round(8 * (window.devicePixelRatio||1));
+    minX=Math.max(0,minX-pad); minY=Math.max(0,minY-pad); maxX=Math.min(w-1,maxX+pad); maxY=Math.min(h-1,maxY+pad);
+    var cw = maxX-minX+1, ch = maxY-minY+1;
+    var oc = document.createElement('canvas'); oc.width = cw; oc.height = ch;
+    oc.getContext('2d').drawImage(src, minX, minY, cw, ch, 0, 0, cw, ch);
+    return oc.toDataURL('image/png');
+  }
+
+  saveBtn.addEventListener('click', function(){
+    if(!drew){ msg('Draw your signature first, then click Save.', 'err'); return; }
+    var dataUrl = trimmed(canvas);
+    saveBtn.disabled = true; saveBtn.querySelector('span').textContent = 'Saving...';
+    // Primary path: hand it to the local helper (set-signature.py) which writes the
+    // file into your repo. Falls back to a download if this page was opened directly.
+    fetch('/save', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ png: dataUrl }) })
+      .then(function(r){ return r.json().then(function(j){ return { ok: r.ok && j && j.ok, err: j && j.error }; }); })
+      .then(function(x){ if(x.ok){ showSaved(); } else { throw new Error(x.err || 'save failed'); } })
+      .catch(function(){
+        // Fallback: download the file so it can still be picked up.
+        var a = document.createElement('a'); a.download = 'founder-signature.png'; a.href = dataUrl;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        saveBtn.disabled = false; saveBtn.querySelector('span').textContent = 'Save my signature';
+        msg('Saved founder-signature.png to your Downloads. Tell Claude it is ready and it will pick it up.', 'ok');
+      });
+  });
+})();
+</script>
+</body>
+</html>

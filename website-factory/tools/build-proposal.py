@@ -43,6 +43,8 @@ TEMPLATE_DIR = REPO_ROOT / "templates" / "proposal"
 TEMPLATE_HTML = TEMPLATE_DIR / "proposal-template.html"
 TEMPLATE_LOGO = TEMPLATE_DIR / "agency-logo.svg"
 AGENCY_ASSETS = TEMPLATE_DIR / "agency-assets"
+TEMPLATE_SIGN = TEMPLATE_DIR / "sign.html"
+CONTRACT_JSON = TEMPLATE_DIR / "api" / "contract.json"
 OPTIMISE_TOOL = REPO_ROOT / "tools" / "optimise-image.py"
 
 # US state code → full name (the most common ones for the student-agency market)
@@ -176,6 +178,55 @@ def load_agency_brand() -> dict[str, Any]:
         )
         sys.exit(2)
     return data
+
+
+def _contract_data_json() -> str:
+    """Load the canonical contract (api/contract.json) and return a compact JSON
+    string of {title, sections} for inlining into proposal.html + sign.html. The
+    serverless PDF builder reads the same file, so the wording never drifts across
+    the on-page review, the signing page, and the executed PDF."""
+    try:
+        data = json.loads(CONTRACT_JSON.read_text())
+    except (OSError, json.JSONDecodeError):
+        return '{"title":"WEBSITE SERVICES AGREEMENT","sections":[]}'
+    return json.dumps(
+        {"title": data.get("title", "WEBSITE SERVICES AGREEMENT"), "sections": data.get("sections", [])},
+        ensure_ascii=False,
+    )
+
+
+def bake_agency_signature(brand: dict[str, Any], proposal_dir: Path) -> None:
+    """Write proposal_dir/api/_agency.json holding the agency's on-file signature
+    and jurisdiction. complete-signature.js stamps the executed PDF from this file,
+    so the agency signs once (in setup) and it is applied automatically. Kept
+    server-side, never exposed in the client signing link. Image used only if a PNG
+    is configured; otherwise the founder's typed name is drawn."""
+    import base64
+    founder = brand.get("founder", {}) or {}
+    sig = {"type": "typed", "png": None, "name": founder.get("name", "")}
+    # Resolve the on-file signature PNG. An explicit founder.signature_path wins;
+    # otherwise auto-detect founder-signature.png, which the student draws once via
+    # tools/sign-setup.html during setup and drops in clients/_agency/assets/.
+    # If neither exists, fall back to the typed founder name in a script font.
+    candidate = None
+    sig_path = founder.get("signature_path")
+    if sig_path:
+        c = AGENCY_ASSETS_DIR / str(sig_path).replace("assets/", "")
+        if c.exists() and c.suffix.lower() == ".png":
+            candidate = c
+    if candidate is None:
+        c = AGENCY_ASSETS_DIR / "founder-signature.png"
+        if c.exists():
+            candidate = c
+    if candidate is not None:
+        try:
+            sig = {"type": "image", "png": base64.b64encode(candidate.read_bytes()).decode("ascii"), "name": founder.get("name", "")}
+        except OSError:
+            pass
+    payload = {"jurisdiction": brand.get("jurisdiction") or "England and Wales", "signature": sig}
+    api_dir = proposal_dir / "api"
+    api_dir.mkdir(parents=True, exist_ok=True)
+    (api_dir / "_agency.json").write_text(json.dumps(payload))
 
 
 def compose_agency_vars(brand: dict[str, Any]) -> dict[str, str]:
@@ -343,9 +394,15 @@ def compose_agency_vars(brand: dict[str, Any]) -> dict[str, str]:
         # clean generic line with no address, so nothing hardcoded ships.
         "AGENCY_CONTRACT_EMAIL": (brand.get("contract_email") or ""),
         "AGENCY_CONTRACT_NOTE": (
-            "Once you both sign, the executed agreement is emailed to both parties as a PDF"
-            + (f" from {brand.get('contract_email')}." if brand.get("contract_email") else ".")
+            "Enter the client's details and send. They get a private link to review and sign; the signed PDF is then emailed to both of you"
+            + (f", from {brand.get('contract_email')}." if brand.get("contract_email") else ".")
         ),
+        # Jurisdiction shown in the on-page agreement + stamped into the PDF.
+        "AGENCY_JURISDICTION": brand.get("jurisdiction") or "England and Wales",
+        # Accent colour for the standalone signing page (sign.html).
+        "AGENCY_PRIMARY": ((brand.get("palette", {}) or {}).get("primary") or "#b8912f"),
+        # Canonical contract text inlined into proposal.html + sign.html (single source).
+        "CONTRACT_DATA_JSON": _contract_data_json(),
         "AGENCY_VALUE_PROP_HEADLINE": intro.get("headline", intro.get("promise", "")),
         "AGENCY_AI_MOCK_MESSAGE_INBOUND": brand.get("ai_mock_message_inbound", "Hi, I need help with my project. Can someone come by today?"),
         "AGENCY_AI_MOCK_MESSAGE_REPLY": brand.get("ai_mock_message_reply", "Sorry to hear that , emergency calls go straight to {{OWNER_FIRST_NAME}}'s mobile. I just paged them and locked you a 7&nbsp;AM slot. What's the best number to text the address to?"),
@@ -1479,6 +1536,9 @@ def main() -> int:
         pkg_src = TEMPLATE_DIR / "package.json"
         if pkg_src.exists():
             shutil.copyfile(pkg_src, proposal_dir / "package.json")
+        # Bake the agency's on-file signature + jurisdiction into api/_agency.json so
+        # the executed PDF is stamped server-side (agency signs once during setup).
+        bake_agency_signature(agency_brand, proposal_dir)
 
         print("\n[3/6] copying per-client logo + GMB cover")
         logo_path = copy_client_logo(paths["logo_dir"], proposal_dir)
@@ -1561,6 +1621,19 @@ def main() -> int:
     index_html = proposal_dir / "index.html"
     index_html.write_text(out)
     print(f"  wrote {proposal_html} ({len(out):,} bytes) + index.html mirror")
+
+    # Emit the client signing page (sign.html) from the same vars_map. Plain
+    # placeholder replacement only (no PAGE_DATA); warn on any leftover {{VAR}}.
+    if TEMPLATE_SIGN.exists():
+        sign_out = TEMPLATE_SIGN.read_text()
+        for k, v in vars_map.items():
+            sign_out = sign_out.replace("{{" + k + "}}", v or "")
+        (proposal_dir / "sign.html").write_text(sign_out)
+        sign_unresolved = find_unresolved_vars(sign_out)
+        if sign_unresolved:
+            print(f"  WARN: sign.html has unresolved placeholders: {sign_unresolved}", file=sys.stderr)
+        else:
+            print(f"  wrote {proposal_dir / 'sign.html'} (client signing page)")
 
     # Validate
     print("\n=== Validation ===")

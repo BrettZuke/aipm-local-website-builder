@@ -105,9 +105,23 @@ vercel link --yes \
   --project "[client-slug]-proposal" \
   --scope "[vercel scope from Stage 11 deploy-meta.json]"
 
-# Deploy to production
+# Wire the contract-signing email vars onto the project BEFORE the prod deploy so
+# the /api functions get RESEND_API_KEY / RESEND_FROM / AGENCY_EMAIL / SIGNING_SECRET
+# at runtime. Reads the student's .env.local from /setup-agency Section 14. The
+# proposal path is resolved against the website-factory repo root; run with the
+# script's absolute path:
+python3 "[repo-root]/tools/wire-proposal-email.py" "clients/[Client Name]/[Client Name] Proposal"
+
+# Deploy to production (now picks up the env vars)
 vercel --prod --yes --scope "[vercel scope]"
 ```
+
+**If the wiring step fails** because the student has not connected Resend yet
+(no `.env.local` keys), it exits with a clear message. That is NOT fatal to the
+deploy: continue to `vercel --prod` and the proposal still ships fully usable, but
+its "Send contract to sign" button will return "email is not configured" until the
+student runs `/setup-agency` Section 14 (Resend) and redeploys. Surface this to the
+student plainly; do not silently skip signing.
 
 Capture the production alias (`https://[client-slug]-proposal.vercel.app`) and the immutable URL from the CLI output. Write both to:
 
@@ -122,6 +136,7 @@ clients/[Client Name]/Pipeline Data/deploy/proposal-url.txt
 2. The HTML title contains the client business name AND `{{AGENCY_NAME}}`
 3. `curl -s https://[client-slug]-proposal.vercel.app/build/` returns **200** (the embedded website iframe target resolves)
 4. `curl -s https://[client-slug]-proposal.vercel.app/agency-logo.svg` returns **200** (the agency branding asset reaches prod)
+5. `curl -s -o /dev/null -w "%{http_code}" https://[client-slug]-proposal.vercel.app/api/send-contract` returns **405** (GET is rejected, confirming the signing serverless function deployed). A **404** here means the `api/` folder did not ship, re-check the proposal folder before completing.
 
 If any smoke check fails, halt with `failed`, surface the failing check, and do not advance Stage 13 to complete.
 

@@ -5,6 +5,8 @@
   "domain": "__REQUIRED__AGENCY_DOMAIN__",
   "$contract_email_note": "OPTIONAL. The address your signed contracts are emailed FROM, shown on the signing screen. Set it to the SAME address as the RESEND_FROM env var on your hosting project (see templates/proposal/api/README.md). Leave empty for a clean line with no address.",
   "contract_email": "",
+  "$jurisdiction_note": "OPTIONAL. Governing-law region named in your client contract (Section 11) and stamped into the signed PDF. Defaults to \"England and Wales\" if empty. Set your own, e.g. \"North Carolina, USA\".",
+  "jurisdiction": "",
   "youtube_channel": null,
   "founder": {
     "name": "__REQUIRED__FOUNDER_FULL_NAME__",
@@ -12,6 +14,7 @@
     "title": "__REQUIRED__FOUNDER_TITLE__",
     "portrait_path": "assets/founder-portrait.jpg",
     "portrait_caption": "__REQUIRED__PORTRAIT_CAPTION__",
+    "$signature_path_note": "OPTIONAL. Draw your signature once with the /set-signature command (or run python3 tools/set-signature.py). It writes assets/founder-signature.png for you and is auto-stamped on every contract, no path needed here. To point at a different file, set its path. Leave null to sign with your typed name in a script font.",
     "signature_path": null
   },
   "owner_pronoun_subj": "they",
