@@ -50,6 +50,20 @@ sensible default per niche; you can override per client.
 - Three filled reference configs (roofer, car garage, plumber), each a different
   combination: `website-factory/templates/website-template/examples/`
 
+## Every site ships with an AI chat agent
+
+Each website the factory builds has an AI chat bubble that answers visitor
+questions about that client's business and steers them to the quote form or a
+phone call. It already knows the client's services, areas, hours, and story;
+you write nothing.
+
+To switch it on you do one thing, once, ever: get a free key (60 seconds, no
+card) from https://console.groq.com/keys. Claude asks you for it during your
+first deploy, saves it, and wires it into every client site automatically from
+then on. Until a key exists, the bubble simply shows Call and Get-a-quote
+buttons, so nothing ever looks broken. Plain-English walkthrough:
+`website-factory/templates/website-template/CHATBOT-SETUP.md`.
+
 ## How to start
 
 1. Open this folder in Claude Code.

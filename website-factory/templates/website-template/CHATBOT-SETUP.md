@@ -1,45 +1,53 @@
-# AI Chatbot Setup (2 minutes per client site)
+# AI Chatbot Setup (you do ONE thing, once, ever)
 
-Every website you build ships with an AI chat widget (bottom-right bubble). It
-answers visitor questions about THIS client's business, services, area, and
-hours, and pushes people to the quote form or a phone call. The business facts
-are baked in automatically at build time (`api/_business.json`), so there is
-nothing to write per client.
+Every website you build comes with an AI chat agent (the bubble in the bottom
+right corner). It answers visitor questions about your client's business,
+services, area, and hours, and pushes people toward the quote form or a phone
+call. The business facts are filled in automatically when the site is built,
+so you never write anything for it.
 
-The widget needs one thing to come alive: an AI API key on the site's Vercel
-project. Until you add one, the bubble still works but offers "Call now" and
-"Get a fast quote" instead of chat, so nothing ever looks broken.
+## The one thing you do: get a free key (60 seconds, one time)
 
-## Step 1: get a free API key (once, reuse it for every client site)
+The chat agent runs on a free AI service called Groq. You need one key. You
+get it once and it powers EVERY website you ever build.
 
-Pick ONE provider:
+1. Open https://console.groq.com/keys
+2. Sign in with your Google account (free, no card needed)
+3. Click "Create API Key", give it any name, copy the key it shows you
+4. When Claude asks for it during your first website deploy, paste it into
+   the chat
 
-- **Groq (recommended, free, no card):** sign up at https://console.groq.com/keys
-  and create an API key.
-- **Google Gemini (free tier):** https://aistudio.google.com/apikey
-- **OpenAI (paid):** https://platform.openai.com/api-keys
+That is it. Claude saves the key privately on your computer and wires it into
+every client site automatically from then on. You never do this again.
 
-You can use the same key across all your client sites.
+## What if I skip it?
 
-## Step 2: add the key to the client site's Vercel project
+Nothing looks broken. The chat bubble still works, it just offers "Call now"
+and "Get a fast quote" buttons instead of typed answers. Add the key any time
+and ask Claude to redeploy the site; the chat switches on.
 
-From the client's website folder (the one you deploy from):
+## How do I know it is working?
+
+After every deploy, Claude asks the live chatbot a test question ("What
+services do you offer?") and shows you the answer. You can also open the live
+site yourself, click the bubble, and ask it anything about the business.
+
+---
+
+Everything below is technical reference. You do not need it; Claude handles it.
+
+## Manual setup (reference)
+
+Other providers work too: set exactly ONE of `GROQ_API_KEY` (free,
+console.groq.com/keys), `GEMINI_API_KEY` (free tier, aistudio.google.com/apikey),
+or `OPENAI_API_KEY` (paid, platform.openai.com/api-keys).
+
+From the client's website folder:
 
 ```bash
 vercel env add GROQ_API_KEY production
-```
-
-Paste the key when prompted. Use `GEMINI_API_KEY` or `OPENAI_API_KEY` instead
-if you chose those providers. Set exactly ONE of the three.
-
-## Step 3: redeploy
-
-```bash
 vercel --prod
 ```
-
-Open the live site, click the chat bubble, ask "what services do you offer?"
-and confirm it answers with this client's actual services.
 
 ## Notes
 
