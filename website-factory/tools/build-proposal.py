@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build-proposal.py — Stage 13 (template-approach branch)
+build-proposal.py, Stage 13 (template-approach branch)
 
 Translation layer between our pipeline outputs (intake / research / strategy /
 brand-dna / dist / assets) and the canonical proposal template
@@ -64,7 +64,7 @@ STATE_FULL = {
     "WI": "Wisconsin", "WY": "Wyoming", "DC": "District of Columbia",
 }
 
-# Marketing region labels — common metros. Falls back to "Greater {city}" if no match.
+# Marketing region labels, common metros. Falls back to "Greater {city}" if no match.
 REGION_MARKETING = {
     ("TX", "Houston"): "Greater Houston",
     ("TX", "Dallas"): "Dallas-Fort Worth Metroplex",
@@ -193,6 +193,50 @@ def _contract_data_json() -> str:
         {"title": data.get("title", "WEBSITE SERVICES AGREEMENT"), "sections": data.get("sections", [])},
         ensure_ascii=False,
     )
+
+
+_CURRENCY_SYMBOLS = {
+    "USD": "$", "CAD": "$", "AUD": "$", "NZD": "$", "SGD": "$", "HKD": "$", "MXN": "$",
+    "GBP": "£", "EUR": "€", "JPY": "¥", "CNY": "¥", "INR": "₹",
+    "ZAR": "R", "AED": "AED ", "CHF": "CHF ", "SEK": "kr ", "NOK": "kr ", "DKK": "kr ",
+    "PLN": "zł ", "BRL": "R$", "PHP": "₱", "THB": "฿", "KRW": "₩",
+}
+
+
+def _currency_symbol(pricing: dict[str, Any]) -> str:
+    """The symbol shown before every price. Students set pricing.currency_symbol
+    directly (e.g. "£"), or just pricing.currency as an ISO code and we map it.
+    Defaults to $."""
+    explicit = str(pricing.get("currency_symbol") or "").strip()
+    if explicit:
+        return explicit[:4]
+    return _CURRENCY_SYMBOLS.get(str(pricing.get("currency") or "").strip().upper(), "$")
+
+
+def _payment_links_json(brand: dict[str, Any]) -> str:
+    """Serialise agency-brand.json "payment_links" for the seller-tools panel, so
+    every proposal you build already carries your Stripe/PayPal/invoice links and
+    you never retype them on a call. Each proposal deploys to its own domain, so
+    browser-saved links would not follow you between clients; baking them in does.
+
+    Non-http(s) entries are dropped: the label and URL are rendered into the page,
+    and a javascript: URL pasted into the config would otherwise become a live href.
+    These are baked into the page source, so only shareable checkout URLs belong
+    here, never a private dashboard link that carries a session token."""
+    out: list[dict[str, str]] = []
+    for row in brand.get("payment_links") or []:
+        if not isinstance(row, dict):
+            continue
+        label = str(row.get("label") or "").strip()
+        url = str(row.get("url") or "").strip()
+        if not label or not url:
+            continue
+        if not re.match(r"^https?://", url, re.I):
+            print(f"  ! payment link '{label}' skipped: not an http(s) URL", file=sys.stderr)
+            continue
+        out.append({"label": label[:60], "url": url})
+    # < so a "</script>" inside a label can never close the inline script block.
+    return json.dumps(out, ensure_ascii=False).replace("<", "\\u003c")
 
 
 def bake_agency_signature(brand: dict[str, Any], proposal_dir: Path) -> None:
@@ -374,7 +418,7 @@ def compose_agency_vars(brand: dict[str, Any]) -> dict[str, str]:
         "AGENCY_PRICING_MONTHLY_FEE": str(pricing.get("monthly_fee_default_usd", "")),
         "AGENCY_PRICING_CURRENCY": pricing.get("currency", "USD"),
 
-        # Niche vocabulary (from agency-brand.json niche.{} block — sentinel-driven)
+        # Niche vocabulary (from agency-brand.json niche.{} block, sentinel-driven)
         "NICHE_NOUN": niche.get("noun", "trades"),
         "NICHE_NOUN_TITLE": niche.get("noun_title", "Trades"),
         "NICHE_NOUN_TITLE_PLURAL": niche.get("noun_title_plural", niche.get("noun_title", "Trades") + "s"),
@@ -403,19 +447,28 @@ def compose_agency_vars(brand: dict[str, Any]) -> dict[str, str]:
         "AGENCY_PRIMARY": ((brand.get("palette", {}) or {}).get("primary") or "#b8912f"),
         # Canonical contract text inlined into proposal.html + sign.html (single source).
         "CONTRACT_DATA_JSON": _contract_data_json(),
+        # Your saved payment links, shown in the seller-tools panel (leads never see it).
+        "AGENCY_PAYMENT_LINKS_JSON": _payment_links_json(brand),
         "AGENCY_VALUE_PROP_HEADLINE": intro.get("headline", intro.get("promise", "")),
         "AGENCY_AI_MOCK_MESSAGE_INBOUND": brand.get("ai_mock_message_inbound", "Hi, I need help with my project. Can someone come by today?"),
         "AGENCY_AI_MOCK_MESSAGE_REPLY": brand.get("ai_mock_message_reply", "Sorry to hear that , emergency calls go straight to {{OWNER_FIRST_NAME}}'s mobile. I just paged them and locked you a 7&nbsp;AM slot. What's the best number to text the address to?"),
         "AGENCY_AI_REVIEW_SAMPLE": brand.get("ai_review_sample", "Great experience from start to finish. Highly recommend."),
 
-        # Pricing — all student-controlled via agency-brand.json
+        # Pricing, all student-controlled via agency-brand.json
         "AGENCY_SETUP_FEE_PRICE": pricing.get("setup_fee_price_display", ""),
         "AGENCY_SETUP_FEE_STANDARD": pricing.get("setup_fee_standard_display", ""),
         "AGENCY_ONE_TIME_OFFER_PRICE": pricing.get("one_time_offer_price_display", ""),
         "AGENCY_MONTHLY_FEE_PRICE": pricing.get("monthly_fee_price_display", ""),
         "AGENCY_STACKED_VALUE_TOTAL": pricing.get("stacked_value_total_display", ""),
+        # Monthly plans: one-time fee only for the first grace-days, then the client
+        # picks one of three plans. AGENCY_MONTHLY_FEE_PRICE is plan 2 (Growth, the
+        # anchor); plan 3 (Pro) carries the AI chatbot + dialler. No add-ons.
+        "AGENCY_MONTHLY_GRACE_DAYS": str(pricing.get("monthly_grace_days", "90")),
+        "AGENCY_CURRENCY_SYMBOL": _currency_symbol(pricing),
+        "AGENCY_PLAN_1_PRICE": pricing.get("plan_1_price_display", "$47"),
+        "AGENCY_PLAN_3_PRICE": pricing.get("plan_3_price_display", "$297"),
 
-        # Value Stack — 5 line items (name + MSRP)
+        # Value Stack, 5 line items (name + MSRP)
         "AGENCY_VALUE_STACK_LINE_1_NAME": _vs(pricing, 0, "name"),
         "AGENCY_VALUE_STACK_LINE_1_MSRP": _vs(pricing, 0, "msrp"),
         "AGENCY_VALUE_STACK_LINE_2_NAME": _vs(pricing, 1, "name"),
@@ -426,6 +479,9 @@ def compose_agency_vars(brand: dict[str, Any]) -> dict[str, str]:
         "AGENCY_VALUE_STACK_LINE_4_MSRP": _vs(pricing, 3, "msrp"),
         "AGENCY_VALUE_STACK_LINE_5_NAME": _vs(pricing, 4, "name"),
         "AGENCY_VALUE_STACK_LINE_5_MSRP": _vs(pricing, 4, "msrp"),
+        # Optional 6th line (e.g. GA4 analytics); its row is stripped when absent.
+        "AGENCY_VALUE_STACK_LINE_6_NAME": _vs(pricing, 5, "name"),
+        "AGENCY_VALUE_STACK_LINE_6_MSRP": _vs(pricing, 5, "msrp"),
 
         # ROI calculator defaults (illustrative; prospect can adjust sliders live)
         "ROI_DEFAULT_LEADS": str(pricing.get("roi_defaults", {}).get("leads_per_month", 40)),
@@ -737,6 +793,8 @@ def strip_optional_blocks(html: str, brand: dict[str, Any]) -> str:
         out = strip("PROOF_VIDEO", out)
     if not brand.get("review_total_count"):
         out = strip("REVIEW_AGGREGATE", out)
+    if not _vs(brand.get("pricing", {}) or {}, 5, "name"):
+        out = strip("VALUE_STACK_6", out)
     return out
 
 
@@ -886,7 +944,7 @@ def compose_vars(client_name: str, paths: dict[str, Path]) -> dict[str, str]:
         "5,000",
     )
 
-    # Logo HTML — populated after asset copy has confirmed the logo file exists
+    # Logo HTML, populated after asset copy has confirmed the logo file exists
     company_logo_html = f'<img src="agency-assets/client-logo.png" alt="{company_name}">'
 
     # Brand short for mock-mobile-bar (uppercase, suffix-stripped, ≤10 chars)
@@ -930,7 +988,7 @@ def compose_vars(client_name: str, paths: dict[str, Path]) -> dict[str, str]:
         "SETUP_FEE_DEFAULT": str(setup_fee_default).replace("$", ""),
         "LIVE_PREVIEW_URL": _resolve_live_preview_url(client_name),
         # GMB knowledge-panel mock fields (currently inside a commented block in the
-        # template, but the validator scans comments too — give them graceful,
+        # template, but the validator scans comments too, give them graceful,
         # never-empty values so the build never fails on them and the mock works if
         # a student uncomments it).
         "CLIENT_EMAIL": str(intake.get("email") or ""),
@@ -942,8 +1000,8 @@ def compose_vars(client_name: str, paths: dict[str, Path]) -> dict[str, str]:
 def _resolve_live_preview_url(client_name: str) -> str:
     """Pick the best preview URL for the laptop iframe in the proposal.
     Priority:
-      1. clients/[X]/Pipeline Data/deploy/vercel-url.txt — first https://*.vercel.app line
-      2. Fallback to '../build/index.html' (local snapshot — works for offline preview only;
+      1. clients/[X]/Pipeline Data/deploy/vercel-url.txt, first https://*.vercel.app line
+      2. Fallback to '../build/index.html' (local snapshot, works for offline preview only;
          Vite SPA assets won't resolve when proposal-dir is hosted on a separate domain).
     """
     deploy_file = REPO_ROOT / "clients" / client_name / "Pipeline Data" / "deploy" / "vercel-url.txt"
@@ -1027,7 +1085,7 @@ def copy_gmb_cover(photos_dir: Path, proposal_dir: Path) -> Path | None:
         )
         return target
     except subprocess.CalledProcessError:
-        # Pillow path fell over — fall back to a straight copy
+        # Pillow path fell over, fall back to a straight copy
         shutil.copyfile(src, target)
         return target
 
@@ -1118,7 +1176,7 @@ def derive_page_data(strategy: dict[str, Any], owner_first: str, brand_short: st
 
     `sitemap` is the parsed sitemap.json (Pipeline Data/strategy/sitemap.json).
     When passed, it's the canonical source for actual page counts (location_pages,
-    blog_posts, utility_pages) — strategy.service_areas may list 12 cities but
+    blog_posts, utility_pages), strategy.service_areas may list 12 cities but
     only 6 dedicated /service-area/<slug> pages get rendered, and only
     sitemap.json knows the truth.
 
@@ -1647,7 +1705,7 @@ def main() -> int:
         print("  PASS: zero unresolved {{VAR}} placeholders")
         rc = 0
 
-    # Build IDs check — the website template is a Vite SPA so the section IDs land in the
+    # Build IDs check, the website template is a Vite SPA so the section IDs land in the
     # bundled JS, NOT in the static dist/index.html shell. Grep dist/assets/*.js
     # instead. Vite's minifier emits the JSX `id="hero"` attribute as
     # `id:`hero`` (backtick template literal) in the React.createElement props

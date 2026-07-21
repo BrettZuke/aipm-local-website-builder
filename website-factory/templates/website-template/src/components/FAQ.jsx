@@ -19,7 +19,7 @@ export default function FAQ() {
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className="flex-1 h-px" style={{ background: 'rgb(var(--accent) / 0.35)' }} />
           <div className="px-4 py-2 bg-navy-slate" style={{ border: '1px solid rgb(var(--accent) / 0.2)' }}>
-            <img src="/logo.webp" alt={brandDNA.company.name} className="w-28 h-auto" />
+            <img src="/logo.webp" alt={brandDNA.company.name} className="w-28 h-auto" onError={(e) => { const el = e.target; el.onerror = () => { el.onerror = null; el.style.display = 'none'; }; el.src = '/logo.svg'; }} />
           </div>
           <div className="flex-1 h-px" style={{ background: 'rgb(var(--accent) / 0.35)' }} />
         </div>

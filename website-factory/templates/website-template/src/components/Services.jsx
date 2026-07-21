@@ -4,7 +4,7 @@ import { brandDNA } from '../config/brand-dna';
 // Generic fallback icon. Per-service icons can ship via brandDNA.services[i].iconPath
 // (an SVG `d` attribute string) so the template stays niche-agnostic.
 const fallbackIcon = (
-  <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="rgb(var(--accent))" strokeWidth={1.5}>
+  <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="none" stroke="rgb(var(--accent))" strokeWidth={1.5}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 003 10c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.25-8.25-3.286z" />
   </svg>
 );
@@ -12,7 +12,7 @@ const fallbackIcon = (
 const renderIcon = (service) => {
   if (service && service.iconPath) {
     return (
-      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="rgb(var(--accent))" strokeWidth={1.5}>
+      <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="none" stroke="rgb(var(--accent))" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d={service.iconPath} />
       </svg>
     );
@@ -93,11 +93,11 @@ export default function Services() {
           )}
 
           {services.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-[10px]">
               {services.map((s) => (
                 <div
                   key={s.slug || s.name}
-                  className="card-elevated-dark flex items-center gap-3 p-3 cursor-pointer transition-all group border-l-2 bg-navy-slate"
+                  className="card-elevated-dark flex items-center gap-[10px] p-[14px] cursor-pointer transition-all group border-l-2 bg-navy-slate"
                   style={{ border: '1px solid rgba(100,116,139,0.3)', borderLeft: '2px solid rgb(var(--accent))' }}
                 >
                   <div className="flex-shrink-0 flex items-center justify-center">

@@ -1,6 +1,6 @@
-# `clients/_agency/` — YOUR agency's brand data
+# `clients/_agency/`, YOUR agency's brand data
 
-This folder holds **your** agency's branding data. It's not a client folder —
+This folder holds **your** agency's branding data. It's not a client folder , 
 it's the student-owned profile that the website factory's proposal builder
 (Stage 13) merges into every client proposal so the closing artifact you send
 prospects represents your agency, not the factory's defaults.
@@ -45,8 +45,13 @@ unmistakably YOUR agency and not the factory default:
 - **Your name and company name** (`founder.name`, `founder.title`, `name`).
 - **Your reviews and client-build screenshots** (`reviews[]`, `client_builds[]`)
   from real work you have done, with real screenshots in `assets/`.
-- **Your prices** (`pricing`) and **your guarantee wording** (`guarantee`,
-  `three_reasons`).
+- **Your prices and currency** (`pricing`): the one-time fee, the three monthly
+  plans (`plan_1_price_display`, `monthly_fee_price_display` = the Growth plan,
+  `plan_3_price_display`), when plans start (`monthly_grace_days`), and
+  `currency_symbol` so everything shows in your local currency (`$`, `£`,
+  `€`...). All of them are also live-editable on any proposal from the Seller
+  tools bar.
+- **Your guarantee wording** (`guarantee`, `three_reasons`).
 - **Your colours and fonts** (`palette`, `fonts`) so it does not look like
   anyone else's.
 - **Your contract email**: set `contract_email` to the address your signed
@@ -54,6 +59,13 @@ unmistakably YOUR agency and not the factory default:
   `templates/proposal/api/README.md` for the 3 environment variables. Until you
   do, the signing screen shows a clean generic line and the send button says
   email is not configured.
+
+- **Your payment links** (`payment_links`): your Stripe / PayPal / invoice
+  checkout links. They show in the Seller tools bar at the bottom of every
+  proposal you build, each with a Copy button, so when they sign you can send
+  the link and get paid before the call ends. Leads never see that panel. Each
+  link must start with `https://`, and because they are baked into the page,
+  only put shareable checkout links there, never a private dashboard URL.
 
 The guarantee badge is now a built-in gold vector seal, so `guarantee-seal.png`
 is optional; drop one in only if you want your own badge image.

@@ -4,7 +4,7 @@ import { brandDNA } from '../config/brand-dna';
 // Right-column photo fallback chain (per 09-build.md Rule 19 + brief A8):
 //   1. /owner.webp (the single-owner portrait, when present)
 //   2. /team/{team_group_photo} (the team group photo, when present)
-//   3. nothing — right column hides cleanly via the photoOk gate
+//   3. nothing, right column hides cleanly via the photoOk gate
 //
 // The build script writes only ONE of these per client. When the owner photo
 // is missing, copy_assets() leaves /owner.webp absent and the onError flips
@@ -97,13 +97,13 @@ export default function Founder() {
               )}
             </div>
 
-            {/* Floating stat card — partially overlaps bottom-left corner of photo */}
+            {/* Floating stat card, partially overlaps bottom-left corner of photo */}
             <div
               className="text-navy"
               style={{
                 position: 'absolute',
-                bottom: 54,
-                left: -24,
+                bottom: 18,
+                left: 18,
                 background: 'linear-gradient(135deg, rgb(var(--accent-light)) 0%, rgb(var(--accent)) 40%, rgb(var(--accent-dark)) 65%, rgb(var(--accent-light)) 100%)',
                 padding: '16px 22px',
                 boxShadow: '0 12px 36px rgba(0,0,0,0.55), 0 3px 10px rgba(0,0,0,0.35)',

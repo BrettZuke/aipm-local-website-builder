@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 /**
- * FAQAccordion — single shared accordion used by both the home FAQ.jsx and
+ * FAQAccordion, single shared accordion used by both the home FAQ.jsx and
  * the per-service ServiceDetailPage.jsx. Click an item to expand its answer
  * (plus icon rotates 45 degrees into a cross with gold gradient background).
  *
  * Props:
- *   items: [{ q: string, a: string }] — required
+ *   items: [{ q: string, a: string }], required
  *
  * Visual contract MUST stay in sync with FAQ.jsx (lessons 14-proposal Rule 8):
  *   - Border:        1px solid rgba(100,116,139,0.25) closed; 1px solid rgb(var(--accent)) open
@@ -23,7 +23,7 @@ export default function FAQAccordion({ items }) {
   if (!items || items.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-[10px]">
       {items.map((item, i) => (
         <div
           key={i}
@@ -35,13 +35,13 @@ export default function FAQAccordion({ items }) {
         >
           <button
             onClick={() => setOpen(open === i ? null : i)}
-            className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
+            className="w-full flex items-center justify-between gap-[16px] px-[20px] py-[14px] text-left"
           >
             <span className="font-heading font-bold text-white text-sm uppercase tracking-wide leading-tight pr-4">
               {item.q}
             </span>
             <div
-              className="w-8 h-8 flex items-center justify-center flex-shrink-0 transition-all duration-200"
+              className="w-[30px] h-[30px] flex items-center justify-center flex-shrink-0 transition-all duration-200"
               style={{
                 background: open === i
                   ? 'linear-gradient(135deg, rgb(var(--accent-light)) 0%, rgb(var(--accent)) 40%, rgb(var(--accent-dark)) 65%, rgb(var(--accent-light)) 100%)'
@@ -50,7 +50,7 @@ export default function FAQAccordion({ items }) {
               }}
             >
               <svg
-                className="w-4 h-4"
+                className="w-[15px] h-[15px]"
                 style={{ color: open === i ? '#0F172A' : '#94A3BB' }}
                 fill="none" viewBox="0 0 24 24" stroke="currentColor"
               >
@@ -59,8 +59,8 @@ export default function FAQAccordion({ items }) {
             </div>
           </button>
           {open === i && (
-            <div className="px-6 pb-5" style={{ borderTop: '1px solid rgba(100,116,139,0.2)' }}>
-              <p className="text-cool font-body text-sm leading-relaxed pt-4">{item.a}</p>
+            <div className="px-[20px] pb-[14px]" style={{ borderTop: '1px solid rgba(100,116,139,0.2)' }}>
+              <p className="text-cool font-body text-sm leading-relaxed pt-[12px]">{item.a}</p>
             </div>
           )}
         </div>

@@ -6,7 +6,7 @@ export default function TrustStrip() {
     <div className="relative bg-navy-slate">
       <BackgroundPattern motif={brandDNA.shape_motif} opacity={0.3} color="white" />
 
-      {/* Floating claims pill — overlaps section above */}
+      {/* Floating claims pill, overlaps section above */}
       <div
         className="flex justify-center px-4 sm:px-8"
         style={{ marginTop: '-21px', position: 'relative', zIndex: 10 }}
@@ -21,14 +21,16 @@ export default function TrustStrip() {
             boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
           }}
         >
-          {/* Mobile: 2-column grid, no dividers */}
-          <div className="grid grid-cols-2 md:hidden">
+          {/* Mobile: 2-column grid, left-aligned rows. Pinned px sizes (the
+              doubled spacing scale makes raw utilities balloon here) and NO
+              text-center: centered wrapping made the four claims rag unevenly. */}
+          <div className="grid grid-cols-2 gap-x-[6px] md:hidden px-[10px] py-[6px]">
             {brandDNA.copy.trustClaims.map((claim) => (
-              <div key={claim} className="flex items-center justify-center gap-1.5 px-4 py-3">
-                <svg className="w-3 h-3 flex-shrink-0 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div key={claim} className="flex items-center justify-start gap-[8px] px-[8px] py-[9px]">
+                <svg className="w-[14px] h-[14px] flex-shrink-0 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="font-heading font-bold text-white text-[10px] uppercase tracking-wide leading-tight text-center">{claim}</span>
+                <span className="font-heading font-bold text-white text-[10.5px] uppercase tracking-wide leading-[1.3] text-left">{claim}</span>
               </div>
             ))}
           </div>
@@ -52,7 +54,7 @@ export default function TrustStrip() {
         </div>
       </div>
 
-      {/* Trust badges — mobile: stacked rows. Rule 57: badges render at a
+      {/* Trust badges, mobile: stacked rows. Rule 57: badges render at a
           minimum 64px height on mobile so the manufacturer credential is
           actually legible. mix-blend-mode multiply lets the badge sit cleanly
           on either light or dark section backgrounds. */}
@@ -73,7 +75,7 @@ export default function TrustStrip() {
         </div>
       )}
 
-      {/* Trust badges — desktop: single horizontal row. Rule 57: minimum 88px
+      {/* Trust badges, desktop: single horizontal row. Rule 57: minimum 88px
           height on desktop. */}
       {brandDNA.trust_badges && brandDNA.trust_badges.length > 0 && (
         <div className="hidden md:block py-5 overflow-x-auto">
@@ -98,7 +100,7 @@ export default function TrustStrip() {
         </div>
       )}
 
-      {/* Press logos / text-only credentials — fallback when no manufacturer cert badges */}
+      {/* Press logos / text-only credentials, fallback when no manufacturer cert badges */}
       {(!brandDNA.trust_badges || brandDNA.trust_badges.length === 0) && brandDNA.press_logos && brandDNA.press_logos.length > 0 && (
         <div className="px-6 py-8">
           <p className="font-heading font-bold text-gold text-[10px] uppercase tracking-[0.3em] text-center mb-4">

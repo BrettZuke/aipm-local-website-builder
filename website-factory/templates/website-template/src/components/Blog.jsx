@@ -21,10 +21,7 @@ export default function Blog() {
             {brandDNA.copy.blog.heading}
           </h2>
           <span className="line-gold block w-12 mt-4" />
-        </div>
-        {/* Right text */}
-        <div className="self-end">
-          <p className="text-cool font-body text-sm leading-relaxed">
+          <p className="text-cool font-body text-sm leading-relaxed mt-4 max-w-2xl">
             {brandDNA.copy.blog.body}
           </p>
         </div>
@@ -34,14 +31,19 @@ export default function Blog() {
       <div className="relative max-w-7xl mx-auto px-8 mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
         {posts.map((post) => (
           <div key={post.slug} className="card-elevated-dark overflow-hidden flex flex-col bg-navy" style={{ border: '1px solid rgba(100,116,139,0.25)' }}>
-            <div className="overflow-hidden aspect-video">
-              <img
-                src={post.cover}
-                alt={post.title}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                onError={(e) => { e.target.style.background = '#1E293B'; e.target.src = ''; }}
-              />
-            </div>
+            {/* Cover renders only when the post has one, and a failed load
+                collapses the whole media area: a hidden img inside a reserved
+                aspect-video box left a giant white void on live builds. */}
+            {post.cover && (
+              <div className="overflow-hidden aspect-video">
+                <img
+                  src={post.cover}
+                  alt={post.title}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  onError={(e) => { const el = e.target; el.onerror = null; const box = el.parentElement; if (box) box.style.display = 'none'; el.removeAttribute('src'); }}
+                />
+              </div>
+            )}
             <div className="p-5 flex flex-col flex-1">
               <div className="text-[10px] text-gold font-body uppercase mb-2 tracking-wide font-semibold">{post.date} · {post.category}</div>
               <h3 className="font-heading font-bold text-white text-base uppercase leading-tight mb-2">{post.title}</h3>

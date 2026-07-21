@@ -101,18 +101,14 @@ export default function Reviews() {
       <CornerOverlay position="top-left" size={320} />
       <CornerOverlay position="bottom-right" size={320} />
 
-      <div className="relative max-w-7xl mx-auto px-8 pt-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        <div>
-          <p className="text-gold font-body font-semibold text-xs uppercase tracking-[0.2em] mb-3">{brandDNA.copy.reviews.label}</p>
-          <h2 className="font-heading font-bold text-white uppercase leading-none text-5xl">
-            {brandDNA.copy.reviews.heading}
-          </h2>
-        </div>
-        <div className="text-cool font-body text-sm leading-relaxed">
-          <p>
-            {brandDNA.copy.reviews.body}
-          </p>
-        </div>
+      <div className="relative max-w-7xl mx-auto px-8 pt-12">
+        <p className="text-gold font-body font-semibold text-xs uppercase tracking-[0.2em] mb-3">{brandDNA.copy.reviews.label}</p>
+        <h2 className="font-heading font-bold text-white uppercase leading-none text-5xl">
+          {brandDNA.copy.reviews.heading}
+        </h2>
+        <p className="text-cool font-body text-sm leading-relaxed mt-4 max-w-2xl">
+          {brandDNA.copy.reviews.body}
+        </p>
       </div>
 
       {/* Summary statement */}
@@ -126,12 +122,12 @@ export default function Reviews() {
       <div className="relative max-w-7xl mx-auto px-8 mt-5">
         <div className="flex items-center gap-4">
 
-          {/* Prev arrow */}
+          {/* Prev arrow (desktop; mobile arrows live below the card) */}
           <button
             onClick={prev}
             disabled={current === 0}
             aria-label="Previous reviews"
-            className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-cool hover:text-white hover:border-gold disabled:opacity-25 disabled:cursor-default transition-all bg-navy-slate"
+            className="hidden lg:flex flex-shrink-0 w-10 h-10 items-center justify-center text-cool hover:text-white hover:border-gold disabled:opacity-25 disabled:cursor-default transition-all bg-navy-slate"
             style={{ border: '1px solid rgba(100,116,139,0.4)' }}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,22 +135,29 @@ export default function Reviews() {
             </svg>
           </button>
 
-          {/* Cards */}
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-5">
-            {isDesktop
-              ? reviews.slice(current, current + 3).map((review, i) => (
-                  <ReviewCard key={current + i} review={review} />
-                ))
-              : <ReviewCard key={current} review={reviews[current]} />
-            }
+          {/* Cards. Desktop: paged 3-up grid. Mobile: native finger-swipe
+              snap strip of every review (modern, no buttons needed). */}
+          <div className="flex-1">
+            <div className="hidden lg:grid lg:grid-cols-3 gap-5">
+              {reviews.slice(current, current + 3).map((review, i) => (
+                <ReviewCard key={current + i} review={review} />
+              ))}
+            </div>
+            <div className="lg:hidden flex overflow-x-auto snap-x snap-mandatory gap-[12px] pb-[6px] -mx-[16px] px-[16px] carousel-scroll">
+              {reviews.map((review, i) => (
+                <div key={i} className="w-[85%] max-w-[335px] flex-shrink-0 snap-center">
+                  <ReviewCard review={review} />
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Next arrow */}
+          {/* Next arrow (desktop) */}
           <button
             onClick={next}
             disabled={current >= maxIndex}
             aria-label="Next reviews"
-            className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-cool hover:text-white hover:border-gold disabled:opacity-25 disabled:cursor-default transition-all bg-navy-slate"
+            className="hidden lg:flex flex-shrink-0 w-10 h-10 items-center justify-center text-cool hover:text-white hover:border-gold disabled:opacity-25 disabled:cursor-default transition-all bg-navy-slate"
             style={{ border: '1px solid rgba(100,116,139,0.4)' }}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -164,7 +167,7 @@ export default function Reviews() {
         </div>
 
         {/* Dot indicators */}
-        <div className="flex items-center justify-center gap-2 mt-6">
+        <div className="hidden lg:flex items-center justify-center gap-2 mt-6">
           {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button
               key={i}
@@ -179,13 +182,14 @@ export default function Reviews() {
         </div>
       </div>
 
-      {/* See All buttons */}
-      <div className="relative max-w-7xl mx-auto px-8 mt-8 mb-10 flex items-center justify-center gap-4 flex-wrap">
+      {/* See All buttons. Equal width on mobile: two centered ghost buttons
+          of different widths read as misaligned when stacked. */}
+      <div className="relative max-w-7xl mx-auto px-8 mt-8 mb-10 flex flex-col items-center gap-[10px] lg:flex-row lg:justify-center lg:gap-4">
         <a
           href={brandDNA.contact.googleMapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-5 py-2.5 text-xs font-body font-bold uppercase tracking-wider text-cool hover:text-white hover:border-gold transition-colors bg-navy-slate"
+          className="w-[268px] lg:w-auto flex items-center justify-center gap-2 px-[16px] py-[11px] lg:px-5 lg:py-2.5 text-xs font-body font-bold uppercase tracking-wider text-cool hover:text-white hover:border-gold transition-colors bg-navy-slate"
           style={{ border: '1px solid rgba(100,116,139,0.4)' }}
         >
           <GoogleIcon />
@@ -195,7 +199,7 @@ export default function Reviews() {
           href={brandDNA.social.facebookReviews}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 px-5 py-2.5 text-xs font-body font-bold uppercase tracking-wider text-cool hover:text-white hover:border-gold transition-colors bg-navy-slate"
+          className="w-[268px] lg:w-auto flex items-center justify-center gap-2 px-[16px] py-[11px] lg:px-5 lg:py-2.5 text-xs font-body font-bold uppercase tracking-wider text-cool hover:text-white hover:border-gold transition-colors bg-navy-slate"
           style={{ border: '1px solid rgba(100,116,139,0.4)' }}
         >
           <FacebookIcon />

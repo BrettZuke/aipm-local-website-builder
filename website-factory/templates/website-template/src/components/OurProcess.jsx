@@ -94,7 +94,7 @@ export default function OurProcess() {
               {steps.map((step) => (
                 <div
                   key={step.n}
-                  className="card-elevated-dark flex items-center gap-4 px-4 py-4 cursor-default transition-all group bg-navy-slate"
+                  className="card-elevated-dark flex items-center gap-[13px] lg:gap-4 px-[15px] lg:px-4 py-[13px] lg:py-4 cursor-default transition-all group bg-navy-slate"
                   style={{ border: '1px solid rgba(100,116,139,0.25)' }}
                 >
                   {/* Rule 60: step number renders white with a black-soft shadow

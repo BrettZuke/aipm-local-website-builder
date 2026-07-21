@@ -24,7 +24,7 @@ export default function CTABanner() {
       <div className="relative max-w-7xl mx-auto px-8 py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         {/* Left: Logo + CTA text */}
         <div>
-          <img src="/logo.webp" alt={brandDNA.company.name} className="w-56 h-auto mb-6" />
+          <img src="/logo.webp" alt={brandDNA.company.name} className="w-56 h-auto mb-6" onError={(e) => { const el = e.target; el.onerror = () => { el.onerror = null; el.style.display = 'none'; }; el.src = '/logo.svg'; }} />
           <p className="text-gold font-body font-semibold text-xs uppercase tracking-[0.2em] mb-3">
             {brandDNA.copy.cta.label}
           </p>
@@ -52,32 +52,32 @@ export default function CTABanner() {
               boxShadow: '0 20px 60px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.30)',
             }}
           >
-            <div className="px-6 pt-6 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="px-[18px] pt-[16px] pb-[10px]" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
               <span className="heading-metallic font-heading font-bold text-white text-xl uppercase tracking-wide block">
                 {brandDNA.copy.formHeader}
               </span>
               <span className="text-white/50 text-[11px] font-body">{brandDNA.copy.formSubtext}</span>
             </div>
-            <form onSubmit={handleSubmit} className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <form onSubmit={handleSubmit} className="p-[12px] grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
               <input
-                className="form-input px-4 py-3 text-sm placeholder-white/40"
+                className="form-input px-[14px] py-[12px] text-sm placeholder-white/40"
                 placeholder="Your Name"
                 style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.14)', color: 'white' }}
               />
               <input
-                className="form-input px-4 py-3 text-sm placeholder-white/40"
+                className="form-input px-[14px] py-[12px] text-sm placeholder-white/40"
                 placeholder="Phone Number"
                 type="tel"
                 style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.14)', color: 'white' }}
               />
               <input
-                className="form-input sm:col-span-2 px-4 py-3 text-sm placeholder-white/40"
+                className="form-input sm:col-span-2 px-[14px] py-[12px] text-sm placeholder-white/40"
                 placeholder="Email Address"
                 type="email"
                 style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.14)', color: 'white' }}
               />
               <select
-                className="form-input sm:col-span-2 px-4 py-3 text-sm"
+                className="form-input sm:col-span-2 px-[14px] py-[12px] text-sm"
                 style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.75)' }}
               >
                 <option style={{ background: '#1E293B', color: 'white' }}>How Can We Help?</option>

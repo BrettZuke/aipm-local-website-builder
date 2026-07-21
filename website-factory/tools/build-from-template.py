@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build-from-template.py — Stage 10.1 (template-approach branch)
+build-from-template.py, Stage 10.1 (template-approach branch)
 
 Clones templates/website-template/ to clients/[X]/[X] Website/, composes a per-client
 src/config/brand-dna.js from upstream pipeline data, copies + optimises the
@@ -209,7 +209,16 @@ def run(cmd: list[str], cwd: Path | None = None, check: bool = True) -> subproce
 
 
 def clone_template(site_dir: Path, source_template: Path) -> None:
+    # Preserve an existing node_modules across the re-clone: wiping it made
+    # --skip-install self-defeating (every re-run forced a full npm install).
+    kept_modules: Path | None = None
     if site_dir.exists():
+        modules = site_dir / "node_modules"
+        if modules.exists():
+            kept_modules = site_dir.parent / f".{site_dir.name}.node_modules.keep"
+            if kept_modules.exists():
+                shutil.rmtree(kept_modules)
+            modules.rename(kept_modules)
         print(f"site dir already exists, removing: {site_dir}")
         shutil.rmtree(site_dir)
     site_dir.parent.mkdir(parents=True, exist_ok=True)
@@ -218,6 +227,9 @@ def clone_template(site_dir: Path, source_template: Path) -> None:
         return [n for n in names if n in {"node_modules", "dist", ".git", "niche-playbook"}]
 
     shutil.copytree(source_template, site_dir, ignore=ignore)
+    if kept_modules is not None:
+        kept_modules.rename(site_dir / "node_modules")
+        print("restored node_modules from previous build")
     print(f"cloned {source_template.relative_to(REPO_ROOT)} -> {site_dir}")
 
 
@@ -285,7 +297,7 @@ def copy_client_photos_to_public(paths: dict[str, Path], site_dir: Path) -> dict
 #
 # - Pipeline Data/intake/intake-form.json  (Stage 1, 00-intake.md)
 #   Keys: businessName, websiteUrl, phone, phoneNormalised, email, submittedAt
-#   This is the LEAN intake — most data comes from research, not intake.
+#   This is the LEAN intake, most data comes from research, not intake.
 #
 # - Pipeline Data/research/research.json  (Stage 2, 01-research.md)
 #   Keys (per the research SKILL.md + 01-research.md pass gate):
@@ -314,7 +326,7 @@ def copy_client_photos_to_public(paths: dict[str, Path], site_dir: Path) -> dict
 #         secondary_keywords, competitor_gaps, services[], service_areas[]
 #
 # - Pipeline Data/brand/brand-dna.json  (Stage 7, brand-dna-agent.md)
-#   Keys (post template-approach rewrite — schema at references/schemas/):
+#   Keys (post template-approach rewrite, schema at references/schemas/):
 #     palette.{primary, primary_dark, accent, accent_light, accent_mid,
 #              accent_dark, neutral, neutral_dim, ink, silver}
 #     typography.{heading, body, headingFontUrl, bodyFontUrl}
@@ -332,7 +344,7 @@ def copy_client_photos_to_public(paths: dict[str, Path], site_dir: Path) -> dict
 #         theme_mode_recommendation
 #
 # - Pipeline Data/copy/copy-deck.md  (Stage 6, 05-copy-deck.md)
-#   Markdown, not JSON — section copy lives here. compose_brand_dna does
+#   Markdown, not JSON, section copy lives here. compose_brand_dna does
 #   NOT parse this file directly; the copy-deck-agent should structure copy
 #   into brand-dna.json under `copy.*` keys before this stage runs.
 
@@ -685,7 +697,7 @@ def _extract_faq_from_body(body: str) -> tuple[str, list[dict[str, str]]]:
     for start, end in faq_blocks:
         block_lines = lines[start + 1:end]  # skip the H2 itself
         # First, try Format B (list bullets with inline answer)
-        bullet_pat = re.compile(r"^\s*-\s*\*\*(.+?)\*\*\s*[:\-—]?\s*(.*)$")
+        bullet_pat = re.compile(r"^\s*-\s*\*\*(.+?)\*\*\s*[:\-, ]?\s*(.*)$")
         any_bullet = False
         for bl in block_lines:
             bm = bullet_pat.match(bl)
@@ -789,7 +801,7 @@ def _normalise_section_body(body_raw: str) -> str:
     """
     import re
 
-    # H3 section names that contain no useful render content (Meta, Hero, etc.) —
+    # H3 section names that contain no useful render content (Meta, Hero, etc.) , 
     # we DROP these entirely, since the content underneath is structural metadata
     # already surfaced via the page hero or meta tags above.
     skip_h3_sections = {
@@ -803,7 +815,7 @@ def _normalise_section_body(body_raw: str) -> str:
     # Working-title rename map. Stage 6 copy-deck uses internal labels like
     # "Problem-Aware Intro" or "Pricing Transparency" so the writer knows the
     # function of each section. Those internal labels are NOT user-facing
-    # headings — promote the prose to a more natural h2 (or strip the
+    # headings, promote the prose to a more natural h2 (or strip the
     # heading entirely with empty string ""). Add new mappings here when a
     # new working-title leaks into a service-detail page.
     rename_h3 = {
@@ -815,7 +827,7 @@ def _normalise_section_body(body_raw: str) -> str:
         "pricing transparency": "What This Costs",
         "pricing": "What This Costs",
         "transparent pricing": "What This Costs",
-        "faq — plain english": "Common Questions",
+        "faq, plain english": "Common Questions",
         "faq plain english": "Common Questions",
         "frequently asked questions": "Common Questions",
         "faq": "Common Questions",
@@ -940,7 +952,7 @@ def _normalise_section_body(body_raw: str) -> str:
                 flush_bullets()
                 section_blocks.append(("p", value))
                 continue
-            # Long-form prose lines — definitely paragraphs, not bullets
+            # Long-form prose lines, definitely paragraphs, not bullets
             if label.startswith("Body") or label in ("Hook paragraph", "Intro paragraph", "Vision", "Mission", "Story paragraph 1", "Story paragraph 2"):
                 flush_bullets()
                 section_blocks.append(("p", value))
@@ -950,7 +962,7 @@ def _normalise_section_body(body_raw: str) -> str:
                 section_blocks.append(("p", f"*\"{value}\"*"))
                 continue
             # "Reason 1 title" / "Damage type 1 title" / "Decision point 1 title" /
-            # "Option 1 title" / "Tile 1 title" — pair with the body that follows.
+            # "Option 1 title" / "Tile 1 title", pair with the body that follows.
             if re.search(r"\b(title)\b", label, re.IGNORECASE):
                 pending_label_title = value
                 continue
@@ -1425,7 +1437,7 @@ def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any
     fb_rating = pick_first(research.get("facebookRating"), get_path(research, "social.facebook_rating"), 5.0)
     fb_url = pick_first(research.get("facebookUrl"), get_path(research, "social.facebook_url"))
     fb_reviews_url = pick_first(get_path(research, "social.facebook_reviews_url"), f"{fb_url}/reviews" if fb_url else None)
-    # Reviews — verbatim Google + Facebook per 05-copy-deck.md Rule 2.
+    # Reviews, verbatim Google + Facebook per 05-copy-deck.md Rule 2.
     # Priority: brand-dna seed -> research.reviews -> real Apify raw scrapes.
     # NEVER fabricate placeholder reviews per Rule 2.
     review_items = pick_first(get_path(brand_dna_in, "reviews.items"), research.get("reviews")) or []
@@ -1439,13 +1451,13 @@ def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any
     founder_title = pick_first(get_path(brand_dna_in, "founder.title"), "Founder & CEO")
     founder_story = pick_first(research.get("ownerStory"), get_path(brand_dna_in, "founder.story")) or ""
 
-    # Services — sourcing chain per 01-research.md Rule 1 + 04-strategy.md Rule 2:
+    # Services, sourcing chain per 01-research.md Rule 1 + 04-strategy.md Rule 2:
     # 1. research.services_offered[]  (Apify website scrape, every distinct trade)
     # 2. strategy.services[]          (Stage 5 strategy.json)
     # 3. brand_dna_in.services        (manual brand-dna.json overlay)
     # 4. raw-websites.json fallback   (primaryServices from Apify, last resort)
     # Distinct trade categories (siding, windows, etc.) NEVER merge into a
-    # generic exterior-services umbrella — Rule 2 in 04-strategy.md is explicit.
+    # generic exterior-services umbrella, Rule 2 in 04-strategy.md is explicit.
     services_offered = research.get("services_offered") if isinstance(research.get("services_offered"), list) else None
     services_from_strategy = strategy.get("services") if isinstance(strategy.get("services"), list) else None
     services_from_brand = brand_dna_in.get("services") if isinstance(brand_dna_in.get("services"), list) else None
@@ -1479,6 +1491,19 @@ def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any
                     return fuzzy
         return None
 
+    # Normalise plain-string service entries (Apify services_offered and
+    # hand-authored strategy lists both produce them) into schema objects.
+    # Every consumer in the template (Footer links, nav dropdown, service
+    # pages) reads svc.name / svc.slug, so a bare string breaks at runtime.
+    def _slugify_service(label: str) -> str:
+        import re as _re
+        return _re.sub(r"(^-|-$)", "", _re.sub(r"[^a-z0-9]+", "-", label.lower()))
+
+    services = [
+        svc if isinstance(svc, dict) else {"slug": _slugify_service(str(svc)), "name": str(svc), "body": ""}
+        for svc in services
+    ]
+
     for svc in services:
         slug = svc.get("slug")
         if not slug:
@@ -1495,7 +1520,7 @@ def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any
         if not svc.get("faq") and sec.get("faq"):
             svc["faq"] = sec["faq"]
 
-    # Location pages (per /service-area/[slug]) — full markdown body + adjacent cities
+    # Location pages (per /service-area/[slug]), full markdown body + adjacent cities
     location_pages = list((copy_sections.get("locations") or {}).values())
 
     # Trust badges (resolved from templates/{niche-slug}/niche-playbook/trust-signals.json by certifications)
@@ -1573,7 +1598,7 @@ def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any
         # Social platform URLs. Footer.jsx renders an icon ONLY for keys with a
         # non-empty URL, so platforms not in the source data simply produce no
         # dead/invisible icon. Add new platforms here when scraped or supplied
-        # by intake — keys must match SOCIAL_ICON_MAP in Footer.jsx (facebook,
+        # by intake, keys must match SOCIAL_ICON_MAP in Footer.jsx (facebook,
         # instagram, youtube, twitter, linkedin, tiktok).
         "social": {
             "facebook": fb_url,
@@ -1614,7 +1639,11 @@ def compose_brand_dna(client_name: str, paths: dict[str, Path]) -> dict[str, Any
                 "name": founder_name,
                 "displayName": founder_name.upper() if founder_name and founder_name != REQ else REQ,
                 "title": founder_title,
-                "yearsExp": pick_first(get_path(brand_dna_in, "founder.years_experience"), get_path(brand_dna_in, "trust.years_in_business"), REQ),
+                # Pipelines commonly store years as a number; the brand-dna
+                # schema (and the JSX that renders it) expects a string.
+                "yearsExp": (lambda v: str(v) if isinstance(v, (int, float)) and not isinstance(v, bool) else v)(
+                    pick_first(get_path(brand_dna_in, "founder.years_experience"), get_path(brand_dna_in, "trust.years_in_business"), REQ)
+                ),
                 "expLabel": "YEARS OF EXPERIENCE",
             },
             "founders": pick_first(brand_dna_in.get("founders"), [founder_name] if founder_name and founder_name != REQ else []),
@@ -1967,7 +1996,9 @@ def _build_copy_block(brand_dna_in: dict[str, Any], research: dict[str, Any], st
         "mobileCallLabel": user.get("mobileCallLabel", "__REQUIRED__MOBILE_CALL_LABEL__"),
         "availableNow": user.get("availableNow", "__REQUIRED__AVAILABLE_NOW__"),
         "footerCta": user.get("footerCta", "__REQUIRED__FOOTER_CTA__"),
-        "controlPhrase": user.get("controlPhrase", "__REQUIRED__RISK_REVERSAL_LINE__"),
+        # controlPhrase is consumed by no component; default to the process
+        # risk-reversal line (or empty) instead of a build-halting sentinel.
+        "controlPhrase": user.get("controlPhrase") or (user.get("process") or {}).get("riskReversal") or "",
         "copyright": user.get("copyright", f"© 2026 {company_name}. All rights reserved."),
 
         # === TopBar (above-nav contact strip) ===
@@ -2201,7 +2232,7 @@ def _regenerate_favicon(logo_src: Path, public_dir: Path) -> None:
     favicon_png = public_dir / "favicon.png"
     cropped.save(favicon_png, "PNG", optimize=True)
 
-    # SVG wrapper that embeds the PNG as a base64 data URL — keeps both formats
+    # SVG wrapper that embeds the PNG as a base64 data URL, keeps both formats
     # available without needing a vector source. Browsers that prefer SVG get the
     # same raster; PNG-only ones get the PNG file directly.
     import base64
@@ -2312,12 +2343,200 @@ def resolve_trust_badges(certifications: dict[str, Any]) -> list[dict[str, str]]
     return matched
 
 
+def load_existing_brand_dna(dest: Path) -> dict[str, Any] | None:
+    """Best-effort parse of an already-composed brand-dna.js so a re-run can
+    refill placeholders from previously authored copy (see refill_required).
+    Must be called BEFORE clone_template: the clone wipes the site dir."""
+    if not dest.exists():
+        return None
+    text = dest.read_text()
+    m = re.search(r"=\s*(\{.*\})\s*;?\s*$", text, re.S)
+    if not m:
+        return None
+    try:
+        return json.loads(m.group(1))
+    except Exception:
+        pass
+    # Hand-edited files can carry JS-only syntax (template literals, comments):
+    # let node evaluate the module and hand back JSON.
+    try:
+        import base64
+        runner = (
+            "const u='data:text/javascript;base64,'+process.argv[1];"
+            "import(u).then(m=>process.stdout.write(JSON.stringify(m.brandDNA)))"
+            ".catch(()=>process.exit(1))"
+        )
+        b64 = base64.b64encode(text.encode()).decode()
+        out = subprocess.run(["node", "-e", runner, b64], capture_output=True, text=True, timeout=30)
+        if out.returncode == 0 and out.stdout.strip().startswith("{"):
+            return json.loads(out.stdout)
+    except Exception:
+        pass
+    return None
+
+
+def _has_required(x: Any) -> bool:
+    if isinstance(x, str):
+        return "__REQUIRED__" in x
+    if isinstance(x, dict):
+        return any(_has_required(v) for v in x.values())
+    if isinstance(x, list):
+        return any(_has_required(v) for v in x)
+    return False
+
+
+def refill_required(new: Any, prev: Any) -> Any:
+    """Make recompose additive, never destructive. Any __REQUIRED__ sentinel in
+    the freshly composed config is refilled from the previous build's value at
+    the same path, and keys that exist only in the previous build (hand-authored
+    additions like a chatbot block) are carried over. Real values coming out of
+    the pipeline always win; only placeholders and missing keys fall back.
+
+    Added 2026-07-20 after a factory re-run wiped a client's authored copy
+    (founder story, FAQs, financing page) back to __REQUIRED__ sentinels because
+    the Pipeline Data JSON was skeletal while the working brand-dna.js held the
+    real site copy."""
+    if prev is None:
+        return new
+    if isinstance(new, str):
+        if "__REQUIRED__" in new:
+            if isinstance(prev, str) and prev and "__REQUIRED__" not in prev:
+                return prev
+            # A placeholder slot is stringly-typed; coerce a previous numeric
+            # value (e.g. yearsExp stored as 18) so the shape check passes.
+            if isinstance(prev, (int, float)) and not isinstance(prev, bool):
+                return str(prev)
+        return new
+    if isinstance(new, dict):
+        prev_d = prev if isinstance(prev, dict) else {}
+        out = {k: refill_required(v, prev_d.get(k)) for k, v in new.items()}
+        for k, v in prev_d.items():
+            if k not in out and not _has_required(v):
+                out[k] = v
+        return out
+    if isinstance(new, list):
+        prev_l = prev if isinstance(prev, list) else []
+        # An empty composed list never overwrites previously authored content
+        # (e.g. reviews vanish when the Apify raw files are absent on a re-run).
+        if not new and prev_l and not _has_required(prev_l):
+            return prev_l
+        # Name-keyed shape repair: a freshly composed entry that is only a
+        # name (string, or object with an empty body) picks up the previous
+        # build's full object for the same name, so authored service blurbs
+        # and FAQs survive a recompose from skeletal pipeline data.
+        prev_by_name: dict[str, Any] = {}
+        for it in prev_l:
+            if isinstance(it, dict):
+                nm = str(it.get("name") or it.get("title") or it.get("label") or "").strip().lower()
+                if nm:
+                    prev_by_name[nm] = it
+        out = []
+        for i, v in enumerate(new):
+            key = None
+            if isinstance(v, str):
+                key = v.strip().lower()
+            elif isinstance(v, dict) and not v.get("body") and not v.get("description"):
+                key = str(v.get("name") or "").strip().lower()
+            if key and key in prev_by_name and not _has_required(prev_by_name[key]):
+                prev_obj = prev_by_name[key]
+                if isinstance(v, dict):
+                    # keep any real values the new compose DID produce
+                    out.append({**prev_obj, **{k2: v2 for k2, v2 in v.items() if v2 not in (None, "", [])}})
+                else:
+                    out.append(prev_obj)
+            else:
+                out.append(refill_required(v, prev_l[i] if i < len(prev_l) else None))
+        if prev_l and _has_required(out) and not _has_required(prev_l):
+            return prev_l
+        return out
+    return new
+
+
 def write_brand_dna_js(brand_dna: dict[str, Any], dest: Path) -> None:
     """Serialise the brand-dna dict as a JavaScript ES module."""
     js = "export const brandDNA = " + json.dumps(brand_dna, indent=2, ensure_ascii=False) + ";\n"
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(js)
     print(f"wrote brand-dna.js: {dest}")
+
+
+def write_business_json(brand_dna: dict[str, Any], dest: Path) -> None:
+    """Distil the composed brand-dna into api/_business.json, the fact sheet the
+    AI chat endpoint (api/chat.mjs) builds its system prompt from. Facts only,
+    kept small; anything missing simply narrows what the bot can say."""
+    company = brand_dna.get("company", {}) or {}
+    contact = brand_dna.get("contact", {}) or {}
+    hours = brand_dna.get("hours", {}) or {}
+
+    def _label(item: Any) -> str:
+        if isinstance(item, str):
+            return item
+        if isinstance(item, dict):
+            return str(item.get("name") or item.get("title") or item.get("label") or "")
+        return ""
+
+    services = [s for s in (_label(x) for x in brand_dna.get("services", []) or []) if s]
+    areas = [a for a in (_label(x) for x in brand_dna.get("serviceAreas", []) or []) if a]
+    hours_display = hours.get("display") or []
+    chatbot = brand_dna.get("chatbot", {}) or {}
+
+    # Deep knowledge: distil everything the pipeline learned about this client
+    # into plain text the AI answers from, so the bot is an expert on THIS
+    # business, not a generic chatbot. Capped so the prompt stays fast + cheap.
+    copy_blk = brand_dna.get("copy", {}) or {}
+    know: list[str] = []
+
+    def _add(label: str, value: Any) -> None:
+        v = str(value or "").strip()
+        if v:
+            know.append(f"{label}: {v}")
+
+    _add("About the business", company.get("description"))
+    founder_copy = copy_blk.get("founder", {}) or {}
+    _add("Owner story", " ".join(str(founder_copy.get(k) or "") for k in ("para1", "para2")).strip())
+    team = (brand_dna.get("team", {}) or {}).get("founder", {}) or {}
+    if team.get("name"):
+        _add("Owner", f"{team.get('name')} ({team.get('title') or 'Owner'}, {team.get('yearsExp') or ''} {team.get('expLabel') or ''})".strip())
+    for svc in (brand_dna.get("services", []) or [])[:12]:
+        if isinstance(svc, dict):
+            nm = svc.get("name") or svc.get("title") or ""
+            blurb = svc.get("blurb") or svc.get("description") or svc.get("body") or ""
+            if nm:
+                know.append(f"Service, {nm}: {str(blurb)[:300]}")
+    for f in (brand_dna.get("faq", []) or [])[:12]:
+        if isinstance(f, dict) and f.get("q"):
+            know.append(f"Q: {f.get('q')} A: {str(f.get('a') or '')[:300]}")
+    for w in (brand_dna.get("why_choose_us", []) or [])[:6]:
+        if isinstance(w, dict) and (w.get("title") or w.get("heading")):
+            know.append(f"Why choose us, {w.get('title') or w.get('heading')}: {str(w.get('body') or w.get('description') or '')[:200]}")
+    for o in (brand_dna.get("special_offers", []) or [])[:4]:
+        if isinstance(o, dict) and (o.get("title") or o.get("name")):
+            know.append(f"Current offer, {o.get('title') or o.get('name')}: {str(o.get('detail') or o.get('body') or '')[:200]}")
+    offers_copy = copy_blk.get("offers", {}) or {}
+    _add("Offers note", offers_copy.get("detail"))
+    _add("Trust and credentials", ", ".join(str((b or {}).get("label") or (b or {}).get("name") or b) for b in (brand_dna.get("trust_badges", []) or [])[:8] if b))
+    if company.get("licenseNumber"):
+        _add("License number", company.get("licenseNumber"))
+    addr = brand_dna.get("address", {}) or {}
+    _add("Address", addr.get("full"))
+    _add("Email", contact.get("email"))
+    knowledge = "\n".join(know)[:6000]
+
+    biz = {
+        "knowledge": knowledge,
+        "name": company.get("name") or "",
+        "assistantName": chatbot.get("assistantName") or "Alex",
+        "trade": (brand_dna.get("niche", {}) or {}).get("noun") or "",
+        "serviceRegion": company.get("serviceRegion") or "",
+        "description": company.get("description") or "",
+        "phone": contact.get("phone") or "",
+        "services": services[:12],
+        "serviceAreas": areas[:15],
+        "hours": "; ".join(str(h) for h in hours_display[:4]),
+    }
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps(biz, indent=2, ensure_ascii=False) + "\n")
+    print(f"wrote _business.json: {dest} (knowledge {len(knowledge)} chars)")
 
 
 # ----- step 3, copy + optimise assets -------------------------------------
@@ -2486,7 +2705,7 @@ def copy_assets(client_name: str, paths: dict[str, Path], site_dir: Path, brand_
                 project_entries.append({"filename": f"project{idx}.webp", "type": "image", "alt": f"Project {idx} by {brand_dna['company']['name']}"})
     brand_dna["previous_projects"] = project_entries
 
-    # Delete the legacy template hero-image.png — it ships in templates/website-template/public/
+    # Delete the legacy template hero-image.png, it ships in templates/website-template/public/
     # at ~10MB and is the wrong company's hero photo. Subpages now reference
     # /hero-image.webp directly, so the .png is dead weight + brand contamination.
     legacy_hero_png = public / "hero-image.png"
@@ -2665,6 +2884,12 @@ def main() -> int:
         print(f"    no active niche (using default website-template)")
     print()
 
+    # Snapshot the previous composed config BEFORE the clone wipes the site
+    # dir; refill_required uses it so a re-run never regresses authored copy.
+    prev_brand_dna = load_existing_brand_dna(paths["site"] / "src" / "config" / "brand-dna.js")
+    if prev_brand_dna is not None:
+        print("    previous brand-dna.js found: authored copy will survive recompose")
+
     print("[1/6] cloning niche template")
     clone_template(paths["site"], source_template)
 
@@ -2683,8 +2908,17 @@ def main() -> int:
     copy_assets(args.client, paths, paths["site"], brand_dna)
 
     # Re-write brand-dna.js after asset copy (because copy_assets populates
-    # previous_projects / team_members from what's actually on disk)
+    # previous_projects / team_members from what's actually on disk).
+    # Refill BEFORE the chatbot/analytics defaults so a previously authored
+    # chatbot block is carried over instead of being masked by the defaults.
+    brand_dna = refill_required(brand_dna, prev_brand_dna)
+    brand_dna.setdefault("chatbot", {"enabled": True, "greeting": None, "teaser": None})
+    brand_dna.setdefault("analytics", {"ga4MeasurementId": None})
     write_brand_dna_js(brand_dna, paths["site"] / "src" / "config" / "brand-dna.js")
+
+    # Bake the AI chat context: api/chat.mjs answers from this file, so the bot
+    # knows this client's services, area, phone, and hours with zero code edits.
+    write_business_json(brand_dna, paths["site"] / "api" / "_business.json")
 
     if args.dry_run:
         print("\n[dry-run] skipping build")

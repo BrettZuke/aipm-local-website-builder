@@ -54,7 +54,19 @@ Follow the prompts:
 This creates `.vercel/project.json`. On subsequent deploys, this file handles the link
 automatically.
 
-### Step 4, Deploy to production
+### Step 4, Wire the AI chatbot key (first deploy of a project only)
+
+Every build ships the AI chat widget; it answers only when an AI key exists on
+the project. Check, and add if missing (see `CHATBOT-SETUP.md` in the website
+template for getting a free key):
+
+```bash
+vercel env ls | grep -E "GROQ_API_KEY|GEMINI_API_KEY|OPENAI_API_KEY" || vercel env add GROQ_API_KEY production
+```
+
+Skipping this is non-fatal: the widget degrades to Call + Get-a-quote buttons.
+
+### Step 5, Deploy to production
 
 ```bash
 vercel --prod
@@ -63,7 +75,7 @@ vercel --prod
 Capture the production URL from the output (format: `https://[client-slug]-website.vercel.app`
 or the custom domain if already configured).
 
-### Step 5, Verify deployment
+### Step 6, Verify deployment
 
 ```bash
 curl -s -o /dev/null -w "%{http_code}" https://[deployed-url]
@@ -71,7 +83,7 @@ curl -s -o /dev/null -w "%{http_code}" https://[deployed-url]
 
 Expect 200. If not 200, check Vercel dashboard for build/deployment errors.
 
-### Step 6, Save the URL
+### Step 7, Save the URL
 
 Write the production URL to:
 ```
@@ -80,7 +92,7 @@ clients/[Client Name]/Pipeline Data/deploy/vercel-url.txt
 
 This file is read by the proposal agent at Stage 13 for the iframe preview.
 
-### Step 7, Optional: custom domain setup
+### Step 8, Optional: custom domain setup
 
 Custom domain configuration is done in the Vercel dashboard, not via CLI. After deploy:
 1. Vercel dashboard > Project > Settings > Domains

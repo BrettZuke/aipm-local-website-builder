@@ -15,9 +15,13 @@ const LocationIcon = () => (
 );
 
 export default function ServiceAreas() {
+  // No embed URL means no map column at all: an iframe with a null src
+  // renders as a giant blank white box, which looks broken on every build
+  // where the factory has no Maps embed for the client.
+  const hasMap = !!brandDNA.contact.mapsEmbedUrl;
   return (
     <section id="service-area" className="py-16 bg-navy">
-      <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className={`${hasMap ? 'max-w-7xl lg:grid-cols-2' : 'max-w-3xl'} mx-auto px-8 grid grid-cols-1 gap-12 items-center`}>
         {/* Left content */}
         <div>
           <p className="text-gold font-body font-semibold text-xs uppercase tracking-[0.2em] mb-3">
@@ -43,20 +47,22 @@ export default function ServiceAreas() {
           </div>
         </div>
 
-        {/* Right: Google Maps embed */}
-        <div className="overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.2)', border: '1px solid rgba(100,116,139,0.25)' }}>
-          <iframe
-            title={`${brandDNA.company.name} - ${brandDNA.address.full}`}
-            src={brandDNA.contact.mapsEmbedUrl}
-            width="100%"
-            height="280"
-            className="sm:!h-[360px]"
-            style={{ border: 0, display: 'block' }}
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </div>
+        {/* Right: Google Maps embed (only when the factory set a real URL) */}
+        {hasMap && (
+          <div className="overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.2)', border: '1px solid rgba(100,116,139,0.25)' }}>
+            <iframe
+              title={`${brandDNA.company.name} - ${brandDNA.address.full}`}
+              src={brandDNA.contact.mapsEmbedUrl}
+              width="100%"
+              height="280"
+              className="sm:!h-[360px]"
+              style={{ border: 0, display: 'block' }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        )}
       </div>
     </section>
   );

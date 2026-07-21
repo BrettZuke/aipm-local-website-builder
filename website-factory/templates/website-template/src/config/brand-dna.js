@@ -1,5 +1,5 @@
 /**
- * brand-dna.js — per-client config contract for the website template.
+ * brand-dna.js, per-client config contract for the website template.
  *
  * Stage 10.1 (`tools/build-from-template.py`) generates this file fresh per
  * client by composing earlier-stage outputs (intake, research, copy-deck,
@@ -69,10 +69,10 @@ export const brandDNA = {
     founders: [],
   },
 
-  // "light" | "dark" — single mode, decided at Stage 7. Default light.
+  // "light" | "dark", single mode, decided at Stage 7. Default light.
   theme_mode: "light",
 
-  // "commercial" | "family" | "premium" — copy tone hint
+  // "commercial" | "family" | "premium", copy tone hint
   voice_register: "family",
 
   // One of: polygon | triangle | wave | arc | dot-grid | hexagon | chevron |
@@ -116,6 +116,24 @@ export const brandDNA = {
   trust_badges: [],
   previous_projects: [],
   team_members: [],
+
+  // AI chat widget (see api/chat.mjs + CHATBOT-SETUP.md). On for every build;
+  // needs one free API key env var on the site's Vercel project to answer.
+  // greeting/teaser: null = sensible defaults. avatar: the photo on the teaser
+  // message; defaults to /owner.webp, falls back to a brand-accent initial.
+  chatbot: {
+    enabled: true,
+    assistantName: null,
+    greeting: null,
+    teaser: null,
+    avatar: null,
+  },
+
+  // GA4: set the client's Measurement ID (G-XXXXXXXXXX) once their property
+  // exists and every page tracks traffic, visitors, time on page, and country.
+  analytics: {
+    ga4MeasurementId: null,
+  },
 
   copy: {
     hero: {

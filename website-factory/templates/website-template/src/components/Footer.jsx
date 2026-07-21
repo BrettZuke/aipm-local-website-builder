@@ -18,19 +18,19 @@ const serviceLinks = brandDNA.services.slice(0, 7).map((s) => ({
 }));
 
 const PhoneIcon = () => (
-  <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="rgb(var(--accent))" strokeWidth={1.5}>
+  <svg className="w-[16px] h-[16px] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="rgb(var(--accent))" strokeWidth={1.5}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
   </svg>
 );
 
 const MailIcon = () => (
-  <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="rgb(var(--accent))" strokeWidth={1.5}>
+  <svg className="w-[16px] h-[16px] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="rgb(var(--accent))" strokeWidth={1.5}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
   </svg>
 );
 
 const LocationIcon = () => (
-  <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="rgb(var(--accent))" strokeWidth={1.5}>
+  <svg className="w-[16px] h-[16px] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="rgb(var(--accent))" strokeWidth={1.5}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
   </svg>
@@ -56,17 +56,26 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-navy">
+    <footer className="theme-keep-dark bg-navy">
       {/* Gold top accent line */}
       <div className="line-gold w-full" />
 
-      <div className="max-w-7xl mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-        {/* Brand col */}
+      <div className="max-w-7xl mx-auto px-8 py-[32px] lg:py-12 grid grid-cols-2 lg:grid-cols-5 gap-[18px] lg:gap-8">
+        {/* Brand col. Text lockup, NOT the logo image: the light-variant logo
+            has navy lettering that disappears on the navy footer (live builds
+            showed only the mark + gold sub-line, which read as broken). */}
         <div className="lg:col-span-1">
-          <Link to="/" className="flex items-center gap-2 mb-3">
-            <img src="/logo.webp" alt={brandDNA.company.name} className="w-40 h-auto" />
+          <Link to="/" className="inline-flex flex-col mb-3">
+            <span className="font-heading font-bold theme-keep-white text-white text-[17px] uppercase tracking-wide leading-none">
+              {brandDNA.company.name.split(' ')[0]}
+            </span>
+            {brandDNA.company.name.split(' ').length > 1 && (
+              <span className="font-heading font-semibold text-gold text-[10px] uppercase tracking-[0.25em] leading-none mt-[5px]">
+                {brandDNA.company.name.split(' ').slice(1).join(' ')}
+              </span>
+            )}
           </Link>
-          <p className="text-steel font-body text-xs leading-relaxed mb-4">
+          <p className="text-steel font-body text-[13px] leading-relaxed mb-[10px]">
             {brandDNA.company.tagline}
           </p>
           {/* Social icons. Render ONLY platforms with a non-empty URL set in
@@ -83,7 +92,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={platform}
-                  className="footer-social-icon w-8 h-8 flex items-center justify-center transition-colors bg-navy-slate"
+                  className="footer-social-icon w-[36px] h-[36px] flex items-center justify-center transition-colors bg-navy-slate"
                   style={{ border: '1px solid rgba(100,116,139,0.25)' }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgb(var(--accent) / 0.15)';
@@ -94,7 +103,7 @@ export default function Footer() {
                     e.currentTarget.style.borderColor = 'rgba(100,116,139,0.25)';
                   }}
                 >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <svg className="w-[16px] h-[16px]" viewBox="0 0 24 24" fill="currentColor">
                     <path d={SOCIAL_ICON_MAP[platform]} />
                   </svg>
                 </a>
@@ -105,11 +114,11 @@ export default function Footer() {
 
         {/* Services links */}
         <div>
-          <h4 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-4">SERVICES</h4>
-          <ul className="flex flex-col gap-2">
+          <h4 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-[10px]">SERVICES</h4>
+          <ul className="flex flex-col gap-[6px]">
             {serviceLinks.map((link) => (
               <li key={link.label}>
-                <Link to={link.to} className="text-steel font-body text-xs hover:text-white transition-colors flex items-center gap-1.5">
+                <Link to={link.to} className="text-steel font-body text-[13px] hover:text-white transition-colors flex items-center gap-1.5">
                   <span className="text-gold">+</span> {link.label}
                 </Link>
               </li>
@@ -117,17 +126,17 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Service Areas links — every city the brand covers, linked to
+        {/* Service Areas links, every city the brand covers, linked to
             /service-area/<slug>. Sourced from brandDNA.serviceAreas (canonical
             12-city list). */}
         <div>
-          <h4 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-4">SERVICE AREAS</h4>
-          <ul className="flex flex-col gap-2">
+          <h4 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-[10px]">SERVICE AREAS</h4>
+          <ul className="flex flex-col gap-[6px]">
             {(brandDNA.serviceAreas || []).slice(0, 12).map((city) => (
               <li key={city}>
                 <Link
                   to={`/service-area/${slugify(city)}`}
-                  className="text-steel font-body text-xs hover:text-white transition-colors flex items-center gap-1.5"
+                  className="text-steel font-body text-[13px] hover:text-white transition-colors flex items-center gap-1.5"
                 >
                   <span className="text-gold">+</span> {city}
                 </Link>
@@ -138,11 +147,11 @@ export default function Footer() {
 
         {/* Company links */}
         <div>
-          <h4 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-4">COMPANY</h4>
-          <ul className="flex flex-col gap-2">
+          <h4 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-[10px]">COMPANY</h4>
+          <ul className="flex flex-col gap-[6px]">
             {companyLinks.map((link) => (
               <li key={link.label}>
-                <Link to={link.to} className="text-steel font-body text-xs hover:text-white transition-colors flex items-center gap-1.5">
+                <Link to={link.to} className="text-steel font-body text-[13px] hover:text-white transition-colors flex items-center gap-1.5">
                   <span className="text-gold">+</span> {link.label}
                 </Link>
               </li>
@@ -151,12 +160,12 @@ export default function Footer() {
         </div>
 
         {/* Contact + CTA */}
-        <div>
-          <h4 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-4">GET IN TOUCH</h4>
-          <div className="flex flex-col gap-3 mb-6">
+        <div className="col-span-2 lg:col-span-1">
+          <h4 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-[10px]">GET IN TOUCH</h4>
+          <div className="flex flex-col gap-[10px] mb-[14px]">
             <div className="flex items-start gap-2">
               <LocationIcon />
-              <div className="text-steel font-body text-xs leading-relaxed">
+              <div className="text-steel font-body text-[13px] leading-relaxed">
                 {brandDNA.address.full}
               </div>
             </div>
@@ -180,7 +189,7 @@ export default function Footer() {
           )}
           <button
             onClick={scrollToForm}
-            className="btn-gold inline-block font-heading font-bold text-sm uppercase px-6 py-2.5 tracking-widest text-navy"
+            className="btn-gold inline-block font-heading font-bold text-[13px] uppercase px-[18px] py-[11px] tracking-widest text-navy"
           >
             {brandDNA.copy.buttonText}
           </button>
@@ -188,28 +197,28 @@ export default function Footer() {
       </div>
 
       {/* Trust stack row */}
-      <div className="border-t px-8 py-4" style={{ borderColor: 'rgba(100,116,139,0.15)' }}>
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
+      <div className="border-t px-8 py-[14px]" style={{ borderColor: 'rgba(100,116,139,0.15)' }}>
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-x-[22px] gap-y-[8px] sm:gap-x-[36px] flex-wrap">
           <div className="flex items-center gap-2">
-            <svg className="w-4 h-4" viewBox="0 0 24 24">
+            <svg className="w-[16px] h-[16px]" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            <span className="text-steel font-body text-xs">{brandDNA.reviews.googleStat}</span>
+            <span className="text-steel font-body text-[13px]">{brandDNA.reviews.googleStat}</span>
           </div>
           <div className="flex items-center gap-2">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="#1877F2">
+            <svg className="w-[16px] h-[16px]" viewBox="0 0 24 24" fill="#1877F2">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
             </svg>
-            <span className="text-steel font-body text-xs">{brandDNA.reviews.facebookStat}</span>
+            <span className="text-steel font-body text-[13px]">{brandDNA.reviews.facebookStat}</span>
           </div>
           <div className="flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="rgb(var(--accent))" strokeWidth={1.5}>
+            <svg className="w-[16px] h-[16px]" fill="none" viewBox="0 0 24 24" stroke="rgb(var(--accent))" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.955 11.955 0 003 10c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.25-8.25-3.286z" />
             </svg>
-            <span className="text-steel font-body text-xs">License #{brandDNA.company.licenseNumber}</span>
+            <span className="text-steel font-body text-[13px]">License #{brandDNA.company.licenseNumber}</span>
           </div>
         </div>
       </div>
@@ -217,10 +226,10 @@ export default function Footer() {
       {/* Copyright bar */}
       <div className="py-3 px-8 bg-navy-dark">
         <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2">
-          <p className="text-steel font-body text-xs">
+          <p className="text-steel font-body text-[13px]">
             {brandDNA.copy.copyright}
           </p>
-          <p className="text-steel font-body text-xs">
+          <p className="text-steel font-body text-[13px]">
             Designed with love by <span className="text-gold">{brandDNA.credit.agency}</span>
           </p>
         </div>

@@ -33,7 +33,7 @@ function MediaItem({ project, className, onClick, style }) {
         src={project.src}
         alt={project.alt}
         className="w-full h-full object-cover"
-        onError={(e) => { e.target.style.background = '#1E293B'; e.target.src = ''; }}
+        onError={(e) => { const el = e.target; el.onerror = null; if (el.parentElement) el.parentElement.style.background = '#1E293B'; el.style.visibility = 'hidden'; el.removeAttribute('src'); }}
       />
     </div>
   );
@@ -64,14 +64,20 @@ export default function OurWork() {
       </div>
 
       {/* Carousel */}
-      <div className="relative max-w-6xl mx-auto px-10 sm:px-12">
-        {/* Mobile: single card */}
-        <div className="flex gap-4 items-center justify-center md:hidden">
-          <MediaItem
-            project={projects[active]}
-            className="w-full max-w-sm shadow-2xl"
-            style={{ border: '1px solid rgba(100,116,139,0.25)', height: 224 }}
-          />
+      <div className="relative max-w-6xl mx-auto px-[16px] md:px-10 lg:px-12">
+        {/* Mobile: finger-swipe strip with snap + a peek of the next photo.
+            The old single-card + edge arrows rendered the arrows as half
+            off-screen slabs at 390px. Cards need explicit width +
+            flex-shrink-0 (min-w % does not cap width in a scroll strip). */}
+        <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-[12px] -mx-[16px] px-[16px] pb-[6px] carousel-scroll">
+          {projects.map((p, i) => (
+            <MediaItem
+              key={i}
+              project={p}
+              className="w-[85%] max-w-[335px] flex-shrink-0 snap-center shadow-2xl"
+              style={{ border: '1px solid rgba(100,116,139,0.25)', height: 210 }}
+            />
+          ))}
         </div>
 
         {/* Desktop: 3-panel carousel */}
@@ -100,7 +106,7 @@ export default function OurWork() {
         {/* Prev arrow */}
         <button
           onClick={prev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-cool hover:text-white transition-all bg-navy"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 hidden md:flex items-center justify-center text-cool hover:text-white transition-all bg-navy"
           style={{ border: '1px solid rgba(100,116,139,0.35)' }}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -109,7 +115,7 @@ export default function OurWork() {
         </button>
         <button
           onClick={next}
-          className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-cool hover:text-white transition-all bg-navy"
+          className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 hidden md:flex items-center justify-center text-cool hover:text-white transition-all bg-navy"
           style={{ border: '1px solid rgba(100,116,139,0.35)' }}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,12 +125,12 @@ export default function OurWork() {
       </div>
 
       {/* Dots */}
-      <div className="flex justify-center gap-2 mt-6">
+      <div className="hidden md:flex justify-center gap-[8px] mt-6">
         {projects.map((_, i) => (
           <button
             key={i}
             onClick={() => setActive(i)}
-            className="h-2 transition-all duration-200"
+            className="h-[8px] transition-all duration-200"
             style={{
               width: i === active ? 20 : 8,
               background: i === active ? 'rgb(var(--accent))' : '#64748B',

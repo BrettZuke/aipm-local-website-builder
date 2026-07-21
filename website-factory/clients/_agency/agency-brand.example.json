@@ -7,6 +7,8 @@
   "contract_email": "",
   "$jurisdiction_note": "OPTIONAL. Governing-law region named in your client contract (Section 11) and stamped into the signed PDF. Defaults to \"England and Wales\" if empty. Set your own, e.g. \"North Carolina, USA\".",
   "jurisdiction": "",
+  "$payment_links_note": "OPTIONAL. Leave empty and add links live from the Seller tools bar on any proposal, or list them here to have them on EVERY proposal you build (each with a Copy button). On the call: they sign, you copy the link, they pay before you hang up. Leads never see this panel. Must start with https:// . These are baked into the page source, so only put shareable checkout links here (Stripe payment links, PayPal.me, an invoice link) and never a private dashboard URL. Example: [ { \"label\": \"Setup fee\", \"url\": \"https://buy.stripe.com/...\" } ]",
+  "payment_links": [],
   "youtube_channel": null,
   "founder": {
     "name": "__REQUIRED__FOUNDER_FULL_NAME__",
@@ -200,11 +202,18 @@
   "pricing": {
     "model": "__REQUIRED__YOUR_PRICING_MODEL__",
     "currency": "USD",
+    "$currency_symbol_note": "OPTIONAL. The symbol shown before every price on the proposal (e.g. \"$\", \"£\", \"€\"). Leave empty to derive it from the currency code above. Your students' clients pay in THEIR local currency; set this to match. Also live-editable per proposal from Seller tools.",
+    "currency_symbol": "",
     "setup_fee_price_display": "__REQUIRED__SETUP_FEE_PRICE__",
     "setup_fee_standard_display": "__REQUIRED__SETUP_FEE_STANDARD__",
     "one_time_offer_price_display": "__REQUIRED__ONE_TIME_OFFER_PRICE__",
     "monthly_fee_price_display": "__REQUIRED__MONTHLY_FEE_PRICE__",
+    "$plans_note": "Three monthly plans shown AFTER the one-time build close: nothing monthly for the first monthly_grace_days, then the client picks one. plan_1 = Lite (hosting, SSL, small edits), monthly_fee_price_display above = plan 2 Growth, the most-picked middle (Lite + review auto-engine + AI chatbot + monthly report), plan_3 = Pro (Growth + AI dialler + unlimited priority edits + seasonal updates). Only ongoing services live in these plans; everything the build includes stays out. All three prices live-editable per proposal from Seller tools.",
+    "plan_1_price_display": "$47",
+    "plan_3_price_display": "$297",
+    "monthly_grace_days": 90,
     "stacked_value_total_display": "__REQUIRED__STACKED_VALUE_TOTAL__",
+    "$value_stack_note": "5 one-time BUILD deliverables only. Never list hosting or maintenance as 'lifetime' or '/yr' here; ongoing upkeep is what the monthly plans charge for, and claiming it in the build contradicts them. DO include the automated email + SMS follow-up to every lead on opt-in and the owner/sales-team notification system; those ship with every build. A 'first X days covered' launch line explains why the monthly starts later. A 6th line is OPTIONAL (e.g. GA4 Analytics Setup); its row renders only when present, and the GA4 tag itself ships with every build once you set analytics.ga4MeasurementId in the client's brand-dna.",
     "value_stack": [
       {
         "name": "__REQUIRED__VALUE_STACK_LINE_1_NAME__",

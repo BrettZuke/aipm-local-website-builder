@@ -66,7 +66,7 @@ export default function Navbar() {
       {/* Thin gold accent line at very top */}
       <div className="line-gold w-full" />
 
-      <div className="max-w-7xl mx-auto px-4 flex items-center h-16 gap-4">
+      <div className="max-w-7xl mx-auto px-[14px] lg:px-4 flex items-center h-[56px] lg:h-[64px] gap-[10px] lg:gap-4">
         {/* Logo. Rule 54: relative + z-index 20 so the wordmark sits ABOVE the
             hero section and the height cap (h-12 md:h-14) keeps the logo
             inside the nav bar even when the source SVG is tall. */}
@@ -74,7 +74,12 @@ export default function Navbar() {
           <img
             src="/logo.webp"
             alt={brandDNA.company.name}
-            className="h-12 md:h-14 w-auto"
+            className="h-[34px] max-w-[42vw] object-contain lg:h-[40px] lg:max-w-none w-auto"
+            onError={(e) => {
+              const el = e.target;
+              el.onerror = () => { el.onerror = null; el.style.display = 'none'; };
+              el.src = '/logo.svg';
+            }}
           />
         </Link>
 
@@ -85,7 +90,7 @@ export default function Navbar() {
               <div key={link.label} className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setServicesOpen(!servicesOpen)}
-                  className={`font-body font-semibold text-sm flex items-center gap-0.5 whitespace-nowrap transition-colors pb-1 ${
+                  className={`font-body font-semibold text-sm flex items-center gap-0.5 whitespace-nowrap transition-colors pb-[4px] ${
                     isActive(link.to)
                       ? 'text-white border-b-2 border-gold'
                       : 'text-cool hover:text-white border-b-2 border-transparent'
@@ -120,7 +125,7 @@ export default function Navbar() {
               <Link
                 key={link.label}
                 to={link.to}
-                className={`font-body font-semibold text-sm whitespace-nowrap transition-colors pb-1 ${
+                className={`font-body font-semibold text-sm whitespace-nowrap transition-colors pb-[4px] ${
                   isActive(link.to)
                     ? 'text-white border-b-2 border-gold'
                     : 'text-cool hover:text-white border-b-2 border-transparent'
@@ -131,16 +136,12 @@ export default function Navbar() {
             )
           )}
 
-          {/* Phone with available-now indicator. Rule 56 (refresh): the dot
-              ALWAYS renders next to the phone number on every desktop
-              breakpoint, not just xl. The label is hidden under xl so the
-              dot fits without crowding the nav links. */}
-          <a href={`tel:${brandDNA.contact.phoneTelLink}`} className="flex items-center gap-2 ml-1">
-            <span className="hidden xl:inline-flex">
+          {/* Phone with available-now indicator. Rule 56 (amended): the dot
+              renders ONLY with its label (2xl+). A label-less dot next to the
+              phone number read as a stray grey blob at narrower widths. */}
+          <a href={`tel:${brandDNA.contact.phoneTelLink}`} className="flex items-center gap-2 ml-1 pb-[4px] border-b-2 border-transparent">
+            <span className="hidden 2xl:inline-flex">
               <AvailableDot size="sm" label={true} />
-            </span>
-            <span className="inline-flex xl:hidden">
-              <AvailableDot size="sm" label={false} />
             </span>
             <span className="font-body font-semibold text-sm text-cool whitespace-nowrap">{brandDNA.contact.phone}</span>
           </a>
@@ -152,19 +153,19 @@ export default function Navbar() {
               metallic accent gradient. */}
           <button
             onClick={scrollToForm}
-            className="btn-gold font-heading font-bold text-xs uppercase px-5 py-2.5 tracking-wider ml-1 whitespace-nowrap"
+            className="btn-gold nav-cta font-heading font-bold text-xs uppercase px-5 py-2.5 tracking-wider ml-1 whitespace-nowrap"
             style={navCtaTextStyle}
           >
             {brandDNA.copy.buttonText}
           </button>
         </div>
 
-        {/* Mobile: CTA between logo and hamburger. Rule 56 (refresh): the
-            dot is ALWAYS present in the mobile slot, with the label visible
-            from the sm breakpoint up so the office hours signal carries
-            even on 375px viewports. Rule 62 keeps the text white + shadow
-            across breakpoints. */}
-        <div className="lg:hidden ml-auto mr-2 flex items-center gap-2">
+        {/* Mobile: CTA between logo and hamburger. Rule 56 (amended): below
+            sm the dot renders nowhere in the bar; a label-less dot next to
+            CALL NOW read as stray debris at 390px. The availability signal
+            still carries via the sm+ labelled slot and inside the expanded
+            hamburger menu. Rule 62 keeps the text white + shadow. */}
+        <div className="lg:hidden ml-auto mr-[8px] flex items-center gap-[8px]">
           <a
             href={`tel:${brandDNA.contact.phoneTelLink}`}
             className="hidden sm:inline-flex"
@@ -174,14 +175,7 @@ export default function Navbar() {
           </a>
           <a
             href={`tel:${brandDNA.contact.phoneTelLink}`}
-            className="sm:hidden inline-flex"
-            aria-label="Call now"
-          >
-            <AvailableDot size="sm" label={false} />
-          </a>
-          <a
-            href={`tel:${brandDNA.contact.phoneTelLink}`}
-            className="flex items-center gap-1.5 font-heading font-bold text-xs uppercase px-3 py-1.5 tracking-wider"
+            className="flex items-center gap-[6px] font-heading font-bold text-xs uppercase px-[10px] py-[6px] tracking-wider whitespace-nowrap"
             style={{
               background: 'linear-gradient(135deg, rgb(var(--accent-light)) 0%, rgb(var(--accent)) 40%, rgb(var(--accent-dark)) 65%, rgb(var(--accent-light)) 100%)',
               ...navCtaTextStyle,
@@ -196,10 +190,11 @@ export default function Navbar() {
 
         {/* Mobile hamburger */}
         <button
-          className="lg:hidden text-white"
+          className="lg:hidden text-white p-[8px] -mr-[6px] flex-shrink-0"
+          aria-label="Menu"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-[24px] h-[24px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
           </svg>
         </button>
