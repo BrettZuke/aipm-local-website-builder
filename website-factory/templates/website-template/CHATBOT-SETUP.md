@@ -8,23 +8,39 @@ so you never write anything for it.
 
 ## The one thing you do: get a free key (60 seconds, one time)
 
-The chat agent runs on a free AI service called Groq. You need one key. You
-get it once and it powers EVERY website you ever build.
+The chat agent runs on Groq, a free AI service. Free means free: there is no
+card on the account, so it can never charge you anything. You need one key.
+You get it once and it powers EVERY website you ever build.
 
 1. Open https://console.groq.com/keys
-2. Sign in with your Google account (free, no card needed)
-3. Click "Create API Key", give it any name, copy the key it shows you
+2. Sign in. The "Continue with Google" button there is just the login for
+   Groq's website (this is Groq's free service, not a Google product)
+3. Click "Create API Key", give it any name, copy the key it shows you (it
+   starts with gsk_)
 4. When Claude asks for it during your first website deploy, paste it into
    the chat
 
 That is it. Claude saves the key privately on your computer and wires it into
 every client site automatically from then on. You never do this again.
 
-## What if I skip it?
+This step is not optional. The chat agent is part of what your client is
+paying for, so Claude will not finish a deploy without a working key. If you
+ever cannot sign up for Groq, Claude will set you up with Google's free
+Gemini tier instead; either way it stays free.
 
-Nothing looks broken. The chat bubble still works, it just offers "Call now"
-and "Get a fast quote" buttons instead of typed answers. Add the key any time
-and ask Claude to redeploy the site; the chat switches on.
+## Keep your key safe (30-second lesson)
+
+An API key is like a password for an online service. Four rules:
+
+- Never share it, post it, screenshot it, or put it inside your website
+  files. If someone asks you for it, the answer is no.
+- Claude keeps it in two safe places only: a private file on your computer
+  that cannot be uploaded to GitHub, and your Vercel project's locked
+  settings. People visiting your websites can never see it.
+- Because Groq's free plan has no card attached, the key cannot cost you
+  money even if something goes wrong.
+- Think it leaked? Go to https://console.groq.com/keys, delete it, create a
+  new one, and tell Claude to update your sites. Two minutes, problem gone.
 
 ## How do I know it is working?
 
@@ -38,9 +54,10 @@ Everything below is technical reference. You do not need it; Claude handles it.
 
 ## Manual setup (reference)
 
-Other providers work too: set exactly ONE of `GROQ_API_KEY` (free,
-console.groq.com/keys), `GEMINI_API_KEY` (free tier, aistudio.google.com/apikey),
-or `OPENAI_API_KEY` (paid, platform.openai.com/api-keys).
+Set exactly ONE key. Students always use a free option: `GROQ_API_KEY` (free,
+console.groq.com/keys, the default) or `GEMINI_API_KEY` (free tier,
+aistudio.google.com/apikey, the fallback). `OPENAI_API_KEY` (platform.openai.com)
+is also supported but it is PAID; not for students.
 
 From the client's website folder:
 

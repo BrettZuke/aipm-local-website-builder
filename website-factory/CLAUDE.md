@@ -56,11 +56,12 @@ Stage 10, Build + QA
   10.4c,  Build fidelity  → DOM structural diff vs templates/website-template, 100%
   10.4d,  Perf            → Lighthouse LCP < 3s on desktop AND mobile
 Stage 11, Deploy          → clients/[Client Name]/Pipeline Data/deploy/vercel-url.txt
-                             (also switches on the AI chatbot: student's free
-                              GROQ_API_KEY lives in website-factory/.env and is
-                              reused for every client; if missing, walk the
-                              student through getting one in plain English per
-                              .claude/skills/vercel-deploy/SKILL.md Step 4)
+                             (also switches on the AI chatbot, REQUIRED: the
+                              student's free GROQ_API_KEY lives in
+                              website-factory/.env, reused for every client;
+                              if missing, walk the student through getting one
+                              in plain English BEFORE deploying, never skip,
+                              per .claude/skills/vercel-deploy/SKILL.md Step 4)
 Stage 12, Delivery        → clients/[Client Name]/Pipeline Data/delivery/delivery-report.md
 Stage 13, Proposal        → clients/[Client Name]/[Client Name] Proposal/proposal.html
                              + Vercel production deploy to

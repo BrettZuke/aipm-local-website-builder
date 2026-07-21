@@ -80,24 +80,41 @@ printf '%s' "$KEY" | vercel env add GROQ_API_KEY production
 (Adjust the `.env` path to wherever `website-factory/.env` sits relative to the
 client website folder. Never echo or print the key itself.)
 
-3. No saved key either: STOP and tell the student, in plain words, exactly this:
+3. No saved key either: STOP and walk the student through it. This step is
+REQUIRED. The chat agent is part of what their client is paying for, so do not
+run the production deploy until a working free key is saved. Tell the student,
+in plain words, exactly this:
 
 > Your website comes with an AI chat agent that answers visitor questions. It
-> needs a free key to switch on. This takes 60 seconds and you only ever do it
-> once:
+> runs on Groq, a free AI service: no card on the account, no charges, ever.
+> Switching it on takes 60 seconds and you only ever do it once:
 > 1. Open https://console.groq.com/keys
-> 2. Sign in with your Google account (free, no card needed)
+> 2. Sign in. The "Continue with Google" button there is just the login for
+>    Groq's website. This is Groq's free service, not a Google product.
 > 3. Click "Create API Key", give it any name, and copy the key it shows you
+>    (it starts with gsk_)
 > 4. Paste the key here in the chat
 >
-> I will save it and reuse it for every website you build from now on.
+> Quick safety lesson, because this matters: an API key is like a password.
+> Never share it, post it, or put it inside your website files. I keep it in
+> two safe places only: a private file on your computer that cannot be
+> uploaded to GitHub, and your Vercel project's locked settings. Website
+> visitors can never see it. Because Groq's free plan has no card attached,
+> the key can never cost you money. If you ever think it leaked, delete it at
+> https://console.groq.com/keys and we will make a new one in a minute.
 
-When the student pastes the key: save it as a `GROQ_API_KEY=...` line in
-`website-factory/.env` (create the file if missing; it is gitignored), then add
-it to the Vercel project with the piped command above.
+When the student pastes the key: confirm it starts with `gsk_` (if it does
+not, they copied the wrong thing; walk them through again patiently). Save it
+as a `GROQ_API_KEY=...` line in `website-factory/.env` (create the file if
+missing; it is gitignored), then add it to the Vercel project with the piped
+command above. Never echo the key back in full.
 
-If the student cannot get a key right now, continue anyway: the widget degrades
-to Call + Get-a-quote buttons, nothing looks broken. Remind them at handoff.
+If the student genuinely cannot create a Groq account (rare, e.g. sign-up
+unavailable in their region), do NOT skip the step: use Google's free Gemini
+tier instead at https://aistudio.google.com/apikey, same routine, saved as
+`GEMINI_API_KEY=...` in `website-factory/.env` and added under that name on
+Vercel. Both options are free with no card. One way or the other, the site
+does not ship without a working key.
 
 ### Step 5, Deploy to production
 
@@ -116,7 +133,7 @@ curl -s -o /dev/null -w "%{http_code}" https://[deployed-url]
 
 Expect 200. If not 200, check Vercel dashboard for build/deployment errors.
 
-Then prove the chatbot answers (only if a key was wired in Step 4):
+Then prove the chatbot answers:
 
 ```bash
 curl -s -X POST https://[deployed-url]/api/chat \

@@ -58,10 +58,11 @@ phone call. It already knows the client's services, areas, hours, and story;
 you write nothing.
 
 To switch it on you do one thing, once, ever: get a free key (60 seconds, no
-card) from https://console.groq.com/keys. Claude asks you for it during your
-first deploy, saves it, and wires it into every client site automatically from
-then on. Until a key exists, the bubble simply shows Call and Get-a-quote
-buttons, so nothing ever looks broken. Plain-English walkthrough:
+card, it stays free) from https://console.groq.com/keys. Claude asks you for
+it during your first deploy, saves it privately, and wires it into every
+client site automatically from then on. This step is required: the chat agent
+is part of what your client pays for, so deploys wait until the key is in
+place. Plain-English walkthrough, including how to keep the key safe:
 `website-factory/templates/website-template/CHATBOT-SETUP.md`.
 
 ## How to start
